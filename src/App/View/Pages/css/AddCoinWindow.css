@@ -1,0 +1,57 @@
+#add-coin-form {
+    display: flex;
+    flex-direction: column;
+}
+
+#add-coin-form > div {
+    margin: 3px;
+}
+
+.input-container {
+    display: flex;
+}
+
+.add-inp {
+    background-color: inherit;
+    border-width: 0px;
+    border-bottom-width: 1px;
+    font: inherit;
+    color: inherit;
+    text-align: right;
+    width: 170px;
+}
+
+.add-inp:focus {
+    outline: none;
+}
+
+.add-inp:focus {
+    outline: none;
+}
+
+.confirm-add-container {
+    display: flex;
+    justify-content: center;
+}
+
+.ticker-autocomplete {
+    position: absolute;
+    right: 0;
+    padding-right: 4px;
+    text-align: right;
+    max-height: 120px;
+    overflow-y: auto;
+    z-index: 99;
+    background-color: var(--third-bg-color);
+    color: black;
+    font: inherit;
+}
+
+.confirm-add {
+    padding: 3px 6px 3px 6px;
+    margin: 8px 4px 2px 4px;
+    background: linear-gradient(var(--third-bg-color), #9fa2c3);
+    color: black;
+    text-align: center;
+    width: 60px;
+}

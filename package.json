@@ -1,0 +1,21 @@
+{
+    "name": "coin-watcher",
+    "version": "0.1.0",
+    "description": "free and private crypto portfolio app",
+    "private": "true",
+    "scripts": {
+        "dev-build": "webpack --config  webpack.dev.js",
+        "build": "webpack --config  webpack.prod.js"
+    },
+    "devDependencies": {
+        "copy-webpack-plugin": "^5.0.1",
+        "css-loader": "^2.1.1",
+        "eslint": "^4.19.1",
+        "style-loader": "^0.23.1",
+        "webpack": "^4.29.6",
+        "webpack-cli": "^3.2.3",
+        "workbox-webpack-plugin": "^4.1.0"
+    },
+    "author": "Tiramisu77",
+    "license": "MIT"
+}
