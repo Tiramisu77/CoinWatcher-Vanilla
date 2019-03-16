@@ -33,7 +33,10 @@ class Root {
         }
 
         window.onpopstate = () => {
-            this.render(this.routes[window.location.pathname])
+            const path = window.location.pathname
+            const route = path.replace(new RegExp(BASE_URL), "")
+
+            this.render(this.routes[route])
         }
 
         window.addEventListener("load", () => {
