@@ -14,7 +14,7 @@ import { About } from "./About.js"
 
 import { utils } from "./utils.js"
 
-const BASE_URL = "/CoinWatcher/"
+const BASE_URL = "/CoinWatcher"
 
 class Root {
     constructor(app, main, addCoinWindow, coinDetails, appSettings, about) {
@@ -30,7 +30,6 @@ class Root {
             "/Settings": appSettings.node,
             "/About": about.node,
             "/": main.node,
-            "": main.node,
         }
 
         window.onpopstate = () => {
