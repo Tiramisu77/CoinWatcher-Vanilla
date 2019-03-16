@@ -1,7 +1,7 @@
 ## Coin Watcher
 
 Coin Watcher is a free, open source and privacy-oriented cryptocurrency portfolio web app.
-It stores all user data strictly on client side utilizing window.localStorage, while market data is fetched from public API's.
+It stores all user data strictly on client side utilizing `window.localStorage`, while market data is fetched from public API's.
 
 ### Using
 
