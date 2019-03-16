@@ -46,6 +46,7 @@ class Root {
         })
     }
     router(path) {
+        if (path === "") path = "/"
         if (window.location.protocol !== "file:") {
             window.history.pushState({}, path, window.location.origin + BASE_URL + path)
         }
