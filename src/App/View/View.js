@@ -14,6 +14,8 @@ import { About } from "./About.js"
 
 import { utils } from "./utils.js"
 
+const BASE_URL = "/CoinWatcher/"
+
 class Root {
     constructor(app, main, addCoinWindow, coinDetails, appSettings, about) {
         this.node = utils.createNode({

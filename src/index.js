@@ -14,7 +14,7 @@ try {
 }
 
 if ("serviceWorker" in navigator) {
-    navigator.serviceWorker.register("/service-worker.js").then(
+    navigator.serviceWorker.register("./service-worker.js").then(
         function(registration) {
             console.info("Service worker registered")
         },
