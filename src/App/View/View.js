@@ -39,7 +39,7 @@ class Root {
 
         window.addEventListener("load", () => {
             const path = window.location.pathname
-            if (this.routes[path]) {
+            if (this.routes[BASE_URL + path]) {
                 this.router(path)
             } else {
                 this.router("")
@@ -48,7 +48,7 @@ class Root {
     }
     router(path) {
         if (window.location.protocol !== "file:") {
-            window.history.pushState({}, path, window.location.origin + path)
+            window.history.pushState({}, path, window.location.origin + BASE_URL + path)
         }
 
         this.render(this.routes[path])
