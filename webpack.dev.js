@@ -14,7 +14,7 @@ module.exports = {
         new CopyPlugin([
             { from: "./public/images", to: "images" },
             { from: "./public/index.html", to: "" },
-            { from: "./public/404.html", to: "" },
+
             { from: "./public/manifest.json", to: "" },
         ]),
         new GenerateSW({
