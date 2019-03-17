@@ -36,9 +36,11 @@ export class CoinDetails {
                 this.states[name].countdownID = setTimeout(countdown, 1000, name, i - 1)
                 this.states[name].countdownTick = i
             } else {
-                //todo fix bug with routing - this redirects back to main when in settings or add coin
-                // maybe instead of timer just have undo button
-                if (this.currentItem === name) router("")
+                // todo components need to have mount/dismount hooks
+                //hack
+                if (this.currentItem === name && /CoinDetails/.test(window.location.pathname)) {
+                    router("")
+                }
                 removeItem(name)
                 delete this.states[name]
             }
@@ -61,7 +63,7 @@ export class CoinDetails {
         })
 
         this.amountField.addEventListener("keydown", event => {
-            if (event.code === "Enter") {
+            if (event.code === "Enter" || event.key === "Enter") {
                 this.amountField.blur()
             }
         })

@@ -19,7 +19,7 @@ export class About {
 
           </p>
           <p>
-          The official page of the project is at <a href=https://github.com/Tiramisu77/CoinWatcher">https://github.com/Tiramisu77/CoinWatcher</a>
+          The official page of the project is at <a href="https://github.com/Tiramisu77/CoinWatcher">https://github.com/Tiramisu77/CoinWatcher</a>
           </p>
 
         </section>

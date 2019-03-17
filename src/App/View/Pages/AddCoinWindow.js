@@ -42,7 +42,7 @@ export class AddCoinWindow {
         })
 
         this.tickerField.addEventListener("keydown", event => {
-            if (event.code === "Enter") {
+            if (event.code === "Enter" || event.key === "Enter") {
                 if (this.amountField.value === "" && this.tickerField.value !== "") {
                     this.amountField.focus()
                 } else {
@@ -75,7 +75,7 @@ export class AddCoinWindow {
             this.message.textContent = ""
         })
         this.amountField.addEventListener("keydown", event => {
-            if (event.code === "Enter") {
+            if (event.code === "Enter" || event.key === "Enter") {
                 this.confirm.click()
             }
         })

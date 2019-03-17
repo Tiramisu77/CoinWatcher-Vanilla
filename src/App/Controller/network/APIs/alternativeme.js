@@ -75,7 +75,16 @@ const listAdapter = function(listItem) {
 
 export const loadSupportedCoinsAlternativeme = async function() {
     try {
-        let res = await fetch(`https://cors-anywhere.herokuapp.com/https://api.alternative.me/v2/listings/`)
+        let res = await Promise.race(
+            [
+                fetch(`https://cors-anywhere.herokuapp.com/https://api.alternative.me/v2/listings/`),
+                new Promise((_, reject) => {
+                    setTimeout(() => reject("alternativeme coinlist timed out manually"), 6000)
+                }),
+            ]
+
+            //magic 6 sec timeout
+        )
             .then(response => {
                 if (response.ok) return response.json()
                 else return Promise.reject(response.status)

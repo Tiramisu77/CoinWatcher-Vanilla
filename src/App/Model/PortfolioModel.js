@@ -157,7 +157,7 @@ export class PortfolioModel {
             })
             this.items[itemName].updateMarketData(this.marketData[itemName] || null, this.bitcoinData)
         } catch (error) {
-            if(window.DEBUG) console.error(error)
+            if (window.DEBUG) console.error(error)
         }
     }
 
@@ -166,19 +166,13 @@ export class PortfolioModel {
             this.items[item].updateMarketData(this.marketData[item] || null, this.bitcoinData)
             this.items[item].observer(this.items[item])
         } catch (error) {
-            if(window.DEBUG) console.error(error)
+            if (window.DEBUG) console.error(error)
         }
     }
 
     updatePortfolio() {
         for (let item in this.items) {
-            //NOTE: order is important, observer only triggers on price usd
-            try {
-                this.items[item].updateMarketData(this.marketData[item] || null, this.bitcoinData)
-                this.items[item].observer(this.items[item])
-            } catch (error) {
-                if(window.DEBUG) console.error(error)
-            }
+            this.updateItem(item)
         }
     }
 }

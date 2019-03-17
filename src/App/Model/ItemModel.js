@@ -35,21 +35,26 @@ export class ItemModel {
             numericalData: { "1h": null, "24h": null, "7d": null },
             printableData: { "1h": null, "24h": null, "7d": null },
         }
+        this.currentMarketData = null
     }
 
     updateMarketData(newMarketData, bitcoinChanges) {
         if (newMarketData === null) return false
-        this.icon = newMarketData.image
-        this.fullName = newMarketData.name
-        this._priceUSD = parseFloat(newMarketData.price_usd)
-        this._priceBTC = parseFloat(newMarketData.price_btc)
-        this._change1h = parseFloat(newMarketData.percent_change_1h)
-        this._change24h = parseFloat(newMarketData.percent_change_24h)
-        this._change7d = parseFloat(newMarketData.percent_change_7d)
-        this.bitcoinChanges = bitcoinChanges
-        this.cache = {
-            numericalData: { "1h": null, "24h": null, "7d": null },
-            printableData: { "1h": null, "24h": null, "7d": null },
+        if (newMarketData !== this.currentMarketData) {
+            this.currentMarketData = newMarketData
+            this.icon = newMarketData.image
+            this.fullName = newMarketData.name
+            this._priceUSD = parseFloat(newMarketData.price_usd)
+            this._priceBTC = parseFloat(newMarketData.price_btc)
+            this._change1h = parseFloat(newMarketData.percent_change_1h)
+            this._change24h = parseFloat(newMarketData.percent_change_24h)
+            this._change7d = parseFloat(newMarketData.percent_change_7d)
+            this.bitcoinChanges = bitcoinChanges
+
+            this.cache = {
+                numericalData: { "1h": null, "24h": null, "7d": null },
+                printableData: { "1h": null, "24h": null, "7d": null },
+            }
         }
     }
 
