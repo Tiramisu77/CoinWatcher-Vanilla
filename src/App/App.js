@@ -2,7 +2,11 @@ import { Controller } from "./Controller/Controller.js"
 
 export class App {
     constructor() {
-        this.controller = new Controller()
+        try {
+            this.controller = new Controller()
+        } catch (e) {
+            this.catchInitErr(e)
+        }
     }
 
     testRandomPortfolio() {
@@ -34,7 +38,7 @@ export class App {
         location.reload()
     }
 
-    static catchInitErr(e) {
+    catchInitErr(e) {
         let errStorage = JSON.parse(localStorage.getItem("criticalErrors") || "[]")
         let report = {}
         report.stack = e.stack

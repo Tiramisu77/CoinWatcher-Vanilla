@@ -78,11 +78,17 @@ export const numToFormattedString = function(num, options) {
         if (options.currency === "BTC") {
             str = autoConvert(num).combinedStrRight
         } else {
-            str = num.toLocaleString(options.lang, {
-                style: "currency",
-                currency: options.currency,
-                maximumSignificantDigits: 3,
-            })
+            str =
+                num > 1
+                    ? num.toLocaleString(options.lang, {
+                          style: "currency",
+                          currency: options.currency,
+                      })
+                    : num.toLocaleString(options.lang, {
+                          style: "currency",
+                          currency: options.currency,
+                          maximumSignificantDigits: 3,
+                      })
         }
     }
 

@@ -41,7 +41,7 @@ class Root {
 
         window.addEventListener("load", () => {
             const path = window.location.pathname
-            if (this.routes[BASE_URL + path]) {
+            if (this.routes[path]) {
                 this.router(path)
             } else {
                 this.router("")

@@ -61,14 +61,6 @@ export const loadAndTransform = async function(fetcher, adapter, findBTCprice) {
 }
 
 /*
- *This function tries to call asynchronous functions one after another
- *until one of them succeeds (meaning doesn't throw an error).
- *@param {Array} arrOfAsyncFuncs - array of asynchronous functions to be called
- *@return - the return value of the first succesful asynchronous function
- *@throw - {Error} - indicated that all calls have failed
- */
-
-/*
 Promise.any by https://github.com/m0ppers/promise-any
 */
 function reverse(promise) {
@@ -81,6 +73,14 @@ function promiseAny(iterable) {
 
 let usePromiseAny = false
 const MAX_ACCEPTABLE_DELAY = 4000
+
+/*
+ *This function tries to call asynchronous functions one after another
+ *until one of them succeeds (meaning doesn't throw an error).
+ *@param {Array} arrOfAsyncFuncs - array of asynchronous functions to be called
+ *@return - the return value of the first succesful asynchronous function
+ *@throw - {Error} - indicated that all calls have failed
+ */
 
 export const asyncShorCircuit = async function(arrOfAsyncFuncs) {
     if (usePromiseAny) {

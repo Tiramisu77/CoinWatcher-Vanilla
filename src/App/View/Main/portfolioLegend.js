@@ -7,9 +7,9 @@ export class PortfolioLegend {
             cssClass: "legend-container",
             innerHTML: `
             <div class="table-row legend">
-        <div class="table-cell"> <span><a href="javascript:void(0)" class="coinL">coin ⇵</a></span></div>
-          <div class="table-cell"><span><a href="javascript:void(0)" class="pricesL"> prices ⇵</a></span></div>
-             <div class="table-cell"><span><a href="javascript:void(0)" class=" valueL">value ⇵</a></span></div>
+        <div class="table-cell"> <span class="coinL">coin ⇵</span></div>
+          <div class="table-cell"><span class="pricesL"> prices ⇵</span></div>
+             <div class="table-cell"><span class=" valueL">value ⇵ </span></div>
              </div>
       `,
             appendTo: table,

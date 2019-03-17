@@ -7,11 +7,7 @@ if (process.env.NODE_ENV !== "production") {
     window.DEBUG = true
 }
 
-try {
-    window.app = new App()
-} catch (e) {
-    App.catchInitErr(e)
-}
+window.app = new App()
 
 if ("serviceWorker" in navigator) {
     navigator.serviceWorker.register("./service-worker.js").then(
