@@ -60,9 +60,10 @@ export class AddCoinWindow {
         this.tickerField.addEventListener("input", () => {
             this.tickerField.value = this.tickerField.value.toUpperCase()
 
-            //todo
-            // this is a hack for preventing uppercasing coins with 0x in their name
-            // this requires some investigation because there might be similar cases
+            /*todo
+             *this is a hack for preventing uppercasing coins with 0x in their name
+             *this requires some investigation because there might be similar cases
+             */
             if (/^0X/.test(this.tickerField.value)) {
                 let a = this.tickerField.value.split("")
                 a[1] = "x"
@@ -110,7 +111,6 @@ export class AddCoinWindow {
         })
     }
 
-    //todo: maybe optimize it with static list instead of creating elements dynamically
     renderAutocomplete(list) {
         this.autocompleteField.renderList(list)
     }

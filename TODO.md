@@ -6,14 +6,14 @@
 
 4.  coinmarketcap - remove when it's disabled
 
-5.  export portfolio json
+5.  export portfolio json - done in console
 
-6.  check precision in fiat numbers - done, needs testing
+6.
 
-7.  test with file:// protocol
+7)  test with file:// protocol
 
-8.  update readme
+8)  update readme
 
-9.  bundle everything in js
+9)  bundle everything in js
 
-10. fix html path, ./ is a hack
+10) fix html path, ./ is a hack

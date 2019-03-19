@@ -9,6 +9,14 @@ export class App {
         }
     }
 
+    exportPortfolio() {
+        console.info(localStorage.getItem("portfolio"))
+    }
+
+    importPortfolio(jsonStr) {
+        localStorage.setItem("portfolio", jsonStr)
+    }
+
     testRandomPortfolio() {
         let a = localStorage.getItem("coinlist")
 

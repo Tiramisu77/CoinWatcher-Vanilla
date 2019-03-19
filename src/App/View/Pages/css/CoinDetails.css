@@ -9,7 +9,7 @@
 .remove-btn {
     padding: 3px 6px 3px 6px;
     margin: 8px 4px 2px 4px;
-    background: linear-gradient(var(--third-bg-color), #9fa2c3);
+    background: linear-gradient(cyan, #9fa2c3);
     color: black;
     text-align: center;
     width: 90px;

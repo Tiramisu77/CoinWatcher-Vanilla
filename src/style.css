@@ -23,7 +23,7 @@ body {
 :root {
     --main-bg-color: #38384a;
     --secondary-bg-color: #131b2b;
-    --third-bg-color: cyan;
+    --third-bg-color: #054237;
     --main-font-color: #d3dbe6;
     --main-bg-color-bottom: #3e1350;
 }
@@ -125,7 +125,7 @@ body {
 }
 
 .period-btn-pressed {
-    background-color: var(--third-bg-color);
+    background-color: cyan;
     color: black;
 }
 
@@ -155,9 +155,7 @@ body {
 .footer-button > .svgbody > .a {
     fill: var(--main-font-color);
 }
-.footer-button:hover {
-    before: var(--third-bg-color);
-}
+
 #add-coin {
     height: 3em;
 }

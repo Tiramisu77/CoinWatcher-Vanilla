@@ -8,12 +8,14 @@ export class Settings {
         this._colorScheme = {
             current: "default",
             default: {
+                "--third-bg-color": "#054237",
                 "--main-bg-color": "#3e1350",
                 "--main-bg-color-bottom": "#2b2b35",
                 "--secondary-bg-color": "#091919",
                 "--main-font-color": "#d3dbe6",
             },
             custom: {
+                "--third-bg-color": "#054237",
                 "--main-bg-color": "#3e1350",
                 "--main-bg-color-bottom": "#2b2b35",
                 "--secondary-bg-color": "#091919",

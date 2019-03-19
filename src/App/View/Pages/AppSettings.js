@@ -40,6 +40,7 @@ export class AppSettings {
             <span>Primary color top: </span> <input type="color" id="primary-color" class="color-picker"> </input>
             <span>Primary color bottom: </span> <input type="color" id="primary-color-bottom" class="color-picker"> </input>
             <span>Secondary color: </span> <input type="color" id="secondary-color" class="color-picker"> </input>
+            <span>Global background: </span> <input type="color" id="global-bg" class="color-picker"> </input>
             <span>Text color: </span> <input type="color" id="text-color" class="color-picker"> </input>
             </div>
 
@@ -56,6 +57,7 @@ export class AppSettings {
         this.primaryColor = this.node.querySelector("#primary-color")
         this.primaryColorBottom = this.node.querySelector("#primary-color-bottom")
         this.secondaryColor = this.node.querySelector("#secondary-color")
+        this.globalBgColor = this.node.querySelector("#global-bg")
         this.textColor = this.node.querySelector("#text-color")
 
         this.message = this.node.querySelector(".message")
@@ -92,7 +94,7 @@ export class AppSettings {
         return {
             "--main-bg-color": this.primaryColor.value,
             "--secondary-bg-color": this.secondaryColor.value,
-            "--third-bg-color": "cyan",
+            "--third-bg-color": this.globalBgColor.value,
             "--main-font-color": this.textColor.value,
             "--main-bg-color-bottom": this.primaryColorBottom.value,
         }
@@ -109,6 +111,7 @@ export class AppSettings {
             this.primaryColorBottom.value = settings.colorScheme.custom["--main-bg-color-bottom"]
             this.secondaryColor.value = settings.colorScheme.custom["--secondary-bg-color"]
             this.textColor.value = settings.colorScheme.custom["--main-font-color"]
+            this.globalBgColor.value = settings.colorScheme.custom["--third-bg-color"]
 
             if (settings.colorScheme.current === "custom") {
                 this.colorSchemeSelect.value = "custom"
