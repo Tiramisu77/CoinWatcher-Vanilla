@@ -38,7 +38,11 @@ export class Settings {
             this._colorScheme.current = "custom"
             return
         }
-        this._colorScheme = scheme
+        this._colorScheme = {
+            default: this._colorScheme.default,
+            custom: scheme.custom,
+            current: scheme.current,
+        }
     }
     get networkMode() {
         return this._networkMode
