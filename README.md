@@ -21,7 +21,7 @@ or
 
 `npm run build`
 
-After this you can go to `dist` directory and open `index.html` in your browser to run the app with `file://` protocol, or run any available server tool to serve it locally, for example with `npx serve`
+After this you can go to `dist` directory and open `index.html` in your browser to run the app with the `file://` protocol, or run any available server tool to serve it locally, for example `npx serve`
 
 ### Credits
 
