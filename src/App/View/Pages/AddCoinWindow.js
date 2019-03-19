@@ -40,8 +40,10 @@ export class AddCoinWindow {
 
     addListeners(addItem, router, getAutocompleteList, getNameFromId) {
         this.tickerField.addEventListener("blur", () => {
-            this.fullName.textContent = getNameFromId(this.tickerField.value)
             this.renderAutocomplete([])
+            //bugfix
+            // this fixes the race condition when this element loses focus before autocomplete was rendered
+            clearTimeout(timer)
         })
 
         this.tickerField.addEventListener("keydown", event => {
@@ -70,7 +72,7 @@ export class AddCoinWindow {
                 this.tickerField.value = a.join("")
             }
             this.message.textContent = ""
-            this.fullName.textContent = getNameFromId(this.tickerField.value)
+            this.fullName.textContent = this.tickerField.value === "" ? "" : getNameFromId(this.tickerField.value)
 
             clearTimeout(timer)
             timer = setTimeout(() => {
