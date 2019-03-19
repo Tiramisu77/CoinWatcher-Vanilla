@@ -26,6 +26,8 @@ export class AddCoinWindow {
           <div class="confirm-add-container"> <div class="confirm-add btn"> ADD </div> </div>
        </form>`
 
+        this.getNameFromId = getNameFromId
+
         this.confirm = this.node.querySelector(".confirm-add")
         this.tickerField = this.node.querySelector("input[name=symbol]")
         this.fullName = this.node.querySelector(".full-name")
@@ -119,5 +121,6 @@ export class AddCoinWindow {
 
     autocompleteItemHandler(event) {
         this.tickerField.value = event.target.innerText
+        this.fullName.textContent = this.getNameFromId(event.target.innerText)
     }
 }
