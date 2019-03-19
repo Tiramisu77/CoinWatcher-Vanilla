@@ -47,6 +47,12 @@
     font: inherit;
 }
 
+.autocomplete-item {
+    padding: 4px;
+    margin: 2px;
+    display: none;
+}
+
 .confirm-add {
     padding: 3px 6px 3px 6px;
     margin: 8px 4px 2px 4px;

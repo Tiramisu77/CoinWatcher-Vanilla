@@ -1,5 +1,7 @@
 import "./css/AddCoinWindow.css"
 
+import { Autocomplete } from "./Autocomplete.js"
+
 export class AddCoinWindow {
     constructor(addItem, router, getAutocompleteList, getNameFromId) {
         this.node = document.createElement("div")
@@ -13,7 +15,7 @@ export class AddCoinWindow {
           <label for="add-symbol"> Symbol:</label>
           <div style="position:relative">
           <input class="add-inp" type="text" name="symbol" id="add-symbol" minlength=1 autocomplete="off" maxlength=8 />
-          <div class="ticker-autocomplete"></div>
+
           </div>
           </div>
 
@@ -29,8 +31,9 @@ export class AddCoinWindow {
         this.fullName = this.node.querySelector(".full-name")
         this.amountField = this.node.querySelector("input[name=amount]")
         this.message = this.node.querySelector(".message")
-        this.autocompleteField = this.node.querySelector(".ticker-autocomplete")
+
         this.autocompleteItemHandler = this.autocompleteItemHandler.bind(this)
+        this.autocompleteField = new Autocomplete(this.autocompleteItemHandler, this.tickerField.parentNode)
 
         this.addListeners(addItem, router, getAutocompleteList, getNameFromId)
     }
@@ -56,6 +59,10 @@ export class AddCoinWindow {
 
         this.tickerField.addEventListener("input", () => {
             this.tickerField.value = this.tickerField.value.toUpperCase()
+
+            //todo
+            // this is a hack for preventing uppercasing coins with 0x in their name
+            // this requires some investigation because there might be similar cases
             if (/^0X/.test(this.tickerField.value)) {
                 let a = this.tickerField.value.split("")
                 a[1] = "x"
@@ -105,18 +112,7 @@ export class AddCoinWindow {
 
     //todo: maybe optimize it with static list instead of creating elements dynamically
     renderAutocomplete(list) {
-        while (this.autocompleteField.firstChild) {
-            this.autocompleteField.removeChild(this.autocompleteField.firstChild)
-        }
-        list = list.forEach ? list : []
-        list.forEach(e => {
-            let elem = document.createElement("div")
-            elem.textContent = e
-            elem.style.padding = "4px"
-            elem.style.margin = "2px"
-            elem.addEventListener("mousedown", this.autocompleteItemHandler, false)
-            this.autocompleteField.appendChild(elem)
-        })
+        this.autocompleteField.renderList(list)
     }
 
     autocompleteItemHandler(event) {
