@@ -134,6 +134,76 @@ export class ItemModel {
         }
     }
 
+    //app.controller.model._portfolioModel.items.ETH.getPrintableDataAgainstCurrencies("24h")
+    getPrintableDataAgainstCurrencies(timeperiod) {
+        let {
+            amount,
+            priceMain,
+            netMain,
+            changeMainPerc,
+            changeMainAbs,
+            priceSecond,
+            netSecond,
+            changeSecondPerc,
+            changeSecondAbs,
+        } = this.getNumericalDataAgainstCurrencies(timeperiod)
+        const name = this.name
+        const fullName = this.fullName
+        const icon = this.icon
+        const lang = navigator.languages ? navigator.languages[0] : navigator.language ? navigator.language : "en-US"
+
+        priceMain = numToFormattedString(priceMain.value, {
+            type: "currency",
+            currency: priceMain.currency,
+            lang,
+        })
+
+        netMain = numToFormattedString(netMain.value, { type: "currency", currency: netMain.currency, lang })
+
+        changeMainPerc = numToFormattedString(changeMainPerc.value, { type: "percentage", isChange: true })
+
+        changeMainAbs = numToFormattedString(changeMainAbs.value, {
+            type: "currency",
+            currency: changeMainAbs.currency,
+            lang,
+            isChange: true,
+        })
+
+        priceSecond = numToFormattedString(priceSecond.value, {
+            type: "currency",
+            currency: priceSecond.currency,
+            lang,
+        })
+
+        netSecond = numToFormattedString(netSecond.value, { type: "currency", currency: netSecond.currency, lang })
+
+        changeSecondPerc = numToFormattedString(changeSecondPerc.value, { type: "percentage", isChange: true })
+
+        changeSecondAbs = numToFormattedString(changeSecondAbs.value, {
+            type: "currency",
+            currency: changeSecondAbs.currency,
+            lang,
+            isChange: true,
+        })
+
+        const res = {
+            name,
+            fullName,
+            icon,
+            amount,
+            priceMain,
+            netMain,
+            changeMainPerc,
+            changeMainAbs,
+            priceSecond,
+            netSecond,
+            changeSecondPerc,
+            changeSecondAbs,
+        }
+
+        return res
+    }
+
     getPrintableData(timePeriod) {
         if (this.cache.printableData[timePeriod] !== null) return this.cache.printableData[timePeriod]
         const name = this.name

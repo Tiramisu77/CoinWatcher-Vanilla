@@ -18,4 +18,4 @@
 
 11) bug - if Bitcoin is not in portfolio,
     btc price change is not correct in items: need to load Bitcoin price separately
-    FIXED, needs testing
+    FIXED on fiat currency branch, needs testing

@@ -59,7 +59,8 @@ export class Controller {
 
             await this.network.getSupportedCoins()
 
-            this.network.loop()
+            await this.network.loop()
+            this.view.addAllCurrencyOptions(this.model.fiatMarketDataList)
         } catch (error) {
             console.error(error)
         }

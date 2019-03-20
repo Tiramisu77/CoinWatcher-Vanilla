@@ -94,6 +94,13 @@ const changeSettings = function(msg, val) {
         this.view.changeColorScheme(this.model.settings.colorScheme[this.model.settings.colorScheme.current])
     }
 
+    if (msg === "currencyMain") {
+        this.model.settings.currentCurrencies.main = val
+    }
+
+    if (msg === "currencySecond") {
+        this.model.settings.currentCurrencies.second = val
+    }
     this.storage.saveSettings()
 }
 

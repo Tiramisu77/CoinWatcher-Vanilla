@@ -12,6 +12,10 @@ export class Model {
         this.SupportedCoins = new SupportedCoins()
     }
 
+    get fiatMarketDataList() {
+        return Object.keys(this.fiatMarketData.rates || {}).sort((a, b) => a.localeCompare(b))
+    }
+
     getFiatMarketData() {
         return this.fiatMarketData.rates
     }

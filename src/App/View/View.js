@@ -133,6 +133,10 @@ export class View {
         }
     }
 
+    addAllCurrencyOptions(list) {
+        this._AppSettings.addAllCurrencyOptions(list)
+    }
+
     changeColorScheme(colorScheme) {
         const root = document.querySelector(":root")
         for (let rule in colorScheme) {
