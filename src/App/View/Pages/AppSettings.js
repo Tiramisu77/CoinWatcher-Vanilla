@@ -12,7 +12,7 @@ export class AppSettings {
 
             </div>
             <div class="settings-item">
-              <span>Price update interval:</span>&nbsp
+              <span>Sync interval:</span>&nbsp
               <select id="update-interval-select" >
                 <option value="2 min">2 min</option>
                 <option value="5 min">5 min</option>
@@ -37,8 +37,7 @@ export class AppSettings {
             </div>
 
             <div class="color-scheme-picker">
-            <span>Primary color top: </span> <input type="color" id="primary-color" class="color-picker"> </input>
-            <span>Primary color bottom: </span> <input type="color" id="primary-color-bottom" class="color-picker"> </input>
+            <span>Primary color: </span> <input type="color" id="primary-color" class="color-picker"> </input>
             <span>Secondary color: </span> <input type="color" id="secondary-color" class="color-picker"> </input>
             <span>Global background: </span> <input type="color" id="global-bg" class="color-picker"> </input>
             <span>Text color: </span> <input type="color" id="text-color" class="color-picker"> </input>
@@ -55,7 +54,7 @@ export class AppSettings {
         this.colorSchemeSelect = this.node.querySelector("#color-scheme-select")
         this.colorSchemePicker = this.node.querySelector(".color-scheme-picker")
         this.primaryColor = this.node.querySelector("#primary-color")
-        this.primaryColorBottom = this.node.querySelector("#primary-color-bottom")
+
         this.secondaryColor = this.node.querySelector("#secondary-color")
         this.globalBgColor = this.node.querySelector("#global-bg")
         this.textColor = this.node.querySelector("#text-color")
@@ -92,11 +91,10 @@ export class AppSettings {
 
     get currentCustomScheme() {
         return {
-            "--main-bg-color": this.primaryColor.value,
-            "--secondary-bg-color": this.secondaryColor.value,
-            "--third-bg-color": this.globalBgColor.value,
+            "--main-color": this.primaryColor.value,
+            "---secondary-color": this.secondaryColor.value,
+            "--page-bg-color": this.globalBgColor.value,
             "--main-font-color": this.textColor.value,
-            "--main-bg-color-bottom": this.primaryColorBottom.value,
         }
     }
 
@@ -107,11 +105,10 @@ export class AppSettings {
                 `[value="${settings.updateInterval / (1000 * 60)} min"]`
             ).selected = true
 
-            this.primaryColor.value = settings.colorScheme.custom["--main-bg-color"]
-            this.primaryColorBottom.value = settings.colorScheme.custom["--main-bg-color-bottom"]
-            this.secondaryColor.value = settings.colorScheme.custom["--secondary-bg-color"]
+            this.primaryColor.value = settings.colorScheme.custom["--main-color"]
+            this.secondaryColor.value = settings.colorScheme.custom["---secondary-color"]
             this.textColor.value = settings.colorScheme.custom["--main-font-color"]
-            this.globalBgColor.value = settings.colorScheme.custom["--third-bg-color"]
+            this.globalBgColor.value = settings.colorScheme.custom["--page-bg-color"]
 
             if (settings.colorScheme.current === "custom") {
                 this.colorSchemeSelect.value = "custom"

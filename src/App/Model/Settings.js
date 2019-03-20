@@ -1,43 +1,51 @@
 export class Settings {
     constructor(constants) {
+        this._version = 1
         this._portfolioSortedBy = "netvalDsc"
         this._priceChangePeriod = "24h"
-        this._updateInterval = 15 * 1000 * 60
+        this._updateInterval = 5 * 1000 * 60
         this._apiList = ["coingecko", "alternativeme", "coinmarketcap"]
         this._networkMode = "single"
         this._colorScheme = {
             current: "default",
             default: {
-                "--third-bg-color": "#054237",
-                "--main-bg-color": "#3e1350",
-                "--main-bg-color-bottom": "#2b2b35",
-                "--secondary-bg-color": "#091919",
+                "--page-bg-color": "#590E79",
+                "--main-color": "#3e1350",
+                "---secondary-color": "#091919",
                 "--main-font-color": "#d3dbe6",
             },
             custom: {
-                "--third-bg-color": "#054237",
-                "--main-bg-color": "#3e1350",
-                "--main-bg-color-bottom": "#2b2b35",
-                "--secondary-bg-color": "#091919",
+                "--page-bg-color": "#590E79",
+                "--main-color": "#3e1350",
+                "---secondary-color": "#091919",
                 "--main-font-color": "#d3dbe6",
             },
         }
         this.constants = constants
     }
 
+    get version() {
+        return this._version
+    }
+
+    set version(val) {}
+
     get colorScheme() {
         return this._colorScheme
     }
     set colorScheme(scheme) {
+        //signal to turn to default
         if (scheme === "default") {
             this._colorScheme.current = "default"
             return
         }
-        if (scheme["--main-bg-color"]) {
+        // custom scheme
+        if (scheme["--main-color"]) {
             this._colorScheme.custom = scheme
             this._colorScheme.current = "custom"
             return
         }
+        // loading scheme from localstorage
         this._colorScheme = {
             default: this._colorScheme.default,
             custom: scheme.custom,
@@ -52,16 +60,16 @@ export class Settings {
             this._networkMode = val
         } else throw new Error("illegal network mode, reverting to default")
     }
-
+    get priceChangePeriod() {
+        return this._priceChangePeriod
+    }
     set priceChangePeriod(val) {
         let vals = new Set(["24h", "1h", "7d"])
         if (vals.has(val)) {
             this._priceChangePeriod = val
         } else throw new Error("illegal priceChangePeriod, reverting to default")
     }
-    get priceChangePeriod() {
-        return this._priceChangePeriod
-    }
+
     get portfolioSortedBy() {
         return this._portfolioSortedBy
     }
@@ -97,6 +105,7 @@ export class Settings {
 
     get settingsJSON() {
         return {
+            version: this.version,
             portfolioSortedBy: this.portfolioSortedBy,
             apiList: this.apiList,
             updateInterval: this.updateInterval,
@@ -107,12 +116,16 @@ export class Settings {
     }
 
     importSettings(loadedSettings) {
-        Object.keys(loadedSettings).forEach(field => {
+        if (loadedSettings.version === undefined || this.version > loadedSettings.version) {
+            throw new Error(`oudated settings object: ${loadedSettings.version}; current version: ${this.version}`)
+        }
+        for (let key in loadedSettings) {
             try {
-                if (this[field]) this[field] = loadedSettings[field]
+                this[key] = loadedSettings[key]
             } catch (e) {
-                if (window.DEBUG) console.warn(e)
+                console.error(e)
             }
-        })
+        }
+        return "ok"
     }
 }

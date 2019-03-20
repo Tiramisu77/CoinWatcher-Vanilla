@@ -48,6 +48,7 @@ export class Storage {
             }
         } catch (error) {
             console.error(error)
+            console.warn("reverting to default settings")
         }
     }
 

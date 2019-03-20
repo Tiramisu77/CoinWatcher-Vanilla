@@ -8,8 +8,6 @@
 
 5.  export portfolio json - done in console
 
-6.
-
 7)  test with file:// protocol
 
 8)  update readme
