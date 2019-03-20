@@ -1,10 +1,10 @@
 export class Settings {
     constructor(constants) {
-        this._version = 1.1
+        this._version = 1.11
         this._portfolioSortedBy = "netvalDsc"
         this._priceChangePeriod = "24h"
         this._updateInterval = 5 * 1000 * 60
-        this._apiList = ["coingecko", "alternativeme", "coinmarketcap"]
+        this._apiList = ["coingecko"]
         this._networkMode = "single"
         this._colorScheme = {
             current: "default",

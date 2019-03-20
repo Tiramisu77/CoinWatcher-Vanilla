@@ -2,23 +2,13 @@ const isNonEmptyStr = function(str) {
     return typeof str === "string" ? (str.length > 0 ? true : false) : false
 }
 
-const isNumericalString = function(numStr) {
-    let n = Number(numStr)
-    return typeof n === "number" ? (isNaN(n) ? false : true) : false
-}
-
 export const validate = function(transformed) {
     let a = transformed
     let res = true
     res = isNonEmptyStr(a.id)
     res = isNonEmptyStr(a.name)
     res = isNonEmptyStr(a.image) || typeof a.image === "undefined"
-    res = isNumericalString(a.price_usd)
-    res = isNumericalString(a.price_btc)
-    res = isNumericalString(a.market_cap_usd)
-    res = isNumericalString(a.percent_change_1h)
-    res = isNumericalString(a.percent_change_24h)
-    res = isNumericalString(a.percent_change_7d)
+    res = typeof a.market_data === "object" ? true : false
     if (res === false) {
         throw new Error("malformed coin data")
     }

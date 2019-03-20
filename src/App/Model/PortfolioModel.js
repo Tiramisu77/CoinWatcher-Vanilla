@@ -1,12 +1,11 @@
 import { ItemModel } from "./ItemModel.js"
 import { numToFormattedString } from "./helpers.js"
 export class PortfolioModel {
-    constructor(itemObserver, settings, getFiatMarketData) {
+    constructor(itemObserver, settings) {
         this.itemObserver = itemObserver
         this.settings = settings
         this.marketData = {}
         this.items = {}
-        this.getFiatMarketData = getFiatMarketData
     }
     get bitcoinData() {
         return this.marketData.BTC
@@ -155,7 +154,6 @@ export class PortfolioModel {
                 amount,
                 observer: this.itemObserver,
                 settings: this.settings,
-                getFiatMarketData: this.getFiatMarketData,
             })
             this.items[itemName].updateMarketData(this.marketData[itemName] || null, this.bitcoinData)
         } catch (error) {

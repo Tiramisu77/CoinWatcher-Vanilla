@@ -57,10 +57,9 @@ export class Controller {
 
             this.view.onLaunch(this.model.sortedPortfolioItemModels, this.model.total, this.model.settings)
 
-            await this.network.getSupportedCoins()
+            await this.network.getSupportedCoinsAndCurrencies()
 
             await this.network.loop()
-            this.view.addAllCurrencyOptions(this.model.fiatMarketDataList)
         } catch (error) {
             console.error(error)
         }

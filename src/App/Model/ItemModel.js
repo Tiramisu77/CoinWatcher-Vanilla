@@ -1,69 +1,34 @@
 import { numToFormattedString } from "./helpers.js"
 export class ItemModel {
-    constructor({
-        name,
-        amount,
-        observer,
-        settings,
-        bitcoinChanges = {
-            "24h": null,
-            "1h": null,
-            "7d": null,
-        },
-        getFiatMarketData,
-    }) {
+    constructor({ name, amount, observer, settings }) {
         this.name = name
-        this.fullName = null
+
         this._amount = amount
-        this._priceUSD = null
-        this._priceBTC = null
-        this._change1h = null
-        this._change24h = null
-        this._change7d = null
+
         this.observer = observer
-        this.icon = null
+
         this.settings = settings
-        this.bitcoinChanges = bitcoinChanges
-        this.currentMarketData = null
-        this.getFiatMarketData = getFiatMarketData
-        this.cache = {
-            numericalData: { "1h": null, "24h": null, "7d": null },
-            printableData: { "1h": null, "24h": null, "7d": null },
-        }
-        this.currentMarketData = null
+
+        this.apiData = null
     }
 
-    updateMarketData(newMarketData, bitcoinChanges) {
-        if (newMarketData === null) return false
-        if (newMarketData !== this.currentMarketData) {
-            this.currentMarketData = newMarketData
-            this.icon = newMarketData.image
-            this.fullName = newMarketData.name
-            this._priceUSD = parseFloat(newMarketData.price_usd)
-            this._priceBTC = parseFloat(newMarketData.price_btc)
-            this._change1h = parseFloat(newMarketData.percent_change_1h)
-            this._change24h = parseFloat(newMarketData.percent_change_24h)
-            this._change7d = parseFloat(newMarketData.percent_change_7d)
-            this.bitcoinChanges = bitcoinChanges
-
-            this.cache = {
-                numericalData: { "1h": null, "24h": null, "7d": null },
-                printableData: { "1h": null, "24h": null, "7d": null },
-            }
+    updateMarketData(newApiData) {
+        if (newApiData === null) return false
+        if (newApiData !== this.apiData) {
+            this.apiData = newApiData
         }
     }
 
-    getNumericalData(timePeriod) {
-        if (this.cache.numericalData[timePeriod] !== null) return this.cache.numericalData[timePeriod]
+    getNumericalData() {
         const priceUSD = this._priceUSD || 0
         const priceBTC = this._priceBTC || 0
-        const amount = this.amount
-        const netUSD = amount * priceUSD
-        const netBTC = amount * priceBTC
-        const changeUSDPerc = this["_change" + timePeriod] || 0
-        const netUSDchangeAbs = (changeUSDPerc / 100) * netUSD
-        const changeBTCPerc = changeUSDPerc - this.bitcoinChanges[timePeriod] || 0
-        const netBTCchangeAbs = (changeBTCPerc / 100) * netBTC
+        const amount = this.amount || 0
+        const netUSD = amount * priceUSD || 0
+        const netBTC = amount * priceBTC || 0
+        const changeUSDPerc = 0
+        const netUSDchangeAbs = (changeUSDPerc / 100) * netUSD || 0
+        const changeBTCPerc = 0
+        const netBTCchangeAbs = (changeBTCPerc / 100) * netBTC || 0
         const res = {
             priceUSD,
             priceBTC,
@@ -75,52 +40,33 @@ export class ItemModel {
             changeBTCPerc,
             netBTCchangeAbs,
         }
-        this.cache.numericalData[timePeriod] = res
+
         return res
     }
 
-    getNumericalDataAgainstCurrencies(timePeriod) {
-        const {
-            priceUSD,
-            priceBTC,
-            amount,
-            netUSD,
-            netBTC,
-            changeUSDPerc,
-            netUSDchangeAbs,
-            changeBTCPerc,
-            netBTCchangeAbs,
-        } = this.getNumericalData(timePeriod)
-        const { main, second } = this.settings.currentCurrencies
-
-        const fiatMarketData = this.getFiatMarketData()
-
-        let priceMain = { currency: main, value: priceUSD * fiatMarketData[main] || 0 }
-        let netMain = { currency: main, value: netUSD * fiatMarketData[main] || 0 }
-        //todo this is actually not accurate because it ignores the change of a currency
-        //but it would require a different API
-        //we assume that fiat currencies don't change too much
-        let changeMainPerc = { value: changeUSDPerc }
-        let changeMainAbs = { currency: main, value: netUSDchangeAbs * fiatMarketData[main] || 0 }
-
-        let priceSecond = { currency: second, value: priceUSD * fiatMarketData[second] || 0 }
-        let netSecond = { currency: second, value: netUSD * fiatMarketData[second] || 0 }
-        let changeSecondPerc = { value: changeUSDPerc }
-        let changeSecondAbs = { currency: second, value: netUSDchangeAbs * fiatMarketData[second] || 0 }
-
-        if (main === "BTC") {
-            priceMain = { value: priceBTC, currency: "BTC" }
-            netMain = { value: netBTC, currency: "BTC" }
-            changeMainPerc = { value: changeBTCPerc, currency: "BTC" }
-            changeMainAbs = { value: netBTCchangeAbs, currency: "BTC" }
+    getDataOrZero(prop, currency) {
+        try {
+            return this.apiData.market_data[prop][currency]
+        } catch (e) {
+            console.warn(e)
+            return 0
         }
+    }
 
-        if (second === "BTC") {
-            priceSecond = { value: priceBTC, currency: "BTC" }
-            netSecond = { value: netBTC, currency: "BTC" }
-            changeSecondPerc = { value: changeBTCPerc, currency: "BTC" }
-            changeSecondAbs = { value: netBTCchangeAbs, currency: "BTC" }
-        }
+    getNumericalDataAgainstCurrencies(timePeriod, mainCurrency, secondCurrency) {
+        mainCurrency = mainCurrency.toLowerCase()
+        secondCurrency = secondCurrency.toLowerCase()
+        let amount = this.amount
+
+        let priceMain = this.getDataOrZero("current_price", mainCurrency)
+        let netMain = priceMain * amount
+        let changeMainPerc = this.getDataOrZero(`price_change_percentage_${timePeriod}_in_currency`, mainCurrency)
+        let changeMainAbs = (changeMainPerc / 100) * netMain
+
+        let priceSecond = this.getDataOrZero("current_price", secondCurrency)
+        let netSecond = priceSecond * amount
+        let changeSecondPerc = this.getDataOrZero(`price_change_percentage_${timePeriod}_in_currency`, secondCurrency)
+        let changeSecondAbs = (changeSecondPerc / 100) * netSecond
 
         return {
             amount,
@@ -136,7 +82,7 @@ export class ItemModel {
     }
 
     //app.controller.model._portfolioModel.items.ETH.getPrintableDataAgainstCurrencies("24h")
-    getPrintableDataAgainstCurrencies(timeperiod) {
+    getPrintableDataAgainstCurrencies(timeperiod, mainCurrency, secondCurrency) {
         let {
             amount,
             priceMain,
@@ -147,42 +93,43 @@ export class ItemModel {
             netSecond,
             changeSecondPerc,
             changeSecondAbs,
-        } = this.getNumericalDataAgainstCurrencies(timeperiod)
+        } = this.getNumericalDataAgainstCurrencies(timeperiod, mainCurrency, secondCurrency)
+
         const name = this.name
         const fullName = this.fullName
         const icon = this.icon
         const lang = navigator.languages ? navigator.languages[0] : navigator.language ? navigator.language : "en-US"
 
-        priceMain = numToFormattedString(priceMain.value, {
+        priceMain = numToFormattedString(priceMain, {
             type: "currency",
-            currency: priceMain.currency,
+            currency: mainCurrency,
             lang,
         })
 
-        netMain = numToFormattedString(netMain.value, { type: "currency", currency: netMain.currency, lang })
+        netMain = numToFormattedString(netMain, { type: "currency", currency: mainCurrency, lang })
 
-        changeMainPerc = numToFormattedString(changeMainPerc.value, { type: "percentage", isChange: true })
+        changeMainPerc = numToFormattedString(changeMainPerc, { type: "percentage", isChange: true })
 
-        changeMainAbs = numToFormattedString(changeMainAbs.value, {
+        changeMainAbs = numToFormattedString(changeMainAbs, {
             type: "currency",
-            currency: changeMainAbs.currency,
+            currency: mainCurrency,
             lang,
             isChange: true,
         })
 
-        priceSecond = numToFormattedString(priceSecond.value, {
+        priceSecond = numToFormattedString(priceSecond, {
             type: "currency",
-            currency: priceSecond.currency,
+            currency: secondCurrency,
             lang,
         })
 
-        netSecond = numToFormattedString(netSecond.value, { type: "currency", currency: netSecond.currency, lang })
+        netSecond = numToFormattedString(netSecond, { type: "currency", currency: secondCurrency, lang })
 
-        changeSecondPerc = numToFormattedString(changeSecondPerc.value, { type: "percentage", isChange: true })
+        changeSecondPerc = numToFormattedString(changeSecondPerc, { type: "percentage", isChange: true })
 
-        changeSecondAbs = numToFormattedString(changeSecondAbs.value, {
+        changeSecondAbs = numToFormattedString(changeSecondAbs, {
             type: "currency",
-            currency: changeSecondAbs.currency,
+            currency: secondCurrency,
             lang,
             isChange: true,
         })
@@ -205,82 +152,12 @@ export class ItemModel {
         return res
     }
 
-    getPrintableData(timePeriod) {
-        if (this.cache.printableData[timePeriod] !== null) return this.cache.printableData[timePeriod]
-        const name = this.name
-        const fullName = this.fullName
-        const icon = this.icon
-        const lang = navigator.languages ? navigator.languages[0] : navigator.language ? navigator.language : "en-US"
-
-        const numericalData = this.getNumericalData(timePeriod)
-
-        const amount = numericalData.amount
-
-        const priceUSD = numToFormattedString(numericalData.priceUSD, { type: "currency", currency: "USD", lang })
-
-        const netUSD = numToFormattedString(numericalData.netUSD, { type: "currency", currency: "USD", lang })
-
-        const changeUSDPerc = numToFormattedString(numericalData.changeUSDPerc, { type: "percentage", isChange: true })
-
-        const netUSDchangeAbs = numToFormattedString(numericalData.netUSDchangeAbs, {
-            type: "currency",
-            currency: "USD",
-            lang,
-            isChange: true,
-        })
-
-        const priceBTC = numToFormattedString(numericalData.priceBTC, { type: "currency", currency: "BTC", lang })
-
-        const netBTC = numToFormattedString(numericalData.netBTC, { type: "currency", currency: "BTC", lang })
-
-        const changeBTCPerc = numToFormattedString(numericalData.changeBTCPerc, { type: "percentage", isChange: true })
-
-        const netBTCchangeAbs = numToFormattedString(numericalData.netBTCchangeAbs, {
-            type: "currency",
-            currency: "BTC",
-            lang,
-            isChange: true,
-        })
-
-        const res = {
-            name,
-            fullName,
-            icon,
-            amount,
-            priceUSD,
-            priceBTC,
-            netUSD,
-            netBTC,
-            changeUSDPerc,
-            changeBTCPerc,
-            netUSDchangeAbs,
-            netBTCchangeAbs,
-        }
-
-        this.cache.printableData[timePeriod] = res
-        return res
-    }
-
     get printableData() {
-        return this.getPrintableDataAgainstCurrencies(this.settings.priceChangePeriod)
-    }
-
-    get priceUSD() {
-        if (this._priceUSD === null) return 0
-        return this._priceUSD
-    }
-
-    set priceUSD(val) {
-        this._priceUSD = val
-    }
-
-    get priceBTC() {
-        if (this._priceBTC === null) return 0
-        return this._priceBTC
-    }
-
-    set priceBTC(val) {
-        this._priceBTC = val
+        return this.getPrintableDataAgainstCurrencies(
+            this.settings.priceChangePeriod,
+            this.settings.currentCurrencies.main,
+            this.settings.currentCurrencies.second
+        )
     }
 
     get amount() {
@@ -290,10 +167,7 @@ export class ItemModel {
     set amount(val) {
         if (typeof val !== "number" || isNaN(val)) throw new Error("incorrect amount")
         this._amount = val
-        this.cache = {
-            numericalData: { "1h": null, "24h": null, "7d": null },
-            printableData: { "1h": null, "24h": null, "7d": null },
-        }
+
         this.observer(this, "amount")
     }
 

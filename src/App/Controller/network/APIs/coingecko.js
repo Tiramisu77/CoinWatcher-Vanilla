@@ -53,21 +53,7 @@ const coingeckoAdapterSingle = function(coingeckoItemSingle) {
     res.symbol = a.symbol.toUpperCase()
     res.name = a.name
     res.image = a.image.small
-    res.price_usd = a.market_data.current_price.usd.toString()
-    res.price_btc = a.market_data.current_price.btc.toString()
-    res.market_cap_usd = a.market_data.market_cap.usd.toString()
-    try {
-        res.percent_change_1h = a.market_data.price_change_percentage_1h_in_currency.usd.toString()
-    } catch (e) {
-        res.percent_change_1h = "0"
-    }
-
-    res.percent_change_7d = a.market_data.price_change_percentage_7d
-        ? a.market_data.price_change_percentage_7d.toString()
-        : "0"
-    res.percent_change_24h = a.market_data.price_change_percentage_24h
-        ? a.market_data.price_change_percentage_24h.toString()
-        : "0"
+    res.market_data = a.market_data
     return res
 }
 

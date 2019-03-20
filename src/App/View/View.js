@@ -133,8 +133,8 @@ export class View {
         }
     }
 
-    addAllCurrencyOptions(list) {
-        this._AppSettings.addAllCurrencyOptions(list)
+    addAllCurrencyOptions(list, settings) {
+        this._AppSettings.addAllCurrencyOptions(list, settings)
     }
 
     changeColorScheme(colorScheme) {

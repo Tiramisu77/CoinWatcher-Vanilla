@@ -31,7 +31,7 @@ export class AppSettings {
             <div class="settings-item">
               <span>Primary currency: </span>&nbsp
               <select id="prim-currency-select" >
-                <option value="USD">USD</option>
+
 
               </select>
             </div>
@@ -39,7 +39,7 @@ export class AppSettings {
             <div class="settings-item">
               <span>Secondary currency: </span>&nbsp
               <select id="sec-currency-select" >
-                <option value="BTC">BTC</option>
+
 
               </select>
             </div>
@@ -129,42 +129,9 @@ export class AppSettings {
         }
     }
 
-    createOptionForCurrSelect(option) {
-        let elem = document.createElement("option")
-        elem.value = option
-        elem.textContent = option
-        return elem
-    }
-
-    addCurrOptionToMain(elem) {
-        this.primaryCurrencySelect.appendChild(elem)
-    }
-    addCurrOptionToSecond(elem) {
-        this.secondaryCurrencySelect.appendChild(elem)
-    }
-
-    addCurrOptionToBoth(option) {
-        let elem = this.createOptionForCurrSelect(option)
-        let clone = this.createOptionForCurrSelect(option)
-        this.addCurrOptionToMain(elem)
-        this.addCurrOptionToSecond(clone)
-    }
     render(settings) {
         try {
             this.networkModeSelect.querySelector(`[value="${settings.networkMode}"]`).selected = true
-            this.updateIntervalSelect.querySelector(
-                `[value="${settings.updateInterval / (1000 * 60)} min"]`
-            ).selected = true
-
-            if (settings.currentCurrencies.main !== "USD") {
-                this.addCurrOptionToMain(this.createOptionForCurrSelect(settings.currentCurrencies.main))
-            }
-            this.primaryCurrencySelect.querySelector(`[value="${settings.currentCurrencies.main}"]`).selected = true
-
-            if (settings.currentCurrencies.second !== "BTC") {
-                this.addCurrOptionToSecond(this.createOptionForCurrSelect(settings.currentCurrencies.second))
-            }
-            this.secondaryCurrencySelect.querySelector(`[value="${settings.currentCurrencies.second}"]`).selected = true
 
             this.primaryColor.value = settings.colorScheme.custom["--main-color"]
             this.secondaryColor.value = settings.colorScheme.custom["---secondary-color"]
@@ -180,9 +147,25 @@ export class AppSettings {
         }
     }
 
-    addAllCurrencyOptions(list) {
+    createOptionForCurrSelect(option) {
+        let elem = document.createElement("option")
+        elem.value = option
+        elem.textContent = option
+        return elem
+    }
+
+    addCurrOptionToBoth(option) {
+        let elem = this.createOptionForCurrSelect(option)
+        let clone = this.createOptionForCurrSelect(option)
+        this.primaryCurrencySelect.appendChild(elem)
+        this.secondaryCurrencySelect.appendChild(clone)
+    }
+
+    addAllCurrencyOptions(list, settings) {
         for (let item of list) {
             this.addCurrOptionToBoth(item)
         }
+        this.primaryCurrencySelect.querySelector(`[value="${settings.currentCurrencies.main}"]`).selected = true
+        this.secondaryCurrencySelect.querySelector(`[value="${settings.currentCurrencies.second}"]`).selected = true
     }
 }
