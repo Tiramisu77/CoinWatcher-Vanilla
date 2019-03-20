@@ -1,17 +1,12 @@
 import { MIN_UPDATE_INTERVAL, MAX_SAFE_INTERVAL } from "../constants.js"
 import { decorate } from "../../lib.js"
-import { loadFromCoinmarketcap } from "./APIs/coinmarketcap.js"
+
 import {
     loadFromCoingecko,
     loadFromCoingeckoSingle,
     loadSupportedCoinsCoingecko,
     loadVersusCurrenciesCoingecko,
 } from "./APIs/coingecko.js"
-import {
-    loadFromAlternativeMe,
-    loadFromAlternativemeSingle,
-    loadSupportedCoinsAlternativeme,
-} from "./APIs/alternativeme.js"
 
 import { asyncShorCircuit } from "./loaderHelpers.js"
 
@@ -26,9 +21,7 @@ const spinnerWrapper = async function(func, args) {
 
 const apiNamesToFuncs = function(apiNamesArr) {
     const apiNameMap = {
-        coinmarketcap: loadFromCoinmarketcap,
         coingecko: loadFromCoingecko,
-        alternativeme: loadFromAlternativeMe,
     }
     return apiNamesArr.map(name => apiNameMap[name])
 }
@@ -41,10 +34,6 @@ const getMarketData = async function() {
 const apiNamesToFuncsSingle = function(apiNamesArr, ids) {
     const apiNameMap = {
         coingecko: loadFromCoingeckoSingle,
-        alternativeme: loadFromAlternativemeSingle,
-        coinmarketcap: () => {
-            return Promise.reject("placeholder")
-        },
     }
 
     const res = apiNamesArr.reduce((acc, name) => {
@@ -120,7 +109,7 @@ const loadPircesAndUpdateSingle = decorate(async function(ticker) {
 
 const loadSupportedCoinsFromApi = decorate(async function() {
     try {
-        let res = await Promise.all([loadSupportedCoinsCoingecko(), loadSupportedCoinsAlternativeme()])
+        let res = await Promise.all([loadSupportedCoinsCoingecko()])
         if (res.length > 0 && res.every(e => e === "not ok")) {
             throw new Error("failed to load supported coins")
         }
@@ -148,10 +137,10 @@ const getSupportedCoinsAndCurrencies = async function() {
         .then(r => r.map(e => e.toUpperCase()))
         .then(r => r.sort((a, b) => a.localeCompare(b)))
         .then(r => {
-            this.model.fiatMarketData = r
+            this.model.versusCurrencies = r
         })
         .then(() => {
-            this.view.addAllCurrencyOptions(this.model.fiatMarketData, this.model.settings)
+            this.view.addAllCurrencyOptions(this.model.versusCurrencies, this.model.settings)
         })
         .catch(console.error)
     if (res === "needs update") {

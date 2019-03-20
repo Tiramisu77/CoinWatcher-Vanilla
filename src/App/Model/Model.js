@@ -4,7 +4,7 @@ import { SupportedCoins } from "./SupportedCoins.js"
 export class Model {
     constructor(itemObserver, constants) {
         this._marketData = {}
-        this.fiatMarketData = []
+        this.versusCurrencies = []
         this._settings = new Settings(constants)
         this._portfolioModel = new PortfolioModel(itemObserver, this.settings)
         this.SupportedCoins = new SupportedCoins()

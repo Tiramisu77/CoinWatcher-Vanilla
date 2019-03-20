@@ -9,7 +9,7 @@ export class ItemModel {
 
         this.settings = settings
 
-        this.apiData = null
+        this.apiData = {}
     }
 
     updateMarketData(newApiData) {
@@ -68,7 +68,7 @@ export class ItemModel {
         let changeSecondPerc = this.getDataOrZero(`price_change_percentage_${timePeriod}_in_currency`, secondCurrency)
         let changeSecondAbs = (changeSecondPerc / 100) * netSecond
 
-        return {
+        let res = {
             amount,
             priceMain,
             netMain,
@@ -79,6 +79,8 @@ export class ItemModel {
             changeSecondPerc,
             changeSecondAbs,
         }
+
+        return res
     }
 
     //app.controller.model._portfolioModel.items.ETH.getPrintableDataAgainstCurrencies("24h")
@@ -96,8 +98,9 @@ export class ItemModel {
         } = this.getNumericalDataAgainstCurrencies(timeperiod, mainCurrency, secondCurrency)
 
         const name = this.name
-        const fullName = this.fullName
-        const icon = this.icon
+        const fullName = this.apiData.name ? this.apiData.name : ""
+        const icon = this.apiData.image ? this.apiData.image : undefined
+
         const lang = navigator.languages ? navigator.languages[0] : navigator.language ? navigator.language : "en-US"
 
         priceMain = numToFormattedString(priceMain, {
@@ -105,11 +108,8 @@ export class ItemModel {
             currency: mainCurrency,
             lang,
         })
-
         netMain = numToFormattedString(netMain, { type: "currency", currency: mainCurrency, lang })
-
         changeMainPerc = numToFormattedString(changeMainPerc, { type: "percentage", isChange: true })
-
         changeMainAbs = numToFormattedString(changeMainAbs, {
             type: "currency",
             currency: mainCurrency,
@@ -122,11 +122,8 @@ export class ItemModel {
             currency: secondCurrency,
             lang,
         })
-
         netSecond = numToFormattedString(netSecond, { type: "currency", currency: secondCurrency, lang })
-
         changeSecondPerc = numToFormattedString(changeSecondPerc, { type: "percentage", isChange: true })
-
         changeSecondAbs = numToFormattedString(changeSecondAbs, {
             type: "currency",
             currency: secondCurrency,
@@ -169,17 +166,5 @@ export class ItemModel {
         this._amount = val
 
         this.observer(this, "amount")
-    }
-
-    set change1h(val) {
-        this._change1h = val
-    }
-
-    set change24h(val) {
-        this._change24h = val
-    }
-
-    set change7d(val) {
-        this._change7d = val
     }
 }
