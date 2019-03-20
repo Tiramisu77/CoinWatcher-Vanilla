@@ -96,10 +96,14 @@ const changeSettings = function(msg, val) {
 
     if (msg === "currencyMain") {
         this.model.settings.currentCurrencies.main = val
+        this.view.renderTotal(this.model.total)
+        this.model.updatePortfolio()
     }
 
     if (msg === "currencySecond") {
         this.model.settings.currentCurrencies.second = val
+        this.view.renderTotal(this.model.total)
+        this.model.updatePortfolio()
     }
     this.storage.saveSettings()
 }

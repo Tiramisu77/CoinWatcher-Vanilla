@@ -101,3 +101,10 @@ export const loadSupportedCoinsCoingecko = async function() {
         return "not ok"
     }
 }
+
+export const loadVersusCurrenciesCoingecko = async function() {
+    return fetch(`https://api.coingecko.com/api/v3/simple/supported_vs_currencies`).then(response => {
+        if (response.ok) return response.json()
+        else return Promise.reject(response.status)
+    })
+}

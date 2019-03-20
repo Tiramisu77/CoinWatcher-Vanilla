@@ -92,20 +92,21 @@ export class ItemModel {
             netBTCchangeAbs,
         } = this.getNumericalData(timePeriod)
         const { main, second } = this.settings.currentCurrencies
+
         const fiatMarketData = this.getFiatMarketData()
 
-        let priceMain = { currency: main, value: priceUSD * fiatMarketData[main] }
-        let netMain = { currency: main, value: netUSD * fiatMarketData[main] }
+        let priceMain = { currency: main, value: priceUSD * fiatMarketData[main] || 0 }
+        let netMain = { currency: main, value: netUSD * fiatMarketData[main] || 0 }
         //todo this is actually not accurate because it ignores the change of a currency
         //but it would require a different API
         //we assume that fiat currencies don't change too much
         let changeMainPerc = { value: changeUSDPerc }
-        let changeMainAbs = { currency: main, value: netUSDchangeAbs * fiatMarketData[main] }
+        let changeMainAbs = { currency: main, value: netUSDchangeAbs * fiatMarketData[main] || 0 }
 
-        let priceSecond = { currency: second, value: priceUSD * fiatMarketData[second] }
-        let netSecond = { currency: second, value: netUSD * fiatMarketData[second] }
+        let priceSecond = { currency: second, value: priceUSD * fiatMarketData[second] || 0 }
+        let netSecond = { currency: second, value: netUSD * fiatMarketData[second] || 0 }
         let changeSecondPerc = { value: changeUSDPerc }
-        let changeSecondAbs = { currency: second, value: netUSDchangeAbs * fiatMarketData[second] }
+        let changeSecondAbs = { currency: second, value: netUSDchangeAbs * fiatMarketData[second] || 0 }
 
         if (main === "BTC") {
             priceMain = { value: priceBTC, currency: "BTC" }
@@ -261,7 +262,7 @@ export class ItemModel {
     }
 
     get printableData() {
-        return this.getPrintableData(this.settings.priceChangePeriod)
+        return this.getPrintableDataAgainstCurrencies(this.settings.priceChangePeriod)
     }
 
     get priceUSD() {

@@ -17,7 +17,7 @@ export class Model {
     }
 
     getFiatMarketData() {
-        return this.fiatMarketData.rates
+        return this.fiatMarketData.rates || {}
     }
 
     get settings() {

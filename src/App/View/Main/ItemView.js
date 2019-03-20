@@ -59,15 +59,36 @@ export class ItemView {
         )
     }
 
+    /*
+    {
+        name,
+        fullName,
+        icon,
+        amount,
+        priceMain,
+        netMain,
+        changeMainPerc,
+        changeMainAbs,
+        priceSecond,
+        netSecond,
+        changeSecondPerc,
+        changeSecondAbs,
+    }
+    */
+
+    /*
+todo change btc and usd into main and second
+    */
+
     renderPriceChanges(itemStrings) {
-        this.changeUSD.textContent = itemStrings.changeUSDPerc.str
-        this.changeUSD.style.color = itemStrings.changeUSDPerc.color
-        this.changeNetUsd.textContent = itemStrings.netUSDchangeAbs.str
-        this.changeNetUsd.style.color = itemStrings.netUSDchangeAbs.color
-        this.changeBTC.textContent = itemStrings.changeBTCPerc.str
-        this.changeBTC.style.color = itemStrings.changeBTCPerc.color
-        this.changeNetBTC.textContent = itemStrings.netBTCchangeAbs.str
-        this.changeNetBTC.style.color = itemStrings.netBTCchangeAbs.color
+        this.changeUSD.textContent = itemStrings.changeMainPerc.str
+        this.changeUSD.style.color = itemStrings.changeMainPerc.color
+        this.changeNetUsd.textContent = itemStrings.changeMainAbs.str
+        this.changeNetUsd.style.color = itemStrings.changeMainAbs.color
+        this.changeBTC.textContent = itemStrings.changeSecondPerc.str
+        this.changeBTC.style.color = itemStrings.changeSecondPerc.color
+        this.changeNetBTC.textContent = itemStrings.changeSecondAbs.str
+        this.changeNetBTC.style.color = itemStrings.changeSecondAbs.color
     }
 
     render(itemStrings) {
@@ -77,10 +98,10 @@ export class ItemView {
         }
         this.amount.textContent = itemStrings.amount
         this.name.textContent = itemStrings.name
-        this.priceUSD.textContent = itemStrings.priceUSD
-        this.priceBTC.textContent = itemStrings.priceBTC
-        this.netUSD.textContent = itemStrings.netUSD
-        this.netBTC.textContent = itemStrings.netBTC
+        this.priceUSD.textContent = itemStrings.priceMain
+        this.priceBTC.textContent = itemStrings.priceSecond
+        this.netUSD.textContent = itemStrings.netMain
+        this.netBTC.textContent = itemStrings.netSecond
         this.renderPriceChanges(itemStrings)
     }
 }
