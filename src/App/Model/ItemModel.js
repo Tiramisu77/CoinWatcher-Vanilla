@@ -2,35 +2,30 @@ import { numToFormattedString } from "./helpers.js"
 export class ItemModel {
     constructor({
         name,
-        fullName = null,
         amount,
-        priceUSD = null,
-        priceBTC = null,
         observer,
-        icon = null,
-        change1h = null,
-        change24h = null,
-        change7d = null,
         settings,
         bitcoinChanges = {
             "24h": null,
             "1h": null,
             "7d": null,
         },
+        getFiatMarketData,
     }) {
         this.name = name
-        this.fullName = fullName
+        this.fullName = null
         this._amount = amount
-        this._priceUSD = priceUSD
-        this._priceBTC = priceBTC
-        this._change1h = change1h
-        this._change24h = change24h
-        this._change7d = change7d
+        this._priceUSD = null
+        this._priceBTC = null
+        this._change1h = null
+        this._change24h = null
+        this._change7d = null
         this.observer = observer
-        this.icon = icon
+        this.icon = null
         this.settings = settings
         this.bitcoinChanges = bitcoinChanges
-
+        this.currentMarketData = null
+        this.getFiatMarketData = getFiatMarketData
         this.cache = {
             numericalData: { "1h": null, "24h": null, "7d": null },
             printableData: { "1h": null, "24h": null, "7d": null },
@@ -82,6 +77,61 @@ export class ItemModel {
         }
         this.cache.numericalData[timePeriod] = res
         return res
+    }
+
+    getNumericalDataAgainstCurrencies(timePeriod) {
+        const {
+            priceUSD,
+            priceBTC,
+            amount,
+            netUSD,
+            netBTC,
+            changeUSDPerc,
+            netUSDchangeAbs,
+            changeBTCPerc,
+            netBTCchangeAbs,
+        } = this.getNumericalData(timePeriod)
+        const { main, second } = this.settings.currentCurrencies
+        const fiatMarketData = this.getFiatMarketData()
+
+        let priceMain = { currency: main, value: priceUSD * fiatMarketData[main] }
+        let netMain = { currency: main, value: netUSD * fiatMarketData[main] }
+        //todo this is actually not accurate because it ignores the change of a currency
+        //but it would require a different API
+        //we assume that fiat currencies don't change too much
+        let changeMainPerc = { value: changeUSDPerc }
+        let changeMainAbs = { currency: main, value: netUSDchangeAbs * fiatMarketData[main] }
+
+        let priceSecond = { currency: second, value: priceUSD * fiatMarketData[second] }
+        let netSecond = { currency: second, value: netUSD * fiatMarketData[second] }
+        let changeSecondPerc = { value: changeUSDPerc }
+        let changeSecondAbs = { currency: second, value: netUSDchangeAbs * fiatMarketData[second] }
+
+        if (main === "BTC") {
+            priceMain = { value: priceBTC, currency: "BTC" }
+            netMain = { value: netBTC, currency: "BTC" }
+            changeMainPerc = { value: changeBTCPerc, currency: "BTC" }
+            changeMainAbs = { value: netBTCchangeAbs, currency: "BTC" }
+        }
+
+        if (second === "BTC") {
+            priceSecond = { value: priceBTC, currency: "BTC" }
+            netSecond = { value: netBTC, currency: "BTC" }
+            changeSecondPerc = { value: changeBTCPerc, currency: "BTC" }
+            changeSecondAbs = { value: netBTCchangeAbs, currency: "BTC" }
+        }
+
+        return {
+            amount,
+            priceMain,
+            netMain,
+            changeMainPerc,
+            changeMainAbs,
+            priceSecond,
+            netSecond,
+            changeSecondPerc,
+            changeSecondAbs,
+        }
     }
 
     getPrintableData(timePeriod) {

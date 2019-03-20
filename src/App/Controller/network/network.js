@@ -8,6 +8,8 @@ import {
     loadSupportedCoinsAlternativeme,
 } from "./APIs/alternativeme.js"
 
+import { loadFromExchangeRatesApi } from "./APIs/exchangeratesapi.js"
+
 import { asyncShorCircuit } from "./loaderHelpers.js"
 
 const spinnerWrapper = async function(func, args) {
@@ -57,15 +59,29 @@ const getMarketDataSingle = async function(ids, apiList) {
     return data
 }
 
+const getBitcoinData = async function() {
+    try {
+        const ids = this.model.getCoinIds("BTC")
+        const BTC = await getMarketDataSingle(ids, this.model.settings.apiList)
+        this.model.marketData = { ...this.model.marketData, BTC }
+    } catch (e) {
+        if (window.DEBUG) console.error(e)
+    }
+}
+
 const loadPircesAndUpdate = decorate(async function() {
     try {
+        loadFromExchangeRatesApi()
+            .then(r => (this.model.fiatMarketData = r))
+            .catch(console.error)
+
         if (this.model.settings.networkMode === "batch") {
             await getMarketData.call(this)
             this.model.updatePortfolio()
             this.view.sortPortfolio(this.model.sortedPortfolioNames)
             this.view.renderTotal(this.model.total)
-            this.view.clearErrorMessage("Unable to load market data")
         } else if (this.model.settings.networkMode === "single") {
+            await getBitcoinData.call(this) //we always need Bitcoin data to calculate price change in btc
             const res = await Promise.all(
                 this.model.sortedPortfolioNames.map(e => _loadPircesAndUpdateSingle.call(this, e))
             )
@@ -73,8 +89,8 @@ const loadPircesAndUpdate = decorate(async function() {
             if (res.length > 0 && res.every(e => e === "not ok")) {
                 throw "Failed to load prices in single mode"
             }
-            this.view.clearErrorMessage("Unable to load market data")
         }
+        this.view.clearErrorMessage("Unable to load market data")
     } catch (e) {
         this.view.renderHeadMessage({ body: "Unable to load market data", type: "error" })
         throw e

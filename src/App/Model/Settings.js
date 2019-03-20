@@ -1,6 +1,6 @@
 export class Settings {
     constructor(constants) {
-        this._version = 1
+        this._version = 1.1
         this._portfolioSortedBy = "netvalDsc"
         this._priceChangePeriod = "24h"
         this._updateInterval = 5 * 1000 * 60
@@ -21,6 +21,12 @@ export class Settings {
                 "--main-font-color": "#d3dbe6",
             },
         }
+
+        this._currentCurrencies = {
+            main: "USD",
+            second: "BTC",
+        }
+
         this.constants = constants
     }
 
@@ -29,6 +35,14 @@ export class Settings {
     }
 
     set version(val) {}
+
+    get currentCurrencies() {
+        return this._currentCurrencies
+    }
+
+    set currentCurrencies(val) {
+        this._currentCurrencies = val
+    }
 
     get colorScheme() {
         return this._colorScheme
@@ -112,12 +126,15 @@ export class Settings {
             priceChangePeriod: this.priceChangePeriod,
             networkMode: this.networkMode,
             colorScheme: this.colorScheme,
+            currentCurrencies: this.currentCurrencies,
         }
     }
 
     importSettings(loadedSettings) {
         if (loadedSettings.version === undefined || this.version > loadedSettings.version) {
-            throw new Error(`oudated settings object: ${loadedSettings.version}; current version: ${this.version}`)
+            throw new Error(
+                `oudated settings object: version ${loadedSettings.version}; current version: ${this.version}`
+            )
         }
         for (let key in loadedSettings) {
             try {

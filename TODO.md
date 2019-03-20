@@ -15,3 +15,7 @@
 9)  bundle everything in js
 
 10) fix html path, ./ is a hack
+
+11) bug - if Bitcoin is not in portfolio,
+    btc price change is not correct in items: need to load Bitcoin price separately
+    FIXED, needs testing

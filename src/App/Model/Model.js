@@ -3,10 +3,17 @@ import { Settings } from "./Settings.js"
 import { SupportedCoins } from "./SupportedCoins.js"
 export class Model {
     constructor(itemObserver, constants) {
+        this.getFiatMarketData = this.getFiatMarketData.bind(this)
+
         this._marketData = {}
+        this.fiatMarketData = {}
         this._settings = new Settings(constants)
-        this._portfolioModel = new PortfolioModel(itemObserver, this.settings, this.marketData)
+        this._portfolioModel = new PortfolioModel(itemObserver, this.settings, this.getFiatMarketData)
         this.SupportedCoins = new SupportedCoins()
+    }
+
+    getFiatMarketData() {
+        return this.fiatMarketData.rates
     }
 
     get settings() {
