@@ -1,9 +1,13 @@
 .settings-item {
     display: flex;
     justify-content: space-between;
-    margin: 7px;
+    margin: 10px;
 }
 
+.setting-item-padder {
+    height: 1px;
+    width: 40px;
+}
 .color-scheme-picker {
     display: none;
     grid-template-columns: 1fr 1fr;

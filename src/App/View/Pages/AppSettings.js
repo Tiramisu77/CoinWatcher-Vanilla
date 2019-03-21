@@ -12,7 +12,7 @@ export class AppSettings {
 
             </div>
             <div class="settings-item">
-              <span>Sync interval:</span>&nbsp
+              <span>Sync interval:</span><span class="setting-item-padder"> </span>
               <select id="update-interval-select" >
                 <option value="2 min">2 min</option>
                 <option value="5 min">5 min</option>
@@ -23,7 +23,7 @@ export class AppSettings {
 
 
             <div class="settings-item">
-              <span>Primary currency: </span>&nbsp
+              <span>Primary currency: </span><span class="setting-item-padder"> </span>
               <select id="prim-currency-select" >
 
 
@@ -31,7 +31,7 @@ export class AppSettings {
             </div>
 
             <div class="settings-item">
-              <span>Secondary currency: </span>&nbsp
+              <span>Secondary currency: </span><span class="setting-item-padder"> </span>
               <select id="sec-currency-select" >
 
 
@@ -39,7 +39,7 @@ export class AppSettings {
             </div>
 
             <div class="settings-item">
-              <span>Color scheme: </span>&nbsp
+              <span>Color scheme: </span><span class="setting-item-padder"> </span>
               <select id="color-scheme-select" >
                 <option value="default">Default</option>
                 <option value="custom">Custom</option>

@@ -51,6 +51,15 @@ export class ItemModel {
         }
     }
 
+    get printableData() {
+        return this.getPrintableDataAgainstCurrencies(
+            this.settings.priceChangePeriod,
+            this.settings.currentCurrencies.main,
+            this.settings.currentCurrencies.second
+        )
+    }
+
+    //todo: optimize: memoize these 2 functions if they will start becoming a problem for performance
     getNumericalDataAgainstCurrencies(timePeriod, mainCurrency, secondCurrency) {
         mainCurrency = mainCurrency.toLowerCase()
         secondCurrency = secondCurrency.toLowerCase()
@@ -82,7 +91,6 @@ export class ItemModel {
         return res
     }
 
-    //app.controller.model._portfolioModel.items.ETH.getPrintableDataAgainstCurrencies("24h")
     getPrintableDataAgainstCurrencies(timeperiod, mainCurrency, secondCurrency) {
         let {
             amount,
@@ -146,13 +154,5 @@ export class ItemModel {
         }
 
         return res
-    }
-
-    get printableData() {
-        return this.getPrintableDataAgainstCurrencies(
-            this.settings.priceChangePeriod,
-            this.settings.currentCurrencies.main,
-            this.settings.currentCurrencies.second
-        )
     }
 }
