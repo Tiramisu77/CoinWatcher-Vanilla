@@ -46,9 +46,9 @@ export class ItemModel {
 
     getDataOrZero(prop, currency) {
         try {
-            return this.apiData.market_data[prop][currency]
+            return this.apiData.market_data[prop][currency] ? this.apiData.market_data[prop][currency] : 0
         } catch (e) {
-            console.warn(e)
+            //console.warn(e)
             return 0
         }
     }

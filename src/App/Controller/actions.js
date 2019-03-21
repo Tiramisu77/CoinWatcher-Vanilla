@@ -83,12 +83,6 @@ const changeSettings = function(msg, val) {
         this.network.loop()
     }
 
-    if (msg === "network") {
-        this.model.settings.networkMode = val
-        clearTimeout(this.timer)
-        this.network.loop()
-    }
-
     if (msg === "colorScheme") {
         this.model.settings.colorScheme = val
         this.view.changeColorScheme(this.model.settings.colorScheme[this.model.settings.colorScheme.current])

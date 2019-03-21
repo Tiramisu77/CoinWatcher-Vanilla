@@ -20,13 +20,7 @@ export class AppSettings {
               </select>
             </div>
 
-            <div class="settings-item">
-              <span>Network mode:</span>&nbsp
-              <select id="net-mode-select" >
-                <option value="single">Single</option>
-                <option value="batch">Batch</option>
-              </select>
-            </div>
+
 
             <div class="settings-item">
               <span>Primary currency: </span>&nbsp
@@ -57,7 +51,7 @@ export class AppSettings {
             <div class="color-scheme-picker">
             <span>Primary color: </span> <input type="color" id="primary-color" class="color-picker"> </input>
             <span>Secondary color: </span> <input type="color" id="secondary-color" class="color-picker"> </input>
-            <span>Global background: </span> <input type="color" id="global-bg" class="color-picker"> </input>
+            <span>Site background: </span> <input type="color" id="global-bg" class="color-picker"> </input>
             <span>Text color: </span> <input type="color" id="text-color" class="color-picker"> </input>
             </div>
 
@@ -69,8 +63,6 @@ export class AppSettings {
         this.aboutBtn = this.node.querySelector("#about-btn")
 
         this.updateIntervalSelect = this.node.querySelector("#update-interval-select")
-
-        this.networkModeSelect = this.node.querySelector("#net-mode-select")
 
         this.primaryCurrencySelect = this.node.querySelector("#prim-currency-select")
         this.secondaryCurrencySelect = this.node.querySelector("#sec-currency-select")
@@ -90,9 +82,6 @@ export class AppSettings {
 
         this.updateIntervalSelect.addEventListener("change", () => {
             changeSettings("interval", this.updateIntervalSelect.value)
-        })
-        this.networkModeSelect.addEventListener("change", () => {
-            changeSettings("network", this.networkModeSelect.value)
         })
 
         this.primaryCurrencySelect.addEventListener("change", () => {
@@ -131,8 +120,6 @@ export class AppSettings {
 
     render(settings) {
         try {
-            this.networkModeSelect.querySelector(`[value="${settings.networkMode}"]`).selected = true
-
             this.primaryColor.value = settings.colorScheme.custom["--main-color"]
             this.secondaryColor.value = settings.colorScheme.custom["---secondary-color"]
             this.textColor.value = settings.colorScheme.custom["--main-font-color"]
