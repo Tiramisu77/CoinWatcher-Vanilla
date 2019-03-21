@@ -6,6 +6,8 @@ export class PortfolioModel {
         this.settings = settings
         this.marketData = {}
         this.items = {}
+
+        Object.preventExtensions(this)
     }
     get bitcoinData() {
         return this.marketData.BTC
@@ -136,6 +138,7 @@ export class PortfolioModel {
         return this[ordering]
     }
 
+    //todo check if this is actually needed
     getSortedPortfolioItemModels(ordering) {
         return this.getSortedPortfolioNames(ordering).map(item => this.items[item])
     }

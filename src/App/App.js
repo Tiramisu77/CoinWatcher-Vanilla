@@ -17,6 +17,10 @@ export class App {
         localStorage.setItem("portfolio", jsonStr)
     }
 
+    getErrorLog() {
+        console.info(localStorage.getItem("criticalErrors"))
+    }
+
     testRandomPortfolio() {
         let a = localStorage.getItem("coinlist")
 

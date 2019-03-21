@@ -3,6 +3,9 @@ export class SupportedCoins {
         this._coingecko = {}
         this._alternativeme = {}
         this._coinmarketcap = {}
+        this._coinSymbolsList = null
+
+        Object.preventExtensions(this)
     }
     set coingecko(data) {
         Object.keys(data).forEach(name => {

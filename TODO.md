@@ -11,3 +11,5 @@
 8.  update readme
 
 9.  bundle everything in js
+
+10. minor bug - table header becomes active after 1 additional click

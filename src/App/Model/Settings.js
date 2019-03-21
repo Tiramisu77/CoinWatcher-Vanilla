@@ -28,6 +28,8 @@ export class Settings {
         }
 
         this.constants = constants
+
+        Object.preventExtensions(this)
     }
 
     get version() {

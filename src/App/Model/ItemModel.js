@@ -10,12 +10,24 @@ export class ItemModel {
         this.settings = settings
 
         this.apiData = {}
+
+        this._cache = {
+            numerical: {},
+            printable: {},
+        }
+
+        Object.preventExtensions(this)
     }
 
     updateMarketData(newApiData) {
         if (newApiData === null) return false
         if (newApiData !== this.apiData) {
             this.apiData = newApiData
+
+            this._cache = {
+                numerical: {},
+                printable: {},
+            }
         }
     }
 
@@ -26,7 +38,10 @@ export class ItemModel {
     set amount(val) {
         if (typeof val !== "number" || isNaN(val)) throw new Error("incorrect amount")
         this._amount = val
-
+        this._cache = {
+            numerical: {},
+            printable: {},
+        }
         this.observer(this, "amount")
     }
 
@@ -61,10 +76,14 @@ export class ItemModel {
 
     //todo: optimize: memoize these 2 functions if they will start becoming a problem for performance
     getNumericalDataAgainstCurrencies(timePeriod, mainCurrency, secondCurrency) {
+        let amount = this.amount
+        let concattedArgs = timePeriod.toString() + mainCurrency.toString() + secondCurrency.toString()
+        if (this._cache.numerical[concattedArgs]) {
+            return this._cache.numerical[concattedArgs]
+        }
         mainCurrency = mainCurrency.toLowerCase()
         secondCurrency = secondCurrency.toLowerCase()
         //todo make amount an argument
-        let amount = this.amount
 
         let priceMain = this.getDataOrZero("current_price", mainCurrency)
         let netMain = priceMain * amount
@@ -88,10 +107,17 @@ export class ItemModel {
             changeSecondAbs,
         }
 
+        this._cache.numerical[concattedArgs] = res
+
         return res
     }
 
-    getPrintableDataAgainstCurrencies(timeperiod, mainCurrency, secondCurrency) {
+    getPrintableDataAgainstCurrencies(timePeriod, mainCurrency, secondCurrency) {
+        let concattedArgs = timePeriod.toString() + mainCurrency.toString() + secondCurrency.toString()
+        if (this._cache.printable[concattedArgs]) {
+            return this._cache.printable[concattedArgs]
+        }
+
         let {
             amount,
             priceMain,
@@ -102,7 +128,7 @@ export class ItemModel {
             netSecond,
             changeSecondPerc,
             changeSecondAbs,
-        } = this.getNumericalDataAgainstCurrencies(timeperiod, mainCurrency, secondCurrency)
+        } = this.getNumericalDataAgainstCurrencies(timePeriod, mainCurrency, secondCurrency)
 
         const name = this.name
         const fullName = this.apiData.name ? this.apiData.name : ""
@@ -152,7 +178,7 @@ export class ItemModel {
             changeSecondPerc,
             changeSecondAbs,
         }
-
+        this._cache.printable[concattedArgs] = res
         return res
     }
 }

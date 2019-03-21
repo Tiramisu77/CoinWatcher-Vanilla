@@ -8,6 +8,8 @@ export class Model {
         this._settings = new Settings(constants)
         this._portfolioModel = new PortfolioModel(itemObserver, this.settings)
         this.SupportedCoins = new SupportedCoins()
+
+        Object.preventExtensions(this)
     }
 
     get settings() {
