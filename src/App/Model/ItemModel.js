@@ -19,29 +19,27 @@ export class ItemModel {
         }
     }
 
-    getNumericalData() {
-        const priceUSD = this._priceUSD || 0
-        const priceBTC = this._priceBTC || 0
-        const amount = this.amount || 0
-        const netUSD = amount * priceUSD || 0
-        const netBTC = amount * priceBTC || 0
-        const changeUSDPerc = 0
-        const netUSDchangeAbs = (changeUSDPerc / 100) * netUSD || 0
-        const changeBTCPerc = 0
-        const netBTCchangeAbs = (changeBTCPerc / 100) * netBTC || 0
-        const res = {
-            priceUSD,
-            priceBTC,
-            amount,
-            netUSD,
-            netBTC,
-            changeUSDPerc,
-            netUSDchangeAbs,
-            changeBTCPerc,
-            netBTCchangeAbs,
-        }
+    get amount() {
+        return this._amount
+    }
 
-        return res
+    set amount(val) {
+        if (typeof val !== "number" || isNaN(val)) throw new Error("incorrect amount")
+        this._amount = val
+
+        this.observer(this, "amount")
+    }
+
+    get mcapUSD() {
+        return this.getDataOrZero("market_cap", "usd")
+    }
+
+    get netValue() {
+        let timeperiod = this.settings.priceChangePeriod
+        let mainCurrency = this.settings.currentCurrencies.main
+        let secondCurrency = this.settings.currentCurrencies.second
+        let { netMain } = this.getNumericalDataAgainstCurrencies(timeperiod, mainCurrency, secondCurrency) || 0
+        return netMain
     }
 
     getDataOrZero(prop, currency) {
@@ -56,6 +54,7 @@ export class ItemModel {
     getNumericalDataAgainstCurrencies(timePeriod, mainCurrency, secondCurrency) {
         mainCurrency = mainCurrency.toLowerCase()
         secondCurrency = secondCurrency.toLowerCase()
+        //todo make amount an argument
         let amount = this.amount
 
         let priceMain = this.getDataOrZero("current_price", mainCurrency)
@@ -155,16 +154,5 @@ export class ItemModel {
             this.settings.currentCurrencies.main,
             this.settings.currentCurrencies.second
         )
-    }
-
-    get amount() {
-        return this._amount
-    }
-
-    set amount(val) {
-        if (typeof val !== "number" || isNaN(val)) throw new Error("incorrect amount")
-        this._amount = val
-
-        this.observer(this, "amount")
     }
 }

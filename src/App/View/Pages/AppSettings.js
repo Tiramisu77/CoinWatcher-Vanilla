@@ -120,6 +120,10 @@ export class AppSettings {
 
     render(settings) {
         try {
+            this.updateIntervalSelect.querySelector(
+                `[value="${settings.updateInterval / (1000 * 60)} min"]`
+            ).selected = true
+
             this.primaryColor.value = settings.colorScheme.custom["--main-color"]
             this.secondaryColor.value = settings.colorScheme.custom["---secondary-color"]
             this.textColor.value = settings.colorScheme.custom["--main-font-color"]

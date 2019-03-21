@@ -12,8 +12,6 @@ export class About {
           The current API's are:
           <ul>
             <li><a href="https://www.coingecko.com">coingecko.com</a></li>
-            <li><a href="https://alternative.me/alternative-me-crypto-api">alternative.me</a></li>
-            <li>  <a href="https://api.coinmarketcap.com/">coinmarketcap.com</a></li>
           </ul>
 
 

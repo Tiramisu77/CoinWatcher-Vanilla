@@ -21,75 +21,89 @@ export class PortfolioModel {
               }
     }
 
-    getnumericalTotalValue(timePeriod) {
-        const total = Object.keys(this.items).reduce(
-            (acc, item) => {
-                const numericalData = this.items[item].getNumericalData(timePeriod)
-                acc.BTC += numericalData.netBTC
-                acc.BTCchangeAbs += numericalData.netBTCchangeAbs
-                acc.USD += numericalData.netUSD
-                acc.USDchangeAbs += numericalData.netUSDchangeAbs
-                return acc
-            },
-            { USD: 0, BTC: 0, BTCchangeAbs: 0, USDchangeAbs: 0 }
-        )
-        const USDchangePerc = (total.USDchangeAbs * 100) / (total.USD + total.USDchangeAbs) || 0
-        const BTCchangePerc = (total.BTCchangeAbs * 100) / (total.BTC + total.BTCchangeAbs) || 0
-        return { ...total, USDchangePerc, BTCchangePerc }
+    getnumericalTotalValue(timePeriod, mainCurrency, secondCurrency) {
+        const total = { mainCurrencyNet: 0, mainCurrencyChangeAbs: 0, secondCurrencyNet: 0, secondCurrencyChangeAbs: 0 }
+
+        for (let item in this.items) {
+            let numData = this.items[item].getNumericalDataAgainstCurrencies(timePeriod, mainCurrency, secondCurrency)
+            let { netMain, changeMainAbs, netSecond, changeSecondAbs } = numData
+
+            total.mainCurrencyNet += netMain
+            total.mainCurrencyChangeAbs += changeMainAbs
+            total.secondCurrencyNet += netSecond
+            total.secondCurrencyChangeAbs += changeSecondAbs
+        }
+
+        const mainChangePerc =
+            (total.mainCurrencyChangeAbs * 100) / (total.mainCurrencyNet + total.mainCurrencyChangeAbs) || 0
+        const secondChangePerc =
+            (total.secondCurrencyChangeAbs * 100) / (total.secondCurrencyNet + total.secondCurrencyChangeAbs) || 0
+        return { ...total, mainChangePerc, secondChangePerc }
     }
 
-    getPrintableValue(numericalData) {
+    getPrintableTotalAgainstCurrencies(timeperiod, mainCurrency, secondCurrency) {
+        let numData = this.getnumericalTotalValue(timeperiod, mainCurrency, secondCurrency)
+        let {
+            mainCurrencyNet,
+            mainCurrencyChangeAbs,
+            secondCurrencyNet,
+            secondCurrencyChangeAbs,
+            mainChangePerc,
+            secondChangePerc,
+        } = numData
         const lang = navigator.languages ? navigator.languages[0] : navigator.language ? navigator.language : "en-US"
 
-        const total = numericalData
-
-        const USD = numToFormattedString(total.USD, { type: "currency", currency: "USD", lang })
-
-        const BTC = numToFormattedString(total.BTC, { type: "currency", currency: "BTC", lang })
-
-        const BTCchangeAbs = numToFormattedString(total.BTCchangeAbs, {
+        mainCurrencyNet = numToFormattedString(mainCurrencyNet, { type: "currency", currency: mainCurrency, lang })
+        mainCurrencyChangeAbs = numToFormattedString(mainCurrencyChangeAbs, {
             type: "currency",
-            currency: "BTC",
+            currency: mainCurrency,
+            isChange: true,
+            lang,
+        })
+        mainChangePerc = numToFormattedString(mainChangePerc, { type: "percentage", isChange: true })
+
+        secondCurrencyNet = numToFormattedString(secondCurrencyNet, {
+            type: "currency",
+            currency: secondCurrency,
+            lang,
+        })
+        secondCurrencyChangeAbs = numToFormattedString(secondCurrencyChangeAbs, {
+            type: "currency",
+            currency: secondCurrency,
             lang,
             isChange: true,
         })
-
-        const BTCchangePerc = numToFormattedString(total.BTCchangePerc, { type: "percentage", isChange: true })
-
-        const USDchangeAbs = numToFormattedString(total.USDchangeAbs, {
-            type: "currency",
-            currency: "USD",
-            lang,
-            isChange: true,
-        })
-
-        const USDchangePerc = numToFormattedString(total.USDchangePerc, { type: "percentage", isChange: true })
+        secondChangePerc = numToFormattedString(secondChangePerc, { type: "percentage", isChange: true })
 
         return {
-            USD,
-            BTC,
-            BTCchangeAbs,
-            BTCchangePerc,
-            USDchangeAbs,
-            USDchangePerc,
+            mainCurrencyNet,
+            mainCurrencyChangeAbs,
+            secondCurrencyNet,
+            secondCurrencyChangeAbs,
+            mainChangePerc,
+            secondChangePerc,
         }
     }
 
     get printableTotalValue() {
-        return this.getPrintableValue(this.getnumericalTotalValue(this.settings.priceChangePeriod))
+        return this.getPrintableTotalAgainstCurrencies(
+            this.settings.priceChangePeriod,
+            this.settings.currentCurrencies.main,
+            this.settings.currentCurrencies.second
+        )
     }
 
     get mcapAsc() {
         return Object.keys(this.items).sort((elem1, elem2) => {
-            let cap1 = this.marketData[elem1] ? parseFloat(this.marketData[elem1].market_cap_usd) : 0
-            let cap2 = this.marketData[elem2] ? parseFloat(this.marketData[elem2].market_cap_usd) : 0
+            let cap1 = this.items[elem1].mcapUSD
+            let cap2 = this.items[elem2].mcapUSD
             return cap1 - cap2
         })
     }
     get mcapDsc() {
         return Object.keys(this.items).sort((elem1, elem2) => {
-            let cap1 = this.marketData[elem1] ? parseFloat(this.marketData[elem1].market_cap_usd) : 0
-            let cap2 = this.marketData[elem2] ? parseFloat(this.marketData[elem2].market_cap_usd) : 0
+            let cap1 = this.items[elem1].mcapUSD
+            let cap2 = this.items[elem2].mcapUSD
             return cap2 - cap1
         })
     }
@@ -105,23 +119,15 @@ export class PortfolioModel {
     }
     get netvalAsc() {
         return Object.keys(this.items).sort((elem1, elem2) => {
-            let val1 = this.marketData[elem1]
-                ? parseFloat(this.marketData[elem1].price_usd) * this.items[elem1].amount
-                : 0
-            let val2 = this.marketData[elem2]
-                ? parseFloat(this.marketData[elem2].price_usd) * this.items[elem2].amount
-                : 0
+            let val1 = this.items[elem1].netValue
+            let val2 = this.items[elem2].netValue
             return val1 - val2
         })
     }
     get netvalDsc() {
         return Object.keys(this.items).sort((elem1, elem2) => {
-            let val1 = this.marketData[elem1]
-                ? parseFloat(this.marketData[elem1].price_usd) * this.items[elem1].amount
-                : 0
-            let val2 = this.marketData[elem2]
-                ? parseFloat(this.marketData[elem2].price_usd) * this.items[elem2].amount
-                : 0
+            let val1 = this.items[elem1].netValue
+            let val2 = this.items[elem2].netValue
             return val2 - val1
         })
     }

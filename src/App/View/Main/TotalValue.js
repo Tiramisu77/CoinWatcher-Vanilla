@@ -46,19 +46,20 @@ export class TotalValue {
         this.btcChangeAbs = this.node.querySelector("#btc-change-abs")
     }
 
+    //todo rename btc and usd into main and second
     renderPriceChanges(printableTotalValue) {
-        this.usdChangePerc.textContent = printableTotalValue.USDchangePerc.str
-        this.usdChangePerc.style.color = printableTotalValue.USDchangePerc.color
-        this.usdChangeAbs.textContent = printableTotalValue.USDchangeAbs.str
-        this.usdChangeAbs.style.color = printableTotalValue.USDchangeAbs.color
-        this.btcChangePerc.textContent = printableTotalValue.BTCchangePerc.str
-        this.btcChangePerc.style.color = printableTotalValue.BTCchangePerc.color
-        this.btcChangeAbs.textContent = printableTotalValue.BTCchangeAbs.str
-        this.btcChangeAbs.style.color = printableTotalValue.BTCchangeAbs.color
+        this.usdChangePerc.textContent = printableTotalValue.mainChangePerc.str
+        this.usdChangePerc.style.color = printableTotalValue.mainChangePerc.color
+        this.usdChangeAbs.textContent = printableTotalValue.mainCurrencyChangeAbs.str
+        this.usdChangeAbs.style.color = printableTotalValue.mainCurrencyChangeAbs.color
+        this.btcChangePerc.textContent = printableTotalValue.secondChangePerc.str
+        this.btcChangePerc.style.color = printableTotalValue.secondChangePerc.color
+        this.btcChangeAbs.textContent = printableTotalValue.secondCurrencyChangeAbs.str
+        this.btcChangeAbs.style.color = printableTotalValue.secondCurrencyChangeAbs.color
     }
     render(printableTotalValue) {
-        this.usdValue.textContent = printableTotalValue.USD
-        this.btcValue.textContent = printableTotalValue.BTC
+        this.usdValue.textContent = printableTotalValue.mainCurrencyNet
+        this.btcValue.textContent = printableTotalValue.secondCurrencyNet
         this.renderPriceChanges(printableTotalValue)
     }
 }
