@@ -1,8 +1,7 @@
 export class SupportedCoins {
     constructor() {
         this._coingecko = {}
-        this._alternativeme = {}
-        this._coinmarketcap = {}
+
         this._coinSymbolsList = null
 
         Object.preventExtensions(this)
@@ -18,34 +17,11 @@ export class SupportedCoins {
         return this._coingecko
     }
 
-    set alternativeme(data) {
-        Object.keys(data).forEach(name => {
-            this._alternativeme[name] = data[name]
-        })
-        this._coinSymbolsList = null
-    }
-
-    get alternativeme() {
-        return this._alternativeme
-    }
-
-    set coinmarketcap(data) {
-        Object.keys(data).forEach(name => {
-            this._coinmarketcap[name] = data[name]
-        })
-        this._coinSymbolsList = null
-    }
-
-    get coinmarketcap() {
-        return this._coinmarketcap
-    }
-
     getCoinIds(ticker) {
         const res = {}
         res.coingecko = this._coingecko[ticker] ? this._coingecko[ticker].id : null
-        res.alternativeme = this._alternativeme[ticker] ? this._alternativeme[ticker].id : null
-        res.coinmarketcap = this._coinmarketcap[ticker] ? this._coinmarketcap[ticker].id : null
-        if (res.coingecko === null && res.alternativeme === null && res.coinmarketcap === null) {
+
+        if (res.coingecko === null) {
             return null
         }
         return res
@@ -54,9 +30,8 @@ export class SupportedCoins {
     getCoinNames(ticker) {
         const res = {}
         res.coingecko = this._coingecko[ticker] ? this._coingecko[ticker].name : null
-        res.alternativeme = this._alternativeme[ticker] ? this._alternativeme[ticker].name : null
-        res.coinmarketcap = this._coinmarketcap[ticker] ? this._coinmarketcap[ticker].name : null
-        if (res.coingecko === null && res.alternativeme === null && res.coinmarketcap === null) {
+
+        if (res.coingecko === null) {
             return null
         }
         return res
@@ -65,8 +40,6 @@ export class SupportedCoins {
     get coinListNoPrefix() {
         const res = {}
         res.coingecko = this._coingecko
-        res.alternativeme = this._alternativeme
-        res.coinmarketcap = this._coinmarketcap
 
         return res
     }

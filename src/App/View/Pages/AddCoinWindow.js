@@ -60,6 +60,7 @@ export class AddCoinWindow {
 
         //timer for throttling autocomplete
         let timer = null
+        const INPUT_THROTTLING = 350 //miliseconds
 
         this.tickerField.addEventListener("input", () => {
             this.tickerField.value = this.tickerField.value.toUpperCase()
@@ -80,7 +81,7 @@ export class AddCoinWindow {
             timer = setTimeout(() => {
                 const list = getAutocompleteList(this.tickerField.value)
                 this.renderAutocomplete(list)
-            }, 350)
+            }, INPUT_THROTTLING)
         })
 
         this.amountField.addEventListener("input", () => {

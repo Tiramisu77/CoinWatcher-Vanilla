@@ -28,7 +28,3 @@ After this you can go to `dist` directory and open `index.html` in your browser 
 This app uses cryptocurrency market data provided by the following public API's:
 
 -   [CoinGecko](https://www.coingecko.com/api)
-
--   [Alternative.me](https://alternative.me/crypto/api/)
-
--   [Coinmarketcap](https://api.coinmarketcap.com)

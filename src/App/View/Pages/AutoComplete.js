@@ -1,5 +1,9 @@
 import { utils } from "../utils.js"
 
+const AUTOCOMPLETE_SLOTS = 200
+
+const INITIALIZATION_DELAY = 1500 //miliseconds
+
 export class Autocomplete {
     constructor(autocompleteItemHandler, parent) {
         this.node = utils.createComponent(
@@ -10,13 +14,14 @@ export class Autocomplete {
         )
 
         this.autocompleteSlots = []
-
-        for (let i = 0; i < 200; i++) {
-            let elem = utils.createComponent(`<div class="autocomplete-item"></div>`)
-            elem.addEventListener("mousedown", autocompleteItemHandler)
-            this.node.appendChild(elem)
-            this.autocompleteSlots.push(elem)
-        }
+        setTimeout(() => {
+            for (let i = 0; i < AUTOCOMPLETE_SLOTS; i++) {
+                let elem = utils.createComponent(`<div class="autocomplete-item"></div>`)
+                elem.addEventListener("mousedown", autocompleteItemHandler)
+                this.node.appendChild(elem)
+                this.autocompleteSlots.push(elem)
+            }
+        }, INITIALIZATION_DELAY)
     }
     renderList(list) {
         list = list.forEach ? list : [] // coerce into array, maybe this should throw on non-arrays

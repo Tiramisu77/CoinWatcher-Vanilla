@@ -30,7 +30,9 @@ export class CoinDetails {
 
         this.states = {}
 
-        const countdown = (name, i = 5) => {
+        const COUNTDOWN_SECONDS = 5
+
+        const countdown = (name, i = COUNTDOWN_SECONDS) => {
             if (i > 0) {
                 if (this.currentItem === name) this.removeButton.textContent = `undo (${i})`
                 this.states[name].countdownID = setTimeout(countdown, 1000, name, i - 1)
