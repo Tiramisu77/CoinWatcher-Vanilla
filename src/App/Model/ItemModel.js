@@ -59,7 +59,8 @@ export class ItemModel {
 
     getDataOrZero(prop, currency) {
         try {
-            return this.apiData.market_data[prop][currency] ? this.apiData.market_data[prop][currency] : 0
+            let n = Number(this.apiData.market_data[prop][currency])
+            return isNaN(n) ? 0 : n
         } catch (e) {
             //console.warn(e)
             return 0

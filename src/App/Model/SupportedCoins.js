@@ -34,8 +34,8 @@ export class SupportedCoins {
         this.names = Array.from(this.nameMap.keys())
         this.symbols = Array.from(this.symbolMap.keys())
     }
-    //app.controller.model.SupportedCoins.matchQuery("bt")
-    matchQuery(str) {
+    //app.controller.model.SupportedCoins.getMatchesFromQuery("bt")
+    getMatchesFromQuery(str) {
         //let t1 = performance.now()
         let reg = new RegExp(`^${str}`, "i")
 
@@ -58,13 +58,18 @@ export class SupportedCoins {
         return "unknown"
     }
 
+    //app.controller.model.SupportedCoins.isInList("bcs")
+    isInList(id) {
+        return this.nameMap.has(id) || this.symbolMap.has(id)
+    }
+
     getIdFromQuery(str) {
-        str = str.toLowerCase()
-        if (this.nameMap.has(str)) {
-            return this.nameMap.get(str).id
+        let q = str.toLowerCase()
+        if (this.nameMap.has(q)) {
+            return this.nameMap.get(q).id
         }
-        if (this.symbolMap.has(str)) {
-            return this.symbolMap.get(str).id
+        if (this.symbolMap.has(q)) {
+            return this.symbolMap.get(q).id
         }
 
         return str

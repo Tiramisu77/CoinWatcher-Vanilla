@@ -38,6 +38,7 @@ const loadPircesAndUpdate = decorate(async function() {
 //this gets called either when user adds a coin, or when portfolio updates
 const _loadPircesAndUpdateSingle = async function(id) {
     try {
+        if (this.model.SupportedCoins.isInList(id) === false) return "ok"
         const data = await loadFromCoingeckoSingle(id)
 
         this.model.marketData = { ...this.model.marketData, [id]: data }

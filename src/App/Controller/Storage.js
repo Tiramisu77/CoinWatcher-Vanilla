@@ -61,16 +61,21 @@ export class Storage {
     }
 
     loadCoinList() {
-        let list = JSON.parse(localStorage.getItem("coinlist"))
-        if (list === undefined || list === null) return "needs update"
-        if (Date.now() - list.timestamp > 1000 * 60 * 60 * 24 * 3) {
-            return "needs update"
-        } else {
-            this.model.SupportedCoins.initizalizeList(list.data)
+        try {
+            let list = JSON.parse(localStorage.getItem("coinlist"))
+            if (list === undefined || list === null) return "needs update"
+            if (Date.now() - list.timestamp > 1000 * 60 * 60 * 24 * 3) {
+                return "needs update"
+            } else {
+                this.model.SupportedCoins.initizalizeList(list.data)
 
-            if (Date.now() - list.timestamp > 1000 * 60 * 60 * 24 * 2) {
-                return "will need update soon"
-            } else return "ok"
+                if (Date.now() - list.timestamp > 1000 * 60 * 60 * 24 * 2) {
+                    return "will need update soon"
+                } else return "ok"
+            }
+        } catch (e) {
+            console.warn(e)
+            return "needs update"
         }
     }
 

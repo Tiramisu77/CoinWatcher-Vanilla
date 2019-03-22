@@ -1,6 +1,6 @@
 export class Settings {
     constructor(constants) {
-        this._version = 1.12
+        this._version = 1.13
         this._portfolioSortedBy = "netvalDsc"
         this._priceChangePeriod = "24h"
         this._updateInterval = 5 * 1000 * 60

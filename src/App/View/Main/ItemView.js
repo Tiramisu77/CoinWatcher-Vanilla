@@ -60,23 +60,6 @@ export class ItemView {
     }
 
     /*
-    {
-        name,
-        fullName,
-        icon,
-        amount,
-        priceMain,
-        netMain,
-        changeMainPerc,
-        changeMainAbs,
-        priceSecond,
-        netSecond,
-        changeSecondPerc,
-        changeSecondAbs,
-    }
-    */
-
-    /*
 todo change btc and usd into main and second
     */
 

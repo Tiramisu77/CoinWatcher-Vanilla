@@ -6,7 +6,7 @@ export class PortfolioModel {
         this.settings = settings
         this.marketData = {}
         this.items = {}
-
+        this.__portfolioVersion__ = 0.11
         Object.preventExtensions(this)
     }
     get bitcoinData() {
@@ -144,15 +144,21 @@ export class PortfolioModel {
     }
 
     get portfolioJSON() {
-        return Object.keys(this.items).reduce((acc, item) => {
+        let res = {}
+        res.data = Object.keys(this.items).reduce((acc, item) => {
             acc[item] = { amount: this.items[item].amount }
             return acc
         }, {})
+        res.__portfolioVersion__ = this.__portfolioVersion__
+        return res
     }
 
     initializeItems(portfolioJSON) {
-        for (let id in portfolioJSON) {
-            this.addItem(id, portfolioJSON[id].amount)
+        let { __portfolioVersion__, data } = portfolioJSON
+        if (__portfolioVersion__ === undefined || __portfolioVersion__ < this.__portfolioVersion__)
+            throw new Error(`incompatible portfolio version: ${portfolioJSON.__portfolioVersion__}`)
+        for (let id in data) {
+            this.addItem(id, data[id].amount)
         }
     }
 

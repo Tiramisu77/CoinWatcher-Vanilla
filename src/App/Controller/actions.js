@@ -45,7 +45,7 @@ const portfolioActions = {
     getAutocompleteList: function(str) {
         try {
             if (str === "") return []
-            return this.model.SupportedCoins.matchQuery(str)
+            return this.model.SupportedCoins.getMatchesFromQuery(str)
         } catch (e) {
             if (window.DEBUG) console.error(e)
             return []

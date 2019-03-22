@@ -30,7 +30,7 @@ export class CoinDetails {
 
         this.states = {}
 
-        const COUNTDOWN_SECONDS = 5
+        const COUNTDOWN_SECONDS = 3
 
         const countdown = (name, i = COUNTDOWN_SECONDS) => {
             if (i > 0) {
@@ -83,8 +83,7 @@ export class CoinDetails {
                     this.removeButton.textContent = "remove"
                 } else {
                     this.removeButton.textContent =
-                        this.states[itemStrings.id].removeButtonState +
-                        `(${this.states[itemStrings.id].countdownTick})`
+                        this.states[itemStrings.id].removeButtonState + `(${this.states[itemStrings.id].countdownTick})`
                 }
             }
 

@@ -26,12 +26,13 @@ export class App {
 
         let b = JSON.parse(a)
 
-        let portfolio = {}
-        for (let key in b.coingecko) {
+        let portfolio = { data: {} }
+        for (let i of b.data) {
             if (Math.random() > 0.993) {
-                portfolio[key] = { amount: Math.random() * 100000 }
+                portfolio.data[i.id] = { amount: Math.random() * 100000 }
             }
         }
+        portfolio.__portfolioVersion__ = 100
         localStorage.setItem("portfolio", JSON.stringify(portfolio))
         location.reload()
     }
