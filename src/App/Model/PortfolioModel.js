@@ -151,29 +151,29 @@ export class PortfolioModel {
     }
 
     initializeItems(portfolioJSON) {
-        for (let itemName in portfolioJSON) {
-            this.addItem(itemName, portfolioJSON[itemName].amount)
+        for (let id in portfolioJSON) {
+            this.addItem(id, portfolioJSON[id].amount)
         }
     }
 
-    addItem(itemName, amount) {
+    addItem(id, amount) {
         try {
-            this.items[itemName] = new ItemModel({
-                name: itemName,
+            this.items[id] = new ItemModel({
+                id,
                 amount,
                 observer: this.itemObserver,
                 settings: this.settings,
             })
-            this.items[itemName].updateMarketData(this.marketData[itemName] || null, this.bitcoinData)
+            this.items[id].updateMarketData(this.marketData[id] || null, this.bitcoinData)
         } catch (error) {
             if (window.DEBUG) console.error(error)
         }
     }
 
-    updateItem(item) {
+    updateItem(id) {
         try {
-            this.items[item].updateMarketData(this.marketData[item] || null, this.bitcoinData)
-            this.items[item].observer(this.items[item])
+            this.items[id].updateMarketData(this.marketData[id] || null, this.bitcoinData)
+            this.items[id].observer(this.items[id])
         } catch (error) {
             if (window.DEBUG) console.error(error)
         }

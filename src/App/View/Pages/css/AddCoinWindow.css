@@ -51,6 +51,7 @@
     padding: 4px;
     margin: 2px;
     display: none;
+    text-transform: capitalize;
 }
 
 .confirm-add {

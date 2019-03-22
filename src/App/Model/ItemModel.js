@@ -1,7 +1,7 @@
 import { numToFormattedString } from "./helpers.js"
 export class ItemModel {
-    constructor({ name, amount, observer, settings }) {
-        this.name = name
+    constructor({ id, amount, observer, settings }) {
+        this.id = id
 
         this._amount = amount
 
@@ -130,8 +130,9 @@ export class ItemModel {
             changeSecondAbs,
         } = this.getNumericalDataAgainstCurrencies(timePeriod, mainCurrency, secondCurrency)
 
-        const name = this.name
-        const fullName = this.apiData.name ? this.apiData.name : ""
+        const id = this.id
+        const symbol = this.apiData.symbol ? this.apiData.symbol : ""
+        const name = this.apiData.name ? this.apiData.name : ""
         const icon = this.apiData.image ? this.apiData.image : undefined
 
         const lang = navigator.languages ? navigator.languages[0] : navigator.language ? navigator.language : "en-US"
@@ -165,8 +166,9 @@ export class ItemModel {
         })
 
         const res = {
+            id,
+            symbol,
             name,
-            fullName,
             icon,
             amount,
             priceMain,

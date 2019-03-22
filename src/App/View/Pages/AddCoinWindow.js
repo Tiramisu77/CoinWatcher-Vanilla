@@ -12,7 +12,7 @@ export class AddCoinWindow {
           </div>
 
           <div class="input-container" >
-          <label for="add-symbol"> Symbol:</label>
+          <label for="add-symbol"> Coin:</label>
           <div style="position:relative">
           <input class="add-inp" type="text" name="symbol" id="add-symbol" minlength=1 autocomplete="off" maxlength=8 />
 
@@ -60,20 +60,9 @@ export class AddCoinWindow {
 
         //timer for throttling autocomplete
         let timer = null
-        const INPUT_THROTTLING = 350 //miliseconds
+        const INPUT_THROTTLING = 50 //miliseconds
 
         this.tickerField.addEventListener("input", () => {
-            this.tickerField.value = this.tickerField.value.toUpperCase()
-
-            /*todo
-             *this is a hack for preventing uppercasing coins with 0x in their name
-             *this requires some investigation because there might be similar cases
-             */
-            if (/^0X/.test(this.tickerField.value)) {
-                let a = this.tickerField.value.split("")
-                a[1] = "x"
-                this.tickerField.value = a.join("")
-            }
             this.message.textContent = ""
             this.fullName.textContent = this.tickerField.value === "" ? "" : getNameFromId(this.tickerField.value)
 

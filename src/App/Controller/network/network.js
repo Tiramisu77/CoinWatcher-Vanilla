@@ -2,13 +2,12 @@ import { MIN_UPDATE_INTERVAL, MAX_SAFE_INTERVAL } from "../constants.js"
 import { decorate } from "../../lib.js"
 
 import {
-    loadFromCoingecko,
     loadFromCoingeckoSingle,
     loadSupportedCoinsCoingecko,
     loadVersusCurrenciesCoingecko,
 } from "./APIs/coingecko.js"
 
-import { asyncShorCircuit } from "./loaderHelpers.js"
+//import { asyncShorCircuit } from "./loaderHelpers.js"
 
 const spinnerWrapper = async function(func, args) {
     try {
@@ -19,54 +18,16 @@ const spinnerWrapper = async function(func, args) {
     }
 }
 
-const apiNamesToFuncs = function(apiNamesArr) {
-    const apiNameMap = {
-        coingecko: loadFromCoingecko,
-    }
-    return apiNamesArr.map(name => apiNameMap[name])
-}
-
-const getMarketData = async function() {
-    const prices = await asyncShorCircuit(apiNamesToFuncs(this.model.settings.apiList))
-    this.model.marketData = prices
-}
-
-const apiNamesToFuncsSingle = function(apiNamesArr, ids) {
-    const apiNameMap = {
-        coingecko: loadFromCoingeckoSingle,
-    }
-
-    const res = apiNamesArr.reduce((acc, name) => {
-        if (ids[name]) {
-            acc.push(apiNameMap[name].bind(null, ids[name]))
-        }
-        return acc
-    }, [])
-
-    return res
-}
-
-const getMarketDataSingle = async function(ids, apiList) {
-    const data = await asyncShorCircuit(apiNamesToFuncsSingle(apiList, ids))
-    return data
-}
-
 const loadPircesAndUpdate = decorate(async function() {
     try {
-        if (this.model.settings.networkMode === "batch") {
-            await getMarketData.call(this)
-            this.model.updatePortfolio()
-            this.view.sortPortfolio(this.model.sortedPortfolioNames)
-            this.view.renderTotal(this.model.total)
-        } else if (this.model.settings.networkMode === "single") {
-            const res = await Promise.all(
-                this.model.sortedPortfolioNames.map(e => _loadPircesAndUpdateSingle.call(this, e))
-            )
+        const res = await Promise.all(
+            this.model.sortedPortfolioNames.map(e => _loadPircesAndUpdateSingle.call(this, e))
+        )
 
-            if (res.length > 0 && res.every(e => e === "not ok")) {
-                throw "Failed to load prices in single mode"
-            }
+        if (res.length > 0 && res.every(e => e === "not ok")) {
+            throw "Failed to load prices in single mode"
         }
+
         this.view.clearErrorMessage("Unable to load market data")
     } catch (e) {
         this.view.renderHeadMessage({ body: "Unable to load market data", type: "error" })
@@ -74,15 +35,13 @@ const loadPircesAndUpdate = decorate(async function() {
     }
 }, spinnerWrapper)
 
-const _loadPircesAndUpdateSingle = async function(ticker) {
+//this gets called either when user adds a coin, or when portfolio updates
+const _loadPircesAndUpdateSingle = async function(id) {
     try {
-        const ids = this.model.getCoinIds(ticker)
-        if (ids === null) return false
+        const data = await loadFromCoingeckoSingle(id)
 
-        const data = await getMarketDataSingle(ids, this.model.settings.apiList)
-
-        this.model.marketData = { ...this.model.marketData, [ticker]: data }
-        this.model.updateItem(ticker)
+        this.model.marketData = { ...this.model.marketData, [id]: data }
+        this.model.updateItem(id)
         this.view.sortPortfolio(this.model.sortedPortfolioNames)
         this.view.renderTotal(this.model.total)
 
@@ -94,45 +53,35 @@ const _loadPircesAndUpdateSingle = async function(ticker) {
     }
 }
 
-const loadPircesAndUpdateSingle = decorate(async function(ticker) {
+// this function is called when user adds new item to portfolio
+const loadPircesAndUpdateSingle = decorate(async function(id) {
     try {
-        let res = await _loadPircesAndUpdateSingle.call(this, ticker)
-        if (res === "not ok") throw `failed to load ${ticker}`
-        this.view.clearErrorMessage(`Unable to load market data for ${ticker}`)
+        let res = await _loadPircesAndUpdateSingle.call(this, id)
+        if (res === "not ok") throw `failed to load ${id}`
+        this.view.clearErrorMessage(`Unable to load market data for ${id}`)
     } catch (e) {
         if (window.DEBUG) console.error(e)
 
-        this.view.renderHeadMessage({ body: `Unable to load market data for ${ticker}`, type: "error" })
+        this.view.renderHeadMessage({ body: `Unable to load market data for ${id}`, type: "error" })
         throw e
     }
 }, spinnerWrapper)
 
+const LOAD_SUPPORTED_COINS_RETRY = 1000 * 30 //seconds
 const loadSupportedCoinsFromApi = decorate(async function() {
     try {
-        let res = await Promise.all([loadSupportedCoinsCoingecko()])
-        if (res.length > 0 && res.every(e => e === "not ok")) {
-            throw new Error("failed to load supported coins")
-        }
-        res = res.reduce((acc, e) => {
-            if (e === "not ok") return acc
-            acc = { ...acc, ...e }
-            return acc
-        }, {})
+        let res = await loadSupportedCoinsCoingecko()
 
-        for (let api in res) {
-            this.model.SupportedCoins[api] = res[api]
-        }
+        this.model.SupportedCoins.initizalizeList(res)
 
-        this.storage.saveCoinList()
+        this.storage.saveCoinList(res)
     } catch (e) {
         if (window.DEBUG) console.warn(e)
-        this.model.settings.networkMode = "batch" //todo investigate, this might cause bugs
-        setTimeout(this.getSupportedCoins, 1000 * 60)
+        setTimeout(this.getSupportedCoins, LOAD_SUPPORTED_COINS_RETRY)
     }
 }, spinnerWrapper)
 
-const getSupportedCoinsAndCurrencies = async function() {
-    let res = this.storage.loadCoinList()
+const loadVersusCurrencies = async function() {
     loadVersusCurrenciesCoingecko()
         .then(r => r.map(e => e.toUpperCase()))
         .then(r => r.sort((a, b) => a.localeCompare(b)))
@@ -143,6 +92,13 @@ const getSupportedCoinsAndCurrencies = async function() {
             this.view.addAllCurrencyOptions(this.model.versusCurrencies, this.model.settings)
         })
         .catch(console.error)
+}
+
+const getSupportedCoinsAndCurrencies = async function() {
+    loadVersusCurrencies.call(this)
+
+    let res = this.storage.loadCoinList()
+
     if (res === "needs update") {
         await loadSupportedCoinsFromApi.call(this)
     }

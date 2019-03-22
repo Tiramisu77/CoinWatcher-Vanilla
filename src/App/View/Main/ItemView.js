@@ -32,7 +32,7 @@ export class ItemView {
         })
         this.node.style.order = orderIndex
         this.amount = this.node.querySelector(".amount")
-        this.name = this.node.querySelector(".ticker")
+        this.symbol = this.node.querySelector(".ticker")
         this.priceUSD = this.node.querySelector(".usd-price")
         this.priceBTC = this.node.querySelector(".btc-price")
         this.netUSD = this.node.querySelector(".netUSD")
@@ -43,17 +43,17 @@ export class ItemView {
         this.changeNetUsd = this.node.querySelector(".net-usd-change")
         this.changeNetBTC = this.node.querySelector(".net-btc-change")
 
-        if (itemStrings.name === "DOGE") {
-            this.name.style["font-family"] = '"Comic Sans MS", cursive, sans-serif'
+        if (itemStrings.name === "doge") {
+            this.symbol.style["font-family"] = '"Comic Sans MS", cursive, sans-serif'
         }
 
-        const name = itemStrings.name
+        const id = itemStrings.id
         this.render(itemStrings)
 
         this.node.addEventListener(
             "click",
             () => {
-                openDetails(name)
+                openDetails(id)
             },
             false
         )
@@ -97,7 +97,7 @@ todo change btc and usd into main and second
             this.icon.style.display = "block"
         }
         this.amount.textContent = itemStrings.amount
-        this.name.textContent = itemStrings.name
+        this.symbol.textContent = itemStrings.symbol || itemStrings.id
         this.priceUSD.textContent = itemStrings.priceMain
         this.priceBTC.textContent = itemStrings.priceSecond
         this.netUSD.textContent = itemStrings.netMain

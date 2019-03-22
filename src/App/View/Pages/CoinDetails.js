@@ -71,25 +71,25 @@ export class CoinDetails {
         })
 
         this.render = function(itemStrings) {
-            if (this.states[itemStrings.name] === undefined) {
-                this.states[itemStrings.name] = {
+            if (this.states[itemStrings.id] === undefined) {
+                this.states[itemStrings.id] = {
                     countdownID: null,
                     removeButtonState: "remove",
                     countdownTick: null,
                 }
                 this.removeButton.textContent = "remove"
             } else {
-                if (this.states[itemStrings.name].removeButtonState === "remove") {
+                if (this.states[itemStrings.id].removeButtonState === "remove") {
                     this.removeButton.textContent = "remove"
                 } else {
                     this.removeButton.textContent =
-                        this.states[itemStrings.name].removeButtonState +
-                        `(${this.states[itemStrings.name].countdownTick})`
+                        this.states[itemStrings.id].removeButtonState +
+                        `(${this.states[itemStrings.id].countdownTick})`
                 }
             }
 
-            this.currentItem = itemStrings.name
-            this.name.textContent = itemStrings.name
+            this.currentItem = itemStrings.id
+            this.name.textContent = itemStrings.id
             this.amountField.value = itemStrings.amount
             this.fullName.textContent = itemStrings.fullName
             if (itemStrings.icon) {

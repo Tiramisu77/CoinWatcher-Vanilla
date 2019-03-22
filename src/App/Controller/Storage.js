@@ -61,25 +61,22 @@ export class Storage {
     }
 
     loadCoinList() {
-        let data = JSON.parse(localStorage.getItem("coinlist"))
-        if (data === undefined || data === null) return "needs update"
-        else if (Date.now() - data.timestamp > 1000 * 60 * 60 * 24 * 3) {
+        let list = JSON.parse(localStorage.getItem("coinlist"))
+        if (list === undefined || list === null) return "needs update"
+        if (Date.now() - list.timestamp > 1000 * 60 * 60 * 24 * 3) {
             return "needs update"
         } else {
-            for (let api in data) {
-                if (api !== "timestamp") {
-                    this.model.SupportedCoins[api] = data[api]
-                }
-            }
-            if (Date.now() - data.timestamp > 1000 * 60 * 60 * 24 * 2) {
+            this.model.SupportedCoins.initizalizeList(list.data)
+
+            if (Date.now() - list.timestamp > 1000 * 60 * 60 * 24 * 2) {
                 return "will need update soon"
             } else return "ok"
         }
     }
 
-    saveCoinList() {
-        let data = this.model.SupportedCoins.coinListNoPrefix
-        data.timestamp = Date.now()
-        localStorage.setItem("coinlist", JSON.stringify(data))
+    saveCoinList(data) {
+        let list = { data, timestamp: Date.now() }
+
+        localStorage.setItem("coinlist", JSON.stringify(list))
     }
 }

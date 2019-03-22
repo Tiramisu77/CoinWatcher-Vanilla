@@ -19,7 +19,7 @@ export class PortfolioView {
 
     addItem(itemStrings, orderIndex) {
         let newItem = new ItemView(itemStrings, this.openDetails, orderIndex)
-        this.items[itemStrings.name] = newItem
+        this.items[itemStrings.id] = newItem
         this.node.appendChild(newItem.node)
     }
 

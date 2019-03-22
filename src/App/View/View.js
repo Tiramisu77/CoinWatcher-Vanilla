@@ -149,7 +149,7 @@ export class View {
     }
 
     renderItem(itemStrings) {
-        this._Main.PortfolioView.items[itemStrings.name].render(itemStrings)
+        this._Main.PortfolioView.items[itemStrings.id].render(itemStrings)
     }
 
     mountItem(itemStrings, orderIndex) {

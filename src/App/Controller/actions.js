@@ -23,20 +23,20 @@ const itemActions = {
 }
 
 const portfolioActions = {
-    addItem: function(item, amountStr) {
-        if (item === "" || amountStr === "") return ""
+    addItem: function(itemInput, amountInput) {
+        if (itemInput === "" || amountInput === "") return ""
 
-        const amount = Number(amountStr.replace(",", "."))
-
+        let itemID = this.model.SupportedCoins.getIdFromQuery(itemInput)
+        let amount = Number(amountInput)
         if (typeof amount !== "number" || isNaN(amount)) return "Amount must a be number"
 
-        let res = this.model.addItem(item, amount)
+        let res = this.model.addItem(itemID, amount)
         if (res === "ok") {
             if (this.model.settings.networkMode === "single") {
-                this.network.loadPircesAndUpdateSingle(item)
+                this.network.loadPircesAndUpdateSingle(itemID)
             }
             this.storage.savePortfolio()
-            this.view.mountItem(this.model.getItemStrings(item))
+            this.view.mountItem(this.model.getItemStrings(itemID))
             this.view.sortPortfolio(this.model.sortedPortfolioNames)
             this.view.renderTotal(this.model.total)
             return "ok"
@@ -44,21 +44,15 @@ const portfolioActions = {
     },
     getAutocompleteList: function(str) {
         try {
-            let firstChar = str[0]
-            let pattern = new RegExp(`^${str}`)
-
-            let matches = this.model.SupportedCoins.coinSymbolsList[firstChar]
-                ? this.model.SupportedCoins.coinSymbolsList[firstChar].filter(e => pattern.test(e))
-                : []
-
-            return matches
+            if (str === "") return []
+            return this.model.SupportedCoins.matchQuery(str)
         } catch (e) {
             if (window.DEBUG) console.error(e)
             return []
         }
     },
     getNameFromId: function(id) {
-        return this.model.getCoinNames(id) ? this.model.getCoinNames(id)[this.model.settings.apiList[0]] : "unknown"
+        return this.model.SupportedCoins.getNameFromQuery(id)
     },
     removeItem: function(item) {
         this.model.deleteItem(item)

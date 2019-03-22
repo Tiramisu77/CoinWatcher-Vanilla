@@ -69,19 +69,8 @@ export const loadSupportedCoinsCoingecko = async function() {
             if (response.ok) return response.json()
             else return Promise.reject(response.status)
         })
-
-        let data = res.reduce((acc, item) => {
-            try {
-                acc[item.symbol.toUpperCase()] = validateListItem(item)
-                return acc
-            } catch (e) {
-                //
-            }
-        }, {})
-
-        return {
-            coingecko: data,
-        }
+        res = res.map(validateListItem).filter(e => e !== null)
+        return res
     } catch (error) {
         if (window.DEBUG) console.error(error)
         return "not ok"

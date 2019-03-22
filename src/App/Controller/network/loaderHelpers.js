@@ -22,7 +22,8 @@ export const validateListItem = function(listItem) {
     res = isNonEmptyStr(a.symbol)
     res = isNonEmptyStr(a.name)
     if (res === false) {
-        throw new Error("malformed coin data")
+        if (window.DEBUG) console.warn(`Malformed coinList data @ ${a}`)
+        return null
     }
     return a
 }
