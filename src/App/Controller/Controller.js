@@ -48,6 +48,8 @@ export class Controller {
         this.storage = new Storage(this.model)
         this.timer = null
 
+        window.EE.on("itemChange", this.actions.onItemChange)
+
         window.addEventListener("load", this.onLaunch.bind(this))
     }
 

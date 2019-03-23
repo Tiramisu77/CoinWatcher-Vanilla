@@ -148,10 +148,6 @@ export class View {
         this._CoinDetails.render(itemStrings)
     }
 
-    renderItem(itemStrings) {
-        this._Main.PortfolioView.items[itemStrings.id].render(itemStrings)
-    }
-
     mountItem(itemStrings, orderIndex) {
         this._Main.PortfolioView.addItem(itemStrings, orderIndex)
     }

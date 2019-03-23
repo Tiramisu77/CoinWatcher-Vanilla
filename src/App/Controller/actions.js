@@ -1,14 +1,9 @@
 const itemActions = {
-    itemObserver: function(itemModel, flag) {
-        if (flag === "amount") {
-            this.storage.savePortfolio()
-            setTimeout(() => {
-                this.view.sortPortfolio(this.model.sortedPortfolioNames)
-            }, 50)
-            this.view.renderTotal(this.model.total)
-        }
-        this.view.renderItem(itemModel.printableData)
+    onItemChange: function onItemChange() {
+        this.view.sortPortfolio(this.model.sortedPortfolioNames)
+        this.view.renderTotal(this.model.total)
     },
+
     editItem: function(itemName, amountStr) {
         const amount = Number(amountStr.replace(",", "."))
 

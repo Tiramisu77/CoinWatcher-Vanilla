@@ -2,6 +2,12 @@ export class Storage {
     constructor(model) {
         this.model = model
         this.testPermissions()
+
+        window.EE.on("itemChange", itemStrings => {
+            if (itemStrings.__amountWasChanged__) {
+                this.savePortfolio()
+            }
+        })
     }
 
     onLaunch() {

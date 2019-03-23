@@ -43,8 +43,6 @@ const _loadPircesAndUpdateSingle = async function(id) {
 
         this.model.marketData = { ...this.model.marketData, [id]: data }
         this.model.updateItem(id)
-        this.view.sortPortfolio(this.model.sortedPortfolioNames)
-        this.view.renderTotal(this.model.total)
 
         return "ok"
     } catch (e) {

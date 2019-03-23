@@ -15,6 +15,8 @@ export class PortfolioView {
         this.openDetails = openDetails
 
         this.items = {}
+
+        window.EE.on("itemChange", this.renderItem, this)
     }
 
     addItem(itemStrings, orderIndex) {
@@ -32,5 +34,9 @@ export class PortfolioView {
         order.forEach((item, index) => {
             this.items[item].node.style.order = index + 1
         })
+    }
+
+    renderItem(itemStrings) {
+        this.items[itemStrings.id].render(itemStrings)
     }
 }

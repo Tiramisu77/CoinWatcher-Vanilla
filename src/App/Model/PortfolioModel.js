@@ -170,7 +170,7 @@ export class PortfolioModel {
                 observer: this.itemObserver,
                 settings: this.settings,
             })
-            this.items[id].updateMarketData(this.marketData[id] || null, this.bitcoinData)
+            this.items[id].updateMarketData(this.marketData[id] || null)
         } catch (error) {
             if (window.DEBUG) console.error(error)
         }
@@ -178,8 +178,7 @@ export class PortfolioModel {
 
     updateItem(id) {
         try {
-            this.items[id].updateMarketData(this.marketData[id] || null, this.bitcoinData)
-            this.items[id].observer(this.items[id])
+            this.items[id].updateMarketData(this.marketData[id] || null)
         } catch (error) {
             if (window.DEBUG) console.error(error)
         }

@@ -28,6 +28,8 @@ export class ItemModel {
                 numerical: {},
                 printable: {},
             }
+
+            window.EE.emit("itemChange", this.printableData)
         }
     }
 
@@ -42,7 +44,7 @@ export class ItemModel {
             numerical: {},
             printable: {},
         }
-        this.observer(this, "amount")
+        window.EE.emit("itemChange", { ...this.printableData, __amountWasChanged__: true })
     }
 
     get mcapUSD() {

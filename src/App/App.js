@@ -1,4 +1,7 @@
 import { Controller } from "./Controller/Controller.js"
+import { EventEmitter } from "./lib.js"
+
+window.EE = new EventEmitter()
 
 export class App {
     constructor() {
