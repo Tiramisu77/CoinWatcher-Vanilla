@@ -9,20 +9,6 @@ export class SupportedCoins {
 
         Object.preventExtensions(this)
     }
-    // app.controller.model.SupportedCoins.__testInteresection__()
-    __testInteresection__() {
-        let a = new Set(this.names)
-        let b = new Set(this.symbols)
-        let intersection = new Set([...a].filter(x => b.has(x)))
-        for (let item of intersection) {
-            let n = this.nameMap.get(item)
-            let s = this.symbolMap.get(item)
-            if (n !== s) {
-                debugger
-            }
-        }
-        console.info(intersection)
-    }
 
     initizalizeList(listJSON) {
         let keyValArrId = listJSON.map(item => [item.id, item])
@@ -58,7 +44,6 @@ export class SupportedCoins {
         return "unknown"
     }
 
-    //app.controller.model.SupportedCoins.isInList("bcs")
     isInList(id) {
         return this.nameMap.has(id) || this.symbolMap.has(id)
     }
@@ -74,75 +59,18 @@ export class SupportedCoins {
 
         return str
     }
-
-    /*set coingecko(data) {
-        Object.keys(data).forEach(name => {
-            this._coingecko[name] = data[name]
-        })
-        this._coinSymbolsList = null
-    }
-
-    get coingecko() {
-        return this._coingecko
-    }
-
-    getCoinIds(ticker) {
-        const res = {}
-        res.coingecko = this._coingecko[ticker] ? this._coingecko[ticker].id : null
-
-        if (res.coingecko === null) {
-            return null
-        }
-        return res
-    }
-
-    getCoinNames(ticker) {
-        const res = {}
-        res.coingecko = this._coingecko[ticker] ? this._coingecko[ticker].name : null
-
-        if (res.coingecko === null) {
-            return null
-        }
-        return res
-    }
-
-    get coinListNoPrefix() {
-        const res = {}
-        res.coingecko = this._coingecko
-
-        return res
-    }
-
-    get coinSymbolsList() {
-        let res
-
-        if (this._coinSymbolsList) {
-            res = this._coinSymbolsList
-        } else {
-            res = Object.keys(this)
-                .reduce((acc, e) => {
-                    for (let key in this[e]) {
-                        acc.push(key)
-                    }
-                    return acc
-                }, [])
-                .reduce((acc, e) => {
-                    if (!acc[e[0].toUpperCase()]) {
-                        acc[e[0].toUpperCase()] = []
-                    }
-                    acc[e[0].toUpperCase()].push(e)
-                    return acc
-                }, {})
-
-            for (let key in res) {
-                res[key] = [...new Set(res[key])]
-                res[key].sort((a, b) => a.localeCompare(b))
+    // app.controller.model.SupportedCoins.__testInteresection__()
+    __testInteresection__() {
+        let a = new Set(this.names)
+        let b = new Set(this.symbols)
+        let intersection = new Set([...a].filter(x => b.has(x)))
+        for (let item of intersection) {
+            let n = this.nameMap.get(item)
+            let s = this.symbolMap.get(item)
+            if (n !== s) {
+                debugger
             }
         }
-        if (!this._coinSymbolsList) {
-            this._coinSymbolsList = res
-        }
-
-        return res
-    } */
+        console.info(intersection)
+    }
 }

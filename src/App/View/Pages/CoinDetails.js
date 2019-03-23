@@ -20,14 +20,14 @@ export class CoinDetails {
           </div>
           `)
 
-        this.name = this.node.querySelector(".ticker")
-        this.fullName = this.node.querySelector(".full-name")
+        this.symbol = this.node.querySelector(".ticker")
+        this.name = this.node.querySelector(".full-name")
         this.amountField = this.node.querySelector("input[name=amount]")
         this.icon = this.node.querySelector(".coin-logo")
         this.removeButton = this.node.querySelector(".remove-btn")
         this.message = this.node.querySelector(".message")
+        //component state
         this.currentItem = null
-
         this.states = {}
 
         const COUNTDOWN_SECONDS = 3
@@ -61,7 +61,7 @@ export class CoinDetails {
         })
 
         this.amountField.addEventListener("change", () => {
-            editItem(this.name.textContent, this.amountField.value)
+            editItem(this.currentItem, this.amountField.value)
         })
 
         this.amountField.addEventListener("keydown", event => {
@@ -88,9 +88,9 @@ export class CoinDetails {
             }
 
             this.currentItem = itemStrings.id
-            this.name.textContent = itemStrings.id
+            this.symbol.textContent = itemStrings.symbol
             this.amountField.value = itemStrings.amount
-            this.fullName.textContent = itemStrings.fullName
+            this.name.textContent = itemStrings.name
             if (itemStrings.icon) {
                 this.icon.src = itemStrings.icon
                 this.icon.style.display = "block"

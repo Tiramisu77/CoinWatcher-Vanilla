@@ -1,7 +1,7 @@
 const SATOSHIS_IN_BTC = 100000000
 const MBTC_IN_BTC = 1000
 
-export const autoConvert = function(btcNum) {
+const autoConvert = function(btcNum) {
     if (typeof btcNum !== "number" || isNaN(btcNum)) {
         throw new Error("btc converter expected a number, instead got: " + btcNum)
     }
@@ -55,14 +55,6 @@ export const prependPlus = function(val, str) {
     }
     return str
 }
-
-/*
-{type: currencyFiat | currencyBTC || percentage,
-isChange:true | false,
-lang: language code,
-currencyCode: code,
-}
-*/
 
 const determineColor = function(val) {
     return val >= 0 ? "green" : "red"

@@ -75,7 +75,6 @@ export class ItemModel {
         )
     }
 
-    //todo: optimize: memoize these 2 functions if they will start becoming a problem for performance
     getNumericalDataAgainstCurrencies(timePeriod, mainCurrency, secondCurrency) {
         let amount = this.amount
         let concattedArgs = timePeriod.toString() + mainCurrency.toString() + secondCurrency.toString()

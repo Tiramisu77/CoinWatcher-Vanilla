@@ -22,32 +22,16 @@ export class App {
     }
 
     testRandomPortfolio() {
-        let a = localStorage.getItem("coinlist")
-
-        let b = JSON.parse(a)
+        let a = JSON.parse(localStorage.getItem("coinlist"))
 
         let portfolio = { data: {} }
-        for (let i of b.data) {
+        for (let i of a.data) {
             if (Math.random() > 0.993) {
                 portfolio.data[i.id] = { amount: Math.random() * 100000 }
             }
         }
         portfolio.__portfolioVersion__ = 100
         localStorage.setItem("portfolio", JSON.stringify(portfolio))
-        location.reload()
-    }
-
-    testCorruptedSettings() {
-        localStorage.setItem(
-            "settings",
-            JSON.stringify({
-                apiList: ["baz", "baz", "fff"],
-                networkMode: "vvv",
-                portfolioSortedBy: "x",
-                priceChangePeriod: "14",
-                updateInterval: 5,
-            })
-        )
         location.reload()
     }
 
@@ -58,7 +42,7 @@ export class App {
         report.message = e.message
         errStorage.push(report)
         localStorage.setItem("criticalErrors", JSON.stringify(errStorage))
-        alert(`Critical Error: ${e}`)
+        alert(`Critical  ${e}`)
         console.error(e)
     }
 }

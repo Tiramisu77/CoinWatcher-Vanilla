@@ -26,8 +26,9 @@ export class Storage {
 
     loadPortfolio() {
         try {
-            const portfolio = JSON.parse(localStorage.getItem("portfolio")) || {}
-            this.model.createItemModels(portfolio)
+            const portfolio = localStorage.getItem("portfolio")
+            if (!portfolio) return
+            this.model.createItemModels(JSON.parse(portfolio))
         } catch (err) {
             console.error(err)
         }
