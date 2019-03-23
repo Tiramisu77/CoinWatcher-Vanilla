@@ -1,4 +1,4 @@
-export class Settings {
+export class SettingsModel {
     constructor(constants) {
         this._version = 1.13
         this._portfolioSortedBy = "netvalDsc"

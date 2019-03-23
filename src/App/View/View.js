@@ -12,7 +12,7 @@ import { FooterButtons } from "./FooterButtons.js"
 
 import { About } from "./About.js"
 
-import { Root } from "./Root.js"
+import { Root } from "./Router.js"
 
 export class View {
     constructor(controllerActions) {

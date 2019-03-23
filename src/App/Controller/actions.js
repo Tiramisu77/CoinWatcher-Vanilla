@@ -29,18 +29,6 @@ const portfolioActions = {
             return "ok"
         } else return res
     },
-    getAutocompleteList: function(str) {
-        try {
-            if (str === "") return []
-            return this.model.SupportedCoins.getMatchesFromQuery(str)
-        } catch (e) {
-            if (window.DEBUG) console.error(e)
-            return []
-        }
-    },
-    getNameFromId: function(id) {
-        return this.model.SupportedCoins.getNameFromQuery(id)
-    },
     removeItem: function(item) {
         this.model.deleteItem(item)
         this.storage.savePortfolio()

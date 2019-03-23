@@ -40,7 +40,7 @@ export class AddCoinWindow {
         this.addListeners(addItem, router, getAutocompleteList, getNameFromId)
     }
 
-    addListeners(addItem, router, getAutocompleteList, getNameFromId) {
+    addListeners(addItem, router) {
         this.tickerField.addEventListener("blur", () => {
             this.renderAutocomplete([])
             //bugfix
@@ -64,11 +64,12 @@ export class AddCoinWindow {
 
         this.tickerField.addEventListener("input", () => {
             this.message.textContent = ""
-            this.fullName.textContent = this.tickerField.value === "" ? "" : getNameFromId(this.tickerField.value)
+            this.fullName.textContent =
+                this.tickerField.value === "" ? "" : window.EE.request("nameFromId", this.tickerField.value) //getNameFromId(this.tickerField.value)
 
             clearTimeout(timer)
             timer = setTimeout(() => {
-                const list = getAutocompleteList(this.tickerField.value)
+                const list = window.EE.request("autocompleteList", this.tickerField.value)
                 this.renderAutocomplete(list)
             }, INPUT_THROTTLING)
         })
