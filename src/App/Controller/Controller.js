@@ -44,13 +44,17 @@ export class Controller {
         }
 
         this.view = new View(this.actions)
-        this.model = new Model(this.actions.itemObserver, constants)
+        this.model = new Model(constants)
         this.storage = new Storage(this.model)
         this.timer = null
 
-        window.EE.on("itemChange", this.actions.onItemChange)
+        this.registerListeners()
 
         window.addEventListener("load", this.onLaunch.bind(this))
+    }
+
+    registerListeners() {
+        window.EE.on("itemChange", this.actions.onItemChange)
     }
 
     async onLaunch() {

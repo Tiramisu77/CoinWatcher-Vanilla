@@ -2,11 +2,11 @@ import { PortfolioModel } from "./PortfolioModel.js"
 import { Settings } from "./Settings.js"
 import { SupportedCoins } from "./SupportedCoins.js"
 export class Model {
-    constructor(itemObserver, constants) {
+    constructor(constants) {
         this._marketData = {}
         this.versusCurrencies = []
         this._settings = new Settings(constants)
-        this._portfolioModel = new PortfolioModel(itemObserver, this.settings)
+        this._portfolioModel = new PortfolioModel(this.settings)
         this.SupportedCoins = new SupportedCoins()
 
         Object.preventExtensions(this)

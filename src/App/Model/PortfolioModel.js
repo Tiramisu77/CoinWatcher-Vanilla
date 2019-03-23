@@ -1,26 +1,21 @@
 import { ItemModel } from "./ItemModel.js"
 import { numToFormattedString } from "./helpers.js"
 export class PortfolioModel {
-    constructor(itemObserver, settings) {
-        this.itemObserver = itemObserver
+    constructor(settings) {
         this.settings = settings
         this.marketData = {}
         this.items = {}
         this.__portfolioVersion__ = 0.11
+
+        window.EE.on("changeItemAmount", this.changeItemAmount, this)
+
         Object.preventExtensions(this)
     }
-    get bitcoinData() {
-        return this.marketData.BTC
-            ? {
-                  "24h": parseFloat(this.marketData.BTC.percent_change_24h),
-                  "1h": parseFloat(this.marketData.BTC.percent_change_1h),
-                  "7d": parseFloat(this.marketData.BTC.percent_change_7d),
-              }
-            : {
-                  "24h": null,
-                  "1h": null,
-                  "7d": null,
-              }
+
+    changeItemAmount(id, amountStr) {
+        let amount = Number(amountStr.replace(",", "."))
+        this.items[id].amount = amount
+        return "ok"
     }
 
     getnumericalTotalValue(timePeriod, mainCurrency, secondCurrency) {
@@ -167,7 +162,7 @@ export class PortfolioModel {
             this.items[id] = new ItemModel({
                 id,
                 amount,
-                observer: this.itemObserver,
+
                 settings: this.settings,
             })
             this.items[id].updateMarketData(this.marketData[id] || null)

@@ -2,7 +2,7 @@ import { utils } from "../utils.js"
 import "./css/CoinDetails.css"
 
 export class CoinDetails {
-    constructor(editItem, removeItem, router) {
+    constructor(removeItem, router) {
         this.node = utils.createComponent(`
           <div id="coin-details">
 
@@ -61,7 +61,8 @@ export class CoinDetails {
         })
 
         this.amountField.addEventListener("change", () => {
-            editItem(this.currentItem, this.amountField.value)
+            if (this.amountField.value !== "")
+                window.EE.emit("changeItemAmount", this.currentItem, this.amountField.value)
         })
 
         this.amountField.addEventListener("keydown", event => {

@@ -4,14 +4,6 @@ const itemActions = {
         this.view.renderTotal(this.model.total)
     },
 
-    editItem: function(itemName, amountStr) {
-        const amount = Number(amountStr.replace(",", "."))
-
-        if (typeof amount !== "number" || isNaN(amount)) return "Amount must be a number"
-        this.model.editItemAmount(itemName, amount)
-
-        return "ok"
-    },
     openDetails: function(itemName) {
         this.view.openDetails(this.model.getItemStrings(itemName))
     },

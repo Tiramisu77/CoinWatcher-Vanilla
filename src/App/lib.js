@@ -31,10 +31,10 @@ export class EventEmitter {
 
     once() {}
 
-    emit(event, data) {
+    emit(event, ...args) {
         if (this.__eventRegister__.has(event)) {
             this.__eventRegister__.get(event).forEach(e => {
-                e.handler.call(e.context, data)
+                e.handler.call(e.context, ...args)
             })
         } else {
             throw new Error(`event ${event} not found`)
