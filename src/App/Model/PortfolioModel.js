@@ -9,8 +9,13 @@ export class PortfolioModel {
 
         window.EE.on("changeItemAmount", this.changeItemAmount, this)
         window.EE.on("newMarketData", this.updateItem, this)
-
+        window.EE.respond("itemStrings", this.getItemStrings, this)
+        window.EE.on("updatePortfolio", this.updatePortfolio, this)
         Object.preventExtensions(this)
+    }
+
+    getItemStrings(id) {
+        return this.items[id].printableData
     }
 
     changeItemAmount(id, amountStr) {
@@ -135,7 +140,7 @@ export class PortfolioModel {
     }
 
     //todo check if this is actually needed
-    getSortedPortfolioItemModels(ordering) {
+    getItemStringsList(ordering) {
         return this.getSortedPortfolioNames(ordering).map(item => this.items[item].printableData)
     }
 
@@ -166,7 +171,6 @@ export class PortfolioModel {
 
                 settings: this.settings,
             })
-            this.items[id].updateMarketData(this.marketData[id] || null)
         } catch (error) {
             if (window.DEBUG) console.error(error)
         }
@@ -179,7 +183,7 @@ export class PortfolioModel {
 
     updatePortfolio() {
         for (let item in this.items) {
-            this.updateItem(item)
+            window.EE.emit("itemChange", this.items[item].printableData)
         }
     }
 }

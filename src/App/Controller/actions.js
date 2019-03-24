@@ -4,8 +4,9 @@ const itemActions = {
         this.view.renderTotal(this.model.total)
     },
 
-    openDetails: function(itemName) {
-        this.view.openDetails(this.model.getItemStrings(itemName))
+    openDetails: function(id) {
+        let itemStrings = window.EE.request("itemStrings", id)
+        this.view.openDetails(itemStrings)
     },
 }
 
@@ -13,19 +14,18 @@ const portfolioActions = {
     addItem: function(itemInput, amountInput) {
         if (itemInput === "" || amountInput === "") return ""
 
-        let itemID = this.model.SupportedCoins.getIdFromQuery(itemInput)
+        let itemID = window.EE.request("idFromInput", itemInput)
+
         let amount = Number(amountInput)
         if (typeof amount !== "number" || isNaN(amount)) return "Amount must a be number"
 
         let res = this.model.addItem(itemID, amount)
         if (res === "ok") {
-            if (this.model.settings.networkMode === "single") {
-                this.network.loadPircesAndUpdateSingle(itemID)
-            }
+            let itemStrings = window.EE.request("itemStrings", itemID)
+            this.view.mountItem(itemStrings)
+            this.network.loadPircesAndUpdateSingle(itemID)
             this.storage.savePortfolio()
-            this.view.mountItem(this.model.getItemStrings(itemID))
-            this.view.sortPortfolio(this.model.sortedPortfolioNames)
-            this.view.renderTotal(this.model.total)
+
             return "ok"
         } else return res
     },
@@ -40,14 +40,15 @@ const portfolioActions = {
         this.model.settings.priceChangePeriod = priceChangePeriod
         this.storage.saveSettings()
         this.view.renderTotal(this.model.total)
-        this.model.updatePortfolio()
+        window.EE.emit("updatePortfolio")
     },
 }
 
 const changeSettings = function(msg, val) {
     if (msg === "interval") {
-        const num = parseInt(val.split(" ")[0]) * 60 * 1000 // "1 min" -> 60000 ms
+        const num = parseInt(val) * 60 * 1000 // "1 min" -> 60000 ms
         this.model.settings.updateInterval = num
+
         clearTimeout(this.timer)
         this.network.loop()
     }
@@ -60,13 +61,13 @@ const changeSettings = function(msg, val) {
     if (msg === "currencyMain") {
         this.model.settings.currentCurrencies.main = val
         this.view.renderTotal(this.model.total)
-        this.model.updatePortfolio()
+        window.EE.emit("updatePortfolio")
     }
 
     if (msg === "currencySecond") {
         this.model.settings.currentCurrencies.second = val
         this.view.renderTotal(this.model.total)
-        this.model.updatePortfolio()
+        window.EE.emit("updatePortfolio")
     }
     this.storage.saveSettings()
 }

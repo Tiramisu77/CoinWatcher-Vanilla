@@ -7,8 +7,9 @@ export class SupportedCoins {
         this.names = null
         this.symbols = null
 
-        window.EE.respond("autocompleteList", this.getMatchesFromQuery, this)
-        window.EE.respond("nameFromInput", this.getNameFromQuery, this)
+        window.EE.respond("autocompleteList", this._getMatchesFromQuery, this)
+        window.EE.respond("nameFromInput", this._getNameFromQuery, this)
+        window.EE.respond("idFromInput", this._getIdFromQuery, this)
 
         Object.preventExtensions(this)
     }
@@ -23,8 +24,8 @@ export class SupportedCoins {
         this.names = Array.from(this.nameMap.keys())
         this.symbols = Array.from(this.symbolMap.keys())
     }
-    //app.controller.model.SupportedCoins.getMatchesFromQuery("bt")
-    getMatchesFromQuery(str) {
+    //app.controller.model.SupportedCoins._getMatchesFromQuery("bt")
+    _getMatchesFromQuery(str) {
         //let t1 = performance.now()
         let reg = new RegExp(`^${str}`, "i")
 
@@ -35,7 +36,7 @@ export class SupportedCoins {
         return [...names, ...symbols]
     }
 
-    getNameFromQuery(str) {
+    _getNameFromQuery(str) {
         str = str.toLowerCase()
 
         if (this.nameMap.has(str)) {
@@ -51,7 +52,7 @@ export class SupportedCoins {
         return this.nameMap.has(id) || this.symbolMap.has(id)
     }
 
-    getIdFromQuery(str) {
+    _getIdFromQuery(str) {
         let q = str.toLowerCase()
         if (this.nameMap.has(q)) {
             return this.nameMap.get(q).id

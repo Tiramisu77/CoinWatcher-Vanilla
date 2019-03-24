@@ -3,7 +3,6 @@ import { SettingsModel } from "./SettingsModel.js"
 import { SupportedCoins } from "./SupportedCoins.js"
 export class Model {
     constructor(constants) {
-        this._marketData = {}
         this.versusCurrencies = []
         this._settings = new SettingsModel(constants)
         this._portfolioModel = new PortfolioModel(this.settings)
@@ -18,15 +17,6 @@ export class Model {
 
     set settings(loadedSettings) {
         this._settings.importSettings(loadedSettings)
-    }
-
-    get marketData() {
-        return this._marketData
-    }
-
-    set marketData(newData) {
-        this._marketData = newData
-        this._portfolioModel.marketData = this._marketData
     }
 
     get settingsJSON() {
@@ -46,7 +36,7 @@ export class Model {
     }
 
     get itemStringsList() {
-        return this._portfolioModel.getSortedPortfolioItemModels(this.settings.portfolioSortedBy)
+        return this._portfolioModel.getItemStringsList(this.settings.portfolioSortedBy)
     }
 
     createItemModels(portfolioJSON) {
@@ -60,18 +50,7 @@ export class Model {
         } else return "This item already in portfolio"
     }
 
-    editItemAmount(itemName, amount) {
-        this._portfolioModel.items[itemName].amount = amount
-    }
-
-    getItemStrings(itemName) {
-        return this._portfolioModel.items[itemName].printableData
-    }
-
     deleteItem(itemName) {
         delete this._portfolioModel.items[itemName]
-    }
-    updateItem(ticker) {
-        this._portfolioModel.updateItem(ticker)
     }
 }

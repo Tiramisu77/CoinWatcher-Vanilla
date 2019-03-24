@@ -1,11 +1,9 @@
 import { numToFormattedString } from "./helpers.js"
 export class ItemModel {
-    constructor({ id, amount, observer, settings }) {
+    constructor({ id, amount, settings }) {
         this.id = id
 
         this._amount = amount
-
-        this.observer = observer
 
         this.settings = settings
 
@@ -20,7 +18,7 @@ export class ItemModel {
     }
 
     updateMarketData(newApiData) {
-        if (newApiData === null) return false
+        if (!newApiData) return false
         if (newApiData !== this.apiData) {
             this.apiData = newApiData
 
