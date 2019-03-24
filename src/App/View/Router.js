@@ -1,6 +1,6 @@
 import { utils } from "./utils.js"
 
-const BASE_URL = "" //"/CoinWatcher"
+const BASE_URL = "/CoinWatcher"
 
 export class Root {
     constructor(app, main, addCoinWindow, coinDetails, appSettings, about) {

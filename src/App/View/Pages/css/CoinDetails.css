@@ -6,6 +6,14 @@
     font-size: 18px;
 }
 
+.coin-logo-big {
+    display: none;
+    width: 3rem;
+    height: auto;
+    vertical-align: middle;
+    margin: 0 auto;
+}
+
 .remove-btn {
     padding: 3px 6px 3px 6px;
     margin: 8px 4px 2px 4px;
@@ -17,4 +25,20 @@
 
 #add-amount-details {
     width: 140px;
+}
+
+#details-api-data {
+    display: grid;
+    grid-template-columns: auto auto;
+    grid-column-gap: 20px;
+    grid-row-gap: 7px;
+    margin: 6px;
+}
+
+#details-api-data .k {
+    align-self: center;
+}
+
+#details-api-data .v {
+    text-align: right;
 }

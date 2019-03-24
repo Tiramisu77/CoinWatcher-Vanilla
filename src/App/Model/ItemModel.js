@@ -12,6 +12,10 @@ export class ItemModel {
         this._cache = {
             numerical: {},
             printable: {},
+            wipe() {
+                this.numerical = {}
+                this.printable = {}
+            },
         }
 
         Object.preventExtensions(this)
@@ -22,10 +26,7 @@ export class ItemModel {
         if (newApiData !== this.apiData) {
             this.apiData = newApiData
 
-            this._cache = {
-                numerical: {},
-                printable: {},
-            }
+            this._cache.wipe()
 
             window.EE.emit("itemChange", this.printableData)
         }
@@ -38,10 +39,7 @@ export class ItemModel {
     set amount(val) {
         if (typeof val !== "number" || isNaN(val)) throw new Error("incorrect amount")
         this._amount = val
-        this._cache = {
-            numerical: {},
-            printable: {},
-        }
+        this._cache.wipe()
         window.EE.emit("itemChange", { ...this.printableData, __amountWasChanged__: true })
     }
 
@@ -59,7 +57,7 @@ export class ItemModel {
 
     getDataOrZero(prop, currency) {
         try {
-            let n = Number(this.apiData.market_data[prop][currency])
+            let n = Number(this.apiData.market_data[prop][currency.toLowerCase()])
             return isNaN(n) ? 0 : n
         } catch (e) {
             //console.warn(e)
@@ -132,8 +130,8 @@ export class ItemModel {
 
         const id = this.id
         const symbol = this.apiData.symbol ? this.apiData.symbol : ""
-        const name = this.apiData.name ? this.apiData.name : ""
-        const icon = this.apiData.image ? this.apiData.image : undefined
+        const name = this.apiData.name ? this.apiData.name : id
+        const icon = this.apiData.image
 
         const lang = navigator.languages ? navigator.languages[0] : navigator.language ? navigator.language : "en-US"
 
@@ -182,5 +180,31 @@ export class ItemModel {
         }
         this._cache.printable[concattedArgs] = res
         return res
+    }
+
+    get printableCoinApiData() {
+        let main = this.settings.currentCurrencies.main
+        let second = this.settings.currentCurrencies.second
+        let lang = navigator.languages ? navigator.languages[0] : navigator.language ? navigator.language : "en-US"
+
+        let optionsM = {
+            type: "currency",
+            currency: main,
+            lang,
+        }
+        let mcapM = numToFormattedString(this.getDataOrZero("market_cap", main), optionsM)
+        let athM = numToFormattedString(this.getDataOrZero("ath", main), optionsM)
+        let priceM = numToFormattedString(this.getDataOrZero("current_price", main), optionsM)
+
+        let optionsS = {
+            type: "currency",
+            currency: second,
+            lang,
+        }
+        let mcapS = numToFormattedString(this.getDataOrZero("market_cap", second), optionsS)
+        let athS = numToFormattedString(this.getDataOrZero("ath", second), optionsS)
+        let priceS = numToFormattedString(this.getDataOrZero("current_price", second), optionsS)
+
+        return { mcapM, athM, priceM, mcapS, athS, priceS }
     }
 }

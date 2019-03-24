@@ -87,8 +87,8 @@ export class View {
         }
     }
 
-    openDetails(itemStrings) {
-        this._CoinDetails.render(itemStrings)
+    openDetails(itemStrings, printableCoinApiData) {
+        this._CoinDetails.render(itemStrings, printableCoinApiData)
     }
 
     mountItem(itemStrings) {

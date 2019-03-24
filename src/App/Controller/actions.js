@@ -6,7 +6,8 @@ const itemActions = {
 
     openDetails: function(id) {
         let itemStrings = window.EE.request("itemStrings", id)
-        this.view.openDetails(itemStrings)
+        let printableCoinApiData = window.EE.request("printableCoinApiData", id)
+        this.view.openDetails(itemStrings, printableCoinApiData)
     },
 }
 

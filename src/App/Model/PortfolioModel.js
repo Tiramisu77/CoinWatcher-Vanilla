@@ -3,19 +3,24 @@ import { numToFormattedString } from "./helpers.js"
 export class PortfolioModel {
     constructor(settings) {
         this.settings = settings
-        this.marketData = {}
+
         this.items = {}
         this.__portfolioVersion__ = 0.11
 
         window.EE.on("changeItemAmount", this.changeItemAmount, this)
         window.EE.on("newMarketData", this.updateItem, this)
         window.EE.respond("itemStrings", this.getItemStrings, this)
+        window.EE.respond("printableCoinApiData", this.getPrintableCoinApiData, this)
         window.EE.on("updatePortfolio", this.updatePortfolio, this)
         Object.preventExtensions(this)
     }
 
     getItemStrings(id) {
         return this.items[id].printableData
+    }
+
+    getPrintableCoinApiData(id) {
+        return this.items[id].printableCoinApiData
     }
 
     changeItemAmount(id, amountStr) {

@@ -33,8 +33,8 @@ export class EventEmitter {
     once() {}
 
     request(query, ...params) {
-        if (this.__eventRegister__.has(query)) {
-            let { handler, context } = this.__eventRegister__.get(query)
+        if (this.__requestRegister__.has(query)) {
+            let { handler, context } = this.__requestRegister__.get(query)
             return handler.call(context, ...params)
         } else {
             throw new Error(`query ${query} not found`)
@@ -44,10 +44,10 @@ export class EventEmitter {
     respond(query, handler, context = null) {
         if (typeof query !== "string") throw new Error("query must be a string")
         if (typeof handler !== "function") throw new Error("handler must be a function")
-        if (this.__eventRegister__.has(query)) {
+        if (this.__requestRegister__.has(query)) {
             throw new Error("only one handler can respond to requests")
         } else {
-            this.__eventRegister__.set(query, { handler, context })
+            this.__requestRegister__.set(query, { handler, context })
         }
     }
 

@@ -1,12 +1,40 @@
 import { utils } from "../utils.js"
 import "./css/CoinDetails.css"
 
+class CoinDetailsApiData {
+    constructor() {
+        this.node = utils.createComponent(
+            `
+        <div id="details-api-data">
+        <div class="k">Price:</div> <div ><div class="details-priceM v"> </div> <div class="details-priceS v"> </div></div>
+
+        <div class="k">ATH:</div> <div ><div class="details-athM v"> </div> <div class="details-athS v"> </div> </div>
+
+        <div class="k">Marketcap:</div> <div ><div class="details-mcapM v"> </div> <div class="details-mcapS v"> </div> </div>
+        </div>
+        `
+        )
+        this.priceM = this.node.querySelector(".details-priceM")
+        this.athM = this.node.querySelector(".details-athM")
+        this.mcapM = this.node.querySelector(".details-mcapM")
+        this.priceS = this.node.querySelector(".details-priceS")
+        this.athS = this.node.querySelector(".details-athS")
+        this.mcapS = this.node.querySelector(".details-mcapS")
+    }
+
+    render(coinDetailsApiData) {
+        for (let key in coinDetailsApiData) {
+            this[key].textContent = coinDetailsApiData[key]
+        }
+    }
+}
+
 export class CoinDetails {
     constructor(removeItem, router) {
         this.node = utils.createComponent(`
           <div id="coin-details">
 
-          <img class="coin-logo">
+          <img class="coin-logo-big">
           <div style="display:flex;justify-content: space-between;margin-top:4px;"><span>Coin:</span> <span><span class="full-name"></span>&nbsp;<span class="ticker"></span></span>
           </div>
 
@@ -23,9 +51,12 @@ export class CoinDetails {
         this.symbol = this.node.querySelector(".ticker")
         this.name = this.node.querySelector(".full-name")
         this.amountField = this.node.querySelector("input[name=amount]")
-        this.icon = this.node.querySelector(".coin-logo")
+        this.icon = this.node.querySelector(".coin-logo-big")
         this.removeButton = this.node.querySelector(".remove-btn")
         this.message = this.node.querySelector(".message")
+        this.CoinDetailsApiData = new CoinDetailsApiData()
+        this.node.insertBefore(this.CoinDetailsApiData.node, this.message)
+
         //component state
         this.currentItem = null
         this.states = {}
@@ -71,7 +102,7 @@ export class CoinDetails {
             }
         })
 
-        this.render = function(itemStrings) {
+        this.render = function(itemStrings, printableCoinApiData) {
             if (this.states[itemStrings.id] === undefined) {
                 this.states[itemStrings.id] = {
                     countdownID: null,
@@ -92,13 +123,23 @@ export class CoinDetails {
             this.symbol.textContent = itemStrings.symbol
             this.amountField.value = itemStrings.amount
             this.name.textContent = itemStrings.name
-            if (itemStrings.icon) {
-                this.icon.src = itemStrings.icon
-                this.icon.style.display = "block"
-            } else {
-                this.icon.style.display = "none"
-            }
+
+            this.renderIcon(itemStrings.icon)
+            this.renderCoinDetailsApiData(printableCoinApiData)
             router("/CoinDetails")
         }.bind(this)
+    }
+
+    renderIcon(icon) {
+        if (icon) {
+            this.icon.src = icon
+            this.icon.style.display = "block"
+        } else {
+            this.icon.style.display = "none"
+        }
+    }
+
+    renderCoinDetailsApiData(printableCoinApiData) {
+        this.CoinDetailsApiData.render(printableCoinApiData)
     }
 }
