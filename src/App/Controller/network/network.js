@@ -39,15 +39,13 @@ const loadPircesAndUpdate = decorate(async function() {
 const _loadPircesAndUpdateSingle = async function(id) {
     try {
         if (this.model.SupportedCoins.isInList(id) === false) return "ok"
-        const data = await loadFromCoingeckoSingle(id)
+        const marketData = await loadFromCoingeckoSingle(id)
 
-        this.model.marketData = { ...this.model.marketData, [id]: data }
-        this.model.updateItem(id)
+        window.EE.emit("newMarketData", marketData)
 
         return "ok"
     } catch (e) {
         if (window.DEBUG) console.error(e)
-
         return "not ok"
     }
 }

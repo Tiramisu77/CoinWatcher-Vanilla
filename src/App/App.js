@@ -11,6 +11,7 @@ export class App {
             this.catchInitErr(e)
         }
     }
+    //debugging and testing methods
 
     exportPortfolio() {
         console.info(localStorage.getItem("portfolio"))
@@ -36,6 +37,20 @@ export class App {
         portfolio.__portfolioVersion__ = 100
         localStorage.setItem("portfolio", JSON.stringify(portfolio))
         location.reload()
+    }
+
+    exportStorage() {
+        let s = {
+            portfolio: JSON.parse(localStorage.getItem("portfolio")),
+            settings: JSON.parse(localStorage.getItem("settings")),
+        }
+        console.info(JSON.stringify(s))
+    }
+
+    importSotrage(s) {
+        let { portfolio, settings } = JSON.parse(s)
+        localStorage.setItem("portfolio", JSON.stringify(portfolio))
+        localStorage.setItem("settings", JSON.stringify(settings))
     }
 
     catchInitErr(e) {

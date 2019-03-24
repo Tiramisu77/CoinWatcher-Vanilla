@@ -45,7 +45,7 @@ export class Model {
         return this._portfolioModel.getSortedPortfolioNames(this.settings.portfolioSortedBy)
     }
 
-    get sortedPortfolioItemModels() {
+    get itemStringsList() {
         return this._portfolioModel.getSortedPortfolioItemModels(this.settings.portfolioSortedBy)
     }
 
@@ -71,20 +71,7 @@ export class Model {
     deleteItem(itemName) {
         delete this._portfolioModel.items[itemName]
     }
-
-    updatePortfolio() {
-        this._portfolioModel.updatePortfolio()
-    }
-
     updateItem(ticker) {
         this._portfolioModel.updateItem(ticker)
-    }
-
-    getCoinIds(ticker) {
-        return this.SupportedCoins.getCoinIds(ticker)
-    }
-
-    getCoinNames(ticker) {
-        return this.SupportedCoins.getCoinNames(ticker)
     }
 }

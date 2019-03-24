@@ -1,6 +1,6 @@
 1.  routing
 
-2.  tickers are non unique, use id's
+2.  tickers are non unique, use id's - done
 
 3.  deal with error messages more
 

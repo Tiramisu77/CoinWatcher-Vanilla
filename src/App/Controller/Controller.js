@@ -61,7 +61,7 @@ export class Controller {
         try {
             this.storage.onLaunch()
 
-            this.view.onLaunch(this.model.sortedPortfolioItemModels, this.model.total, this.model.settings)
+            this.view.onLaunch(this.model.itemStringsList, this.model.total, this.model.settings)
 
             await this.network.getSupportedCoinsAndCurrencies()
 

@@ -26,12 +26,7 @@ export class View {
 
         this._CoinDetails = new CoinDetails(controllerActions.removeItem, this.router)
 
-        this._AddCoinWindow = new AddCoinWindow(
-            controllerActions.addItem,
-            this.router,
-            controllerActions.getAutocompleteList,
-            controllerActions.getNameFromId
-        )
+        this._AddCoinWindow = new AddCoinWindow(controllerActions.addItem, this.router)
 
         this._AppSettings = new AppSettings(controllerActions.changeSettings, () => {
             this.router("/About")
@@ -66,11 +61,9 @@ export class View {
         this._Root.router(path)
     }
 
-    onLaunch(orderedItemModels, total, settings) {
-        let i = 0
-        for (let itemModel of orderedItemModels) {
-            this.mountItem(itemModel.printableData, i)
-            i = i + 1
+    onLaunch(itemStringsList, total, settings) {
+        for (let itemStrings of itemStringsList) {
+            this.mountItem(itemStrings)
         }
         this.renderTotal(total)
         this.renderSettings(settings)
@@ -98,8 +91,8 @@ export class View {
         this._CoinDetails.render(itemStrings)
     }
 
-    mountItem(itemStrings, orderIndex) {
-        this._Main.PortfolioView.addItem(itemStrings, orderIndex)
+    mountItem(itemStrings) {
+        this._Main.PortfolioView.addItem(itemStrings)
     }
 
     unmountItem(item) {

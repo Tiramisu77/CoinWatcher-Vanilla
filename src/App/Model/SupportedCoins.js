@@ -8,7 +8,7 @@ export class SupportedCoins {
         this.symbols = null
 
         window.EE.respond("autocompleteList", this.getMatchesFromQuery, this)
-        window.EE.respond("nameFromId", this.getNameFromQuery, this)
+        window.EE.respond("nameFromInput", this.getNameFromQuery, this)
 
         Object.preventExtensions(this)
     }

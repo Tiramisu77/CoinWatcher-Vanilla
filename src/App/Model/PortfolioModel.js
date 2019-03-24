@@ -8,6 +8,7 @@ export class PortfolioModel {
         this.__portfolioVersion__ = 0.11
 
         window.EE.on("changeItemAmount", this.changeItemAmount, this)
+        window.EE.on("newMarketData", this.updateItem, this)
 
         Object.preventExtensions(this)
     }
@@ -135,7 +136,7 @@ export class PortfolioModel {
 
     //todo check if this is actually needed
     getSortedPortfolioItemModels(ordering) {
-        return this.getSortedPortfolioNames(ordering).map(item => this.items[item])
+        return this.getSortedPortfolioNames(ordering).map(item => this.items[item].printableData)
     }
 
     get portfolioJSON() {
@@ -171,12 +172,9 @@ export class PortfolioModel {
         }
     }
 
-    updateItem(id) {
-        try {
-            this.items[id].updateMarketData(this.marketData[id] || null)
-        } catch (error) {
-            if (window.DEBUG) console.error(error)
-        }
+    updateItem(marketData) {
+        let { id } = marketData
+        this.items[id].updateMarketData(marketData)
     }
 
     updatePortfolio() {

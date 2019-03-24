@@ -3,7 +3,7 @@ import "./css/AddCoinWindow.css"
 import { Autocomplete } from "./Autocomplete.js"
 
 export class AddCoinWindow {
-    constructor(addItem, router, getAutocompleteList, getNameFromId) {
+    constructor(addItem, router) {
         this.node = document.createElement("div")
         this.node.id = "AddCoinWindow"
         this.node.innerHTML = `
@@ -26,8 +26,6 @@ export class AddCoinWindow {
           <div class="confirm-add-container"> <div class="confirm-add btn"> ADD </div> </div>
        </form>`
 
-        this.getNameFromId = getNameFromId
-
         this.confirm = this.node.querySelector(".confirm-add")
         this.tickerField = this.node.querySelector("input[name=symbol]")
         this.fullName = this.node.querySelector(".full-name")
@@ -37,7 +35,7 @@ export class AddCoinWindow {
         this.autocompleteItemHandler = this.autocompleteItemHandler.bind(this)
         this.autocompleteField = new Autocomplete(this.autocompleteItemHandler, this.tickerField.parentNode)
 
-        this.addListeners(addItem, router, getAutocompleteList, getNameFromId)
+        this.addListeners(addItem, router)
     }
 
     addListeners(addItem, router) {
@@ -65,8 +63,7 @@ export class AddCoinWindow {
         this.tickerField.addEventListener("input", () => {
             this.message.textContent = ""
             this.fullName.textContent =
-                this.tickerField.value === "" ? "" : window.EE.request("nameFromId", this.tickerField.value) //getNameFromId(this.tickerField.value)
-
+                this.tickerField.value === "" ? "" : window.EE.request("nameFromInput", this.tickerField.value)
             clearTimeout(timer)
             timer = setTimeout(() => {
                 const list = window.EE.request("autocompleteList", this.tickerField.value)
@@ -112,6 +109,6 @@ export class AddCoinWindow {
 
     autocompleteItemHandler(event) {
         this.tickerField.value = event.target.innerText
-        this.fullName.textContent = this.getNameFromId(event.target.innerText)
+        this.fullName.textContent = window.EE.request("nameFromInput", event.target.innerText)
     }
 }

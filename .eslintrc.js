@@ -13,5 +13,5 @@ module.exports = {
 
         sourceType: "module",
     },
-    rules: { "no-console": ["error", { allow: ["warn", "error", "info"] }] },
+    rules: { "no-console": ["error", { allow: ["warn", "error", "info"] }], "no-var": ["error"] },
 }
