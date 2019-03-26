@@ -36,6 +36,17 @@ module.exports = {
                         },
                     },
                 },
+                {
+                    urlPattern: new RegExp("(https://api.coingecko.com/api/v3/coins/)(?!list)"),
+                    handler: "NetworkFirst",
+                    options: {
+                        cacheName: "coingecko-v3",
+
+                        cacheableResponse: {
+                            statuses: [0, 200],
+                        },
+                    },
+                },
             ],
         }),
     ],

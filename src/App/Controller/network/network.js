@@ -84,7 +84,7 @@ const loadVersusCurrencies = async function() {
 
 const getSupportedCoinsAndCurrencies = async function() {
     loadVersusCurrencies.call(this)
-    loadSupportedCoinsFromApi.call(this)
+    return loadSupportedCoinsFromApi.call(this)
 }
 
 const loop = async function() {

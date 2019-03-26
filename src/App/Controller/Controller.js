@@ -49,12 +49,11 @@ export class Controller {
         this.timer = null
 
         this.registerListeners()
-
-        window.addEventListener("load", this.onLaunch.bind(this))
     }
 
     registerListeners() {
         window.EE.on("itemChange", this.actions.onItemChange)
+        window.addEventListener("load", this.onLaunch.bind(this))
     }
 
     async onLaunch() {
@@ -66,6 +65,10 @@ export class Controller {
             await this.network.getSupportedCoinsAndCurrencies()
 
             this.network.loop()
+
+            window.addEventListener("focus", () => {
+                this.network.loop()
+            })
         } catch (error) {
             console.error(error)
         }
