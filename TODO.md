@@ -17,3 +17,5 @@
 11. cache in service worker
 
 12. worker instead of loop
+
+13. autoupdate the worker

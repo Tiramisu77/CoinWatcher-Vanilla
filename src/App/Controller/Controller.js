@@ -67,7 +67,13 @@ export class Controller {
             this.network.loop()
 
             window.addEventListener("focus", () => {
+                console.warn("starting loop")
                 this.network.loop()
+            })
+
+            window.addEventListener("blur", () => {
+                console.warn("clearing loop")
+                clearTimeout(this.timer)
             })
         } catch (error) {
             console.error(error)

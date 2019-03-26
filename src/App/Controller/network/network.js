@@ -31,7 +31,6 @@ const loadPircesAndUpdate = decorate(async function() {
         this.view.clearErrorMessage("Unable to load market data")
     } catch (e) {
         this.view.renderHeadMessage({ body: "Unable to load market data", type: "error" })
-        throw e
     }
 }, spinnerWrapper)
 
@@ -89,6 +88,7 @@ const getSupportedCoinsAndCurrencies = async function() {
 
 const loop = async function() {
     let interval = this.model.settings.updateInterval
+
     if (
         typeof interval !== "number" ||
         isNaN(interval) ||
@@ -98,6 +98,7 @@ const loop = async function() {
         throw new Error("bad interval")
     }
     await loadPircesAndUpdate.call(this)
+    clearTimeout(this.timer)
     this.timer = setTimeout(this.network.loop, interval)
 }
 
