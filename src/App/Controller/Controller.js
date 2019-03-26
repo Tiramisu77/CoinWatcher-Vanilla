@@ -65,7 +65,7 @@ export class Controller {
 
             await this.network.getSupportedCoinsAndCurrencies()
 
-            await this.network.loop()
+            this.network.loop()
         } catch (error) {
             console.error(error)
         }

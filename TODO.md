@@ -13,3 +13,7 @@
 9.  bundle everything in js
 
 10. minor bug - table header becomes active after 1 additional click
+
+11. cache in service worker
+
+12. worker instead of loop

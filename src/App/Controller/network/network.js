@@ -64,18 +64,9 @@ const loadPircesAndUpdateSingle = decorate(async function(id) {
     }
 }, spinnerWrapper)
 
-const LOAD_SUPPORTED_COINS_RETRY = 1000 * 30 //seconds
 const loadSupportedCoinsFromApi = decorate(async function() {
-    try {
-        let res = await loadSupportedCoinsCoingecko()
-
-        this.model.SupportedCoins.initizalizeList(res)
-
-        this.storage.saveCoinList(res)
-    } catch (e) {
-        if (window.DEBUG) console.warn(e)
-        setTimeout(this.getSupportedCoins, LOAD_SUPPORTED_COINS_RETRY)
-    }
+    let res = await loadSupportedCoinsCoingecko()
+    this.model.SupportedCoins.initizalizeList(res)
 }, spinnerWrapper)
 
 const loadVersusCurrencies = async function() {
@@ -93,15 +84,7 @@ const loadVersusCurrencies = async function() {
 
 const getSupportedCoinsAndCurrencies = async function() {
     loadVersusCurrencies.call(this)
-
-    let res = this.storage.loadCoinList()
-
-    if (res === "needs update") {
-        await loadSupportedCoinsFromApi.call(this)
-    }
-    if (res === "will need update soon") {
-        setTimeout(this.loadSupportedCoins, 1000 * 60 * 2) //magic
-    }
+    loadSupportedCoinsFromApi.call(this)
 }
 
 const loop = async function() {

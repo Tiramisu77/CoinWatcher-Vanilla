@@ -20,6 +20,23 @@ module.exports = {
         new GenerateSW({
             importWorkboxFrom: "local",
             skipWaiting: true,
+            runtimeCaching: [
+                {
+                    urlPattern: /https:\/\/api.coingecko.com\/api\/v3\/coins\/list|https:\/\/api.coingecko.com\/api\/v3\/simple\/supported_vs_currencies/,
+                    handler: "CacheFirst",
+                    options: {
+                        cacheName: "coingecko-v3",
+
+                        expiration: {
+                            maxAgeSeconds: 60 * 60 * 24 * 6,
+                        },
+
+                        cacheableResponse: {
+                            statuses: [0, 200],
+                        },
+                    },
+                },
+            ],
         }),
     ],
     mode: "development",
