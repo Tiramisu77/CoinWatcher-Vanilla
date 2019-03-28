@@ -20,7 +20,9 @@ export class EventEmitter {
 
     on(event, handler, context = null) {
         if (typeof event !== "string") throw new Error("event must be a string")
+
         if (typeof handler !== "function") throw new Error("handler must be a function")
+
         if (this.__eventRegister__.has(event)) {
             this.__eventRegister__.get(event).push({ handler, context })
         } else {
@@ -28,7 +30,18 @@ export class EventEmitter {
         }
     }
 
-    //unsub(event, handler, context) {}
+    emit(event, ...args) {
+        if (this.__eventRegister__.has(event)) {
+            this.__eventRegister__.get(event).forEach(e => {
+                e.handler.call(e.context, ...args)
+            })
+        } else {
+            throw new Error(`event ${event} not found`)
+        }
+    }
+
+    //todo
+    unsub() {}
 
     once() {}
 
@@ -44,20 +57,11 @@ export class EventEmitter {
     respond(query, handler, context = null) {
         if (typeof query !== "string") throw new Error("query must be a string")
         if (typeof handler !== "function") throw new Error("handler must be a function")
+        if (typeof context !== "object") throw new Error("context must be an object")
         if (this.__requestRegister__.has(query)) {
             throw new Error("only one handler can respond to requests")
         } else {
             this.__requestRegister__.set(query, { handler, context })
-        }
-    }
-
-    emit(event, ...args) {
-        if (this.__eventRegister__.has(event)) {
-            this.__eventRegister__.get(event).forEach(e => {
-                e.handler.call(e.context, ...args)
-            })
-        } else {
-            throw new Error(`event ${event} not found`)
         }
     }
 }

@@ -31,7 +31,7 @@ export class App {
         let portfolio = { data: {} }
         for (let i of a.data) {
             if (Math.random() > 0.993) {
-                portfolio.data[i.id] = { amount: Math.random() * 100000 }
+                portfolio.data[i.id] = { amount: Math.random() * 100002 }
             }
         }
         portfolio.__portfolioVersion__ = 100

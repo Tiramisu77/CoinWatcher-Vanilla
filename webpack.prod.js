@@ -14,11 +14,41 @@ module.exports = {
         new CopyPlugin([
             { from: "./public/images", to: "images" },
             { from: "./public/index.html", to: "" },
+
             { from: "./public/manifest.json", to: "" },
         ]),
         new GenerateSW({
             importWorkboxFrom: "local",
             skipWaiting: true,
+            navigateFallback: "/index.html",
+            runtimeCaching: [
+                {
+                    urlPattern: /https:\/\/api.coingecko.com\/api\/v3\/coins\/list|https:\/\/api.coingecko.com\/api\/v3\/simple\/supported_vs_currencies/,
+                    handler: "CacheFirst",
+                    options: {
+                        cacheName: "coinwatcher-coingecko-v3-lists",
+
+                        expiration: {
+                            maxAgeSeconds: 60 * 60 * 24 * 6,
+                        },
+
+                        cacheableResponse: {
+                            statuses: [0, 200],
+                        },
+                    },
+                },
+                {
+                    urlPattern: new RegExp("(https://api.coingecko.com/api/v3/coins/)(?!list)"),
+                    handler: "NetworkFirst",
+                    options: {
+                        cacheName: "coinwatcher-coingecko-v3-coins",
+
+                        cacheableResponse: {
+                            statuses: [0, 200],
+                        },
+                    },
+                },
+            ],
         }),
     ],
     mode: "production",
