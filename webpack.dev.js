@@ -20,7 +20,7 @@ module.exports = {
         new GenerateSW({
             importWorkboxFrom: "local",
             skipWaiting: true,
-            navigateFallback: "/index.html",
+
             runtimeCaching: [
                 {
                     urlPattern: /https:\/\/api.coingecko.com\/api\/v3\/coins\/list|https:\/\/api.coingecko.com\/api\/v3\/simple\/supported_vs_currencies/,

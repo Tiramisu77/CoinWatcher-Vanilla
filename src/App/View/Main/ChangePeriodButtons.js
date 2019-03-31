@@ -5,38 +5,43 @@ export class ChangePeriodButtons {
         this.node = utils.createComponent(
             `
           <div id="change-period-buttons">
-          <div  id="one-hour">1 hour</div>
-          <div  id="twenty-four-hours">24 hours</div>
-          <div  id="seven-days">7 days</div>
+          <div>
+          <div class="change-period-btn" data-option="1h">1 hour</div>
+          <div class="change-period-btn" data-option="24h">24 hours</div>
+          <div class="change-period-btn" data-option="7d">7 days</div>
           </div>
+          <div>
+          <div class="change-period-btn" data-option="30d">30 days</div>
+          <div class="change-period-btn" data-option="60d">60 days</div>
+          <div class="change-period-btn" data-option="200d">200 days</div>
+          </div>
+          </div>
+
           `,
             parent
         )
+        this.switchPriceChangePeriod = switchPriceChangePeriod
+        this.currentPressed = this.node.querySelector(".change-period-btn")
 
-        this["1h"] = this.node.querySelector("#one-hour")
-        this["24h"] = this.node.querySelector("#twenty-four-hours")
-        this["7d"] = this.node.querySelector("#seven-days")
-        this["1h"].addEventListener("click", event => {
-            switchPriceChangePeriod("1h")
-            event.target.classList.add("period-btn-pressed")
-            this["24h"].classList.remove("period-btn-pressed")
-            this["7d"].classList.remove("period-btn-pressed")
-        })
-        this["24h"].addEventListener("click", event => {
-            switchPriceChangePeriod("24h")
-            event.target.classList.add("period-btn-pressed")
-            this["1h"].classList.remove("period-btn-pressed")
-            this["7d"].classList.remove("period-btn-pressed")
-        })
-        this["7d"].addEventListener("click", event => {
-            switchPriceChangePeriod("7d")
-            event.target.classList.add("period-btn-pressed")
-            this["24h"].classList.remove("period-btn-pressed")
-            this["1h"].classList.remove("period-btn-pressed")
-        })
+        this.node
+            .querySelectorAll(".change-period-btn")
+            .forEach(btn => btn.addEventListener("click", this.clickHandler.bind(this)))
     }
 
     renderInit(changePeriod) {
-        this[changePeriod].classList.add("period-btn-pressed")
+        this.node.querySelectorAll(".change-period-btn").forEach(e => {
+            if (e.dataset.option === changePeriod) {
+                e.dispatchEvent(new Event("click"))
+            }
+        })
+    }
+
+    clickHandler(event) {
+        if (!event.target.dataset) return
+        this.switchPriceChangePeriod(event.target.dataset.option)
+        this.currentPressed.classList.remove("period-btn-pressed")
+        event.target.classList.add("period-btn-pressed")
+
+        this.currentPressed = event.target
     }
 }

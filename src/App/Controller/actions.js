@@ -43,6 +43,19 @@ const portfolioActions = {
         this.view.renderTotal(this.model.total)
         window.EE.emit("updatePortfolio")
     },
+    //unused todo: remove
+    makeTotalValSnapshot: function() {
+        let { mainCurrencyNet } = window.EE.request("totalValue", "24h", "USD", "USD")
+        let timestamp = Date.now()
+        if (typeof mainCurrencyNet === "number" && !isNaN(mainCurrencyNet) && mainCurrencyNet !== 0)
+            this.storage.saveTotalValSnapshot({ value: mainCurrencyNet, timestamp })
+        else console.warn(`incorrect total value: ${mainCurrencyNet}`)
+    },
+    //unused
+    totalValSnapshotLoop: function() {
+        this.actions.makeTotalValSnapshot()
+        setTimeout(this.actions.totalValSnapshotLoop, this.model.settings.totalValSnapshotInterval)
+    },
 }
 
 const changeSettings = function(msg, val) {

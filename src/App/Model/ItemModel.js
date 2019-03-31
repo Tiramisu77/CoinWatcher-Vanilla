@@ -132,7 +132,6 @@ export class ItemModel {
         const symbol = this.apiData.symbol ? this.apiData.symbol : ""
         const name = this.apiData.name ? this.apiData.name : id
         const icon = this.apiData.image
-
         const lang = navigator.languages ? navigator.languages[0] : navigator.language ? navigator.language : "en-US"
 
         priceMain = numToFormattedString(priceMain, {
@@ -192,8 +191,8 @@ export class ItemModel {
             currency: main,
             lang,
         }
-        let mcapM = numToFormattedString(this.getDataOrZero("market_cap", main), optionsM)
-        let athM = numToFormattedString(this.getDataOrZero("ath", main), optionsM)
+        let mcapM = numToFormattedString(this.getDataOrZero("market_cap", main), { ...optionsM, digits: 0 })
+        let athM = numToFormattedString(this.getDataOrZero("ath", main), { ...optionsM, digits: 0 })
         let priceM = numToFormattedString(this.getDataOrZero("current_price", main), optionsM)
 
         let optionsS = {
@@ -201,8 +200,8 @@ export class ItemModel {
             currency: second,
             lang,
         }
-        let mcapS = numToFormattedString(this.getDataOrZero("market_cap", second), optionsS)
-        let athS = numToFormattedString(this.getDataOrZero("ath", second), optionsS)
+        let mcapS = numToFormattedString(this.getDataOrZero("market_cap", second), { ...optionsS, digits: 0 })
+        let athS = numToFormattedString(this.getDataOrZero("ath", second), { ...optionsS, digits: 0 })
         let priceS = numToFormattedString(this.getDataOrZero("current_price", second), optionsS)
 
         return { mcapM, athM, priceM, mcapS, athS, priceS }

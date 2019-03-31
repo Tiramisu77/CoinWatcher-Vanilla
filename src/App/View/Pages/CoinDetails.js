@@ -6,7 +6,12 @@ class CoinDetailsApiData {
         this.node = utils.createComponent(
             `
         <div id="details-api-data">
+
         <div class="k">Price:</div> <div ><div class="details-priceM v"> </div> <div class="details-priceS v"> </div></div>
+
+        <div class="k">Value:</div> <div ><div class="details-valueM v"> </div> <div class="details-valueS v"> </div></div>
+
+        <div class="k">Share of portfolio:</div> <div ><div class="details-shareM v"> </div> </div>
 
         <div class="k">ATH:</div> <div ><div class="details-athM v"> </div> <div class="details-athS v"> </div> </div>
 
@@ -15,17 +20,22 @@ class CoinDetailsApiData {
         `
         )
         this.priceM = this.node.querySelector(".details-priceM")
+        this.valueM = this.node.querySelector(".details-valueM")
         this.athM = this.node.querySelector(".details-athM")
         this.mcapM = this.node.querySelector(".details-mcapM")
+
         this.priceS = this.node.querySelector(".details-priceS")
+        this.valueS = this.node.querySelector(".details-valueS")
         this.athS = this.node.querySelector(".details-athS")
         this.mcapS = this.node.querySelector(".details-mcapS")
+        this.shareM = this.node.querySelector(".details-shareM")
     }
 
-    render(coinDetailsApiData) {
+    render(coinDetailsApiData, share) {
         for (let key in coinDetailsApiData) {
             this[key].textContent = coinDetailsApiData[key]
         }
+        this.shareM.textContent = share
     }
 }
 
@@ -34,7 +44,7 @@ export class CoinDetails {
         this.node = utils.createComponent(`
           <div id="coin-details">
 
-          <img class="coin-logo-big">
+          <div><img class="coin-logo-big"></div>
           <div style="display:flex;justify-content: space-between;margin-top:4px;"><span>Coin:</span> <span><span class="full-name"></span>&nbsp;<span class="ticker"></span></span>
           </div>
 
@@ -125,7 +135,7 @@ export class CoinDetails {
             this.name.textContent = itemStrings.name
 
             this.renderIcon(itemStrings.icon)
-            this.renderCoinDetailsApiData(printableCoinApiData)
+            this.renderCoinDetailsApiData(printableCoinApiData, itemStrings)
             router("/CoinDetails")
         }.bind(this)
     }
@@ -139,7 +149,12 @@ export class CoinDetails {
         }
     }
 
-    renderCoinDetailsApiData(printableCoinApiData) {
-        this.CoinDetailsApiData.render(printableCoinApiData)
+    renderCoinDetailsApiData(printableCoinApiData, itemStrings) {
+        let shares = window.EE.request("portfolioStructure")
+        let share = shares[this.currentItem].main
+        let { netMain, netSecond } = itemStrings
+        printableCoinApiData.valueM = netMain
+        printableCoinApiData.valueS = netSecond
+        this.CoinDetailsApiData.render(printableCoinApiData, share)
     }
 }

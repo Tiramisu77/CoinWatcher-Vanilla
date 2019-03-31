@@ -75,6 +75,8 @@ export const numToFormattedString = function(num, options) {
                     ? num.toLocaleString(options.lang, {
                           style: "currency",
                           currency: options.currency,
+                          maximumFractionDigits: options.digits, // when undefined, it will use default value of the currency
+                          minimumFractionDigits: options.digits, // together it emulates .toFixed()
                       })
                     : num.toLocaleString(options.lang, {
                           style: "currency",

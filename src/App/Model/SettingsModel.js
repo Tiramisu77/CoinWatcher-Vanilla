@@ -4,6 +4,7 @@ export class SettingsModel {
         this._portfolioSortedBy = "netvalDsc"
         this._priceChangePeriod = "24h"
         this._updateInterval = 5 * 1000 * 60
+        this.totalValSnapshotInterval = 1000 * 60 * 10
         this._apiList = ["coingecko"]
         this._networkMode = "single"
         this._colorScheme = {
@@ -80,7 +81,7 @@ export class SettingsModel {
         return this._priceChangePeriod
     }
     set priceChangePeriod(val) {
-        let vals = new Set(["24h", "1h", "7d"])
+        let vals = new Set(["24h", "1h", "7d", "30d", "60d", "200d"])
         if (vals.has(val)) {
             this._priceChangePeriod = val
         } else throw new Error("illegal priceChangePeriod, reverting to default")

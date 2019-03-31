@@ -7,7 +7,7 @@ module.exports = {
     extends: ["eslint:recommended"],
     parserOptions: {
         ecmaVersion: 2017,
-
+        ecmaFeatures: { experimentalObjectRestSpread: true },
         sourceType: "module",
     },
     rules: { "no-console": ["error", { allow: ["warn", "error", "info"] }], "no-var": ["error"] },

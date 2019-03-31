@@ -66,4 +66,10 @@ export class Storage {
             console.error(error)
         }
     }
+
+    saveTotalValSnapshot(snapshot) {
+        let snapshots = JSON.parse(localStorage.getItem("totalValSnapshots") || "[]")
+        snapshots.push(snapshot)
+        localStorage.setItem("totalValSnapshots", JSON.stringify(snapshots))
+    }
 }
