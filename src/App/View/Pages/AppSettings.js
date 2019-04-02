@@ -3,10 +3,10 @@ import "./css/AppSettings.css"
 
 export class AppSettings {
     constructor(changeSettings, aboutRoute) {
-        this.node = utils.createNode({
-            tag: "div",
-            innerHTML: `
-            <div>
+        this.node = utils.createComponent(
+            `
+            <div class="page-container">
+            <div id="AppSettings" >
             <div class="settings-item">
               <span id="about-btn">About</span>
 
@@ -57,8 +57,9 @@ export class AppSettings {
 
             <div class="message"> </div>
             </div>
-          `,
-        })
+            </div>
+          `
+        )
 
         this.aboutBtn = this.node.querySelector("#about-btn")
 

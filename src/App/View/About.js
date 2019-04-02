@@ -4,7 +4,8 @@ export class About {
     constructor() {
         this.node = utils.createComponent(
             `
-        <section id="about" >
+            <div class="page-container">
+        <div id="about" >
         <p>
           Coin Watcher is a free, open source and privacy-oriented cryptocurrency portfolio web app.  </p>
         <p>  It stores all user data strictly on client side, while market data is fetched from public API's.</p>
@@ -20,7 +21,8 @@ export class About {
           The official page of the project is at <a href="https://github.com/Tiramisu77/CoinWatcher">https://github.com/Tiramisu77/CoinWatcher</a>
           </p>
 
-        </section>
+        </div>
+        </div>
         `
         )
     }

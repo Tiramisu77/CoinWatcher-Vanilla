@@ -1,71 +1,62 @@
 import { utils } from "../utils.js"
 import "./css/CoinDetails.css"
 
-class CoinDetailsApiData {
-    constructor() {
-        this.node = utils.createComponent(
-            `
-        <div id="details-api-data">
-
-        <div class="k">Price:</div> <div ><div class="details-priceM v"> </div> <div class="details-priceS v"> </div></div>
-
-        <div class="k">Value:</div> <div ><div class="details-valueM v"> </div> <div class="details-valueS v"> </div></div>
-
-        <div class="k">Share of portfolio:</div> <div ><div class="details-shareM v"> </div> </div>
-
-        <div class="k">ATH:</div> <div ><div class="details-athM v"> </div> <div class="details-athS v"> </div> </div>
-
-        <div class="k">Marketcap:</div> <div ><div class="details-mcapM v"> </div> <div class="details-mcapS v"> </div> </div>
-        </div>
-        `
-        )
-        this.priceM = this.node.querySelector(".details-priceM")
-        this.valueM = this.node.querySelector(".details-valueM")
-        this.athM = this.node.querySelector(".details-athM")
-        this.mcapM = this.node.querySelector(".details-mcapM")
-
-        this.priceS = this.node.querySelector(".details-priceS")
-        this.valueS = this.node.querySelector(".details-valueS")
-        this.athS = this.node.querySelector(".details-athS")
-        this.mcapS = this.node.querySelector(".details-mcapS")
-        this.shareM = this.node.querySelector(".details-shareM")
-    }
-
-    render(coinDetailsApiData, share) {
-        for (let key in coinDetailsApiData) {
-            this[key].textContent = coinDetailsApiData[key]
-        }
-        this.shareM.textContent = share
-    }
-}
-
 export class CoinDetails {
     constructor(removeItem, router) {
         this.node = utils.createComponent(`
-          <div id="coin-details">
+          <div class="page-container">
+          <div id="coin-details" >
 
-          <div><img class="coin-logo-big"></div>
-          <div style="display:flex;justify-content: space-between;margin-top:4px;"><span>Coin:</span> <span><span class="full-name"></span>&nbsp;<span class="ticker"></span></span>
+            <div><img class="coin-logo-big"></div>
+
+            <div id="details-data" >
+
+              <div>Coin:</div>
+              <div class="full-name v">
+
+              </div>
+
+              <label for="add-amount-details"> Amount:</label>
+            <input class="add-inp v" autocomplete="off" type="number" name="amount" id="add-amount-details"  size=16></input>
+
+
+
+            <div class="k">Price:</div> <div ><div class="details-priceM v"> </div> <div class="details-priceS v"> </div></div>
+
+            <div class="k">Value:</div> <div ><div class="details-valueM v"> </div> <div class="details-valueS v"> </div></div>
+
+            <div class="k">Share of portfolio:</div> <div class="details-shareM v"> </div>
+
+            <div class="k">ATH:</div> <div ><div class="details-athM v"> </div> <div class="details-athS v"> </div> </div>
+
+            <div class="k">Marketcap:</div> <div ><div class="details-mcapM v"> </div> <div class="details-mcapS v"> </div> </div>
+
+
+
+            </div>
+            <div class="message" style="color:red; text-align:center;"> </div>
+            <div class="remove-container" style="display:flex;justify-content:center;"> <div class="remove-btn btn">remove</div> </div>
+
           </div>
-
-        <div class="input-container" >
-        <label for="add-amount-details"> Amount:</label> <input class="add-inp" autocomplete="off" type="number" name="amount" id="add-amount-details"  size=16 />
-          </div>
-          <div class="message" style="color:red; text-align:center;"> </div>
-
-           <div class="remove-container" style="display:flex;justify-content:center;"> <div class="remove-btn btn">remove</div> </div>
-
           </div>
           `)
 
-        this.symbol = this.node.querySelector(".ticker")
         this.name = this.node.querySelector(".full-name")
         this.amountField = this.node.querySelector("input[name=amount]")
         this.icon = this.node.querySelector(".coin-logo-big")
         this.removeButton = this.node.querySelector(".remove-btn")
         this.message = this.node.querySelector(".message")
-        this.CoinDetailsApiData = new CoinDetailsApiData()
-        this.node.insertBefore(this.CoinDetailsApiData.node, this.message)
+
+        this.priceM = this.node.querySelector(".details-priceM")
+        this.valueM = this.node.querySelector(".details-valueM")
+        this.athM = this.node.querySelector(".details-athM")
+        this.mcapM = this.node.querySelector(".details-mcapM")
+        this.shareM = this.node.querySelector(".details-shareM")
+
+        this.priceS = this.node.querySelector(".details-priceS")
+        this.valueS = this.node.querySelector(".details-valueS")
+        this.athS = this.node.querySelector(".details-athS")
+        this.mcapS = this.node.querySelector(".details-mcapS")
 
         //component state
         this.currentItem = null
@@ -130,9 +121,9 @@ export class CoinDetails {
             }
 
             this.currentItem = itemStrings.id
-            this.symbol.textContent = itemStrings.symbol
+
             this.amountField.value = itemStrings.amount
-            this.name.textContent = itemStrings.name
+            this.name.textContent = `${itemStrings.name} ${itemStrings.symbol}`
 
             this.renderIcon(itemStrings.icon)
             this.renderCoinDetailsApiData(printableCoinApiData, itemStrings)
@@ -155,6 +146,10 @@ export class CoinDetails {
         let { netMain, netSecond } = itemStrings
         printableCoinApiData.valueM = netMain
         printableCoinApiData.valueS = netSecond
-        this.CoinDetailsApiData.render(printableCoinApiData, share)
+
+        for (let key in printableCoinApiData) {
+            this[key].textContent = printableCoinApiData[key]
+        }
+        this.shareM.textContent = share
     }
 }

@@ -52,6 +52,19 @@ body {
     overflow: auto;
 }
 
+.page-container {
+    display: grid;
+
+    justify-content: center;
+    align-content: center;
+}
+
+@media (min-height: 600px) {
+    .page-container {
+        height: 100%;
+    }
+}
+
 #main {
     display: grid;
     grid-template-columns: 100%;
@@ -82,7 +95,7 @@ body {
     justify-content: flex-start;
 }
 
-@media (max-height: 330px) {
+@media (max-height: 415px) {
     #networth {
         flex-direction: row;
     }

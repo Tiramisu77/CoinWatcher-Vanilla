@@ -1,3 +1,9 @@
+#AddCoinWindow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
 #add-coin-form {
     display: flex;
     flex-direction: column;

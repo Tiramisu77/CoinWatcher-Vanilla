@@ -6,6 +6,8 @@
 
 10. minor bug - table header becomes active after 1 additional click
 
-11. autoupdate the worker!
+11.
 
-12. price change alert?
+12) price change alert?
+
+13. nan in total

@@ -1,3 +1,9 @@
+#AppSettings {
+    display: grid;
+
+    justify-content: center;
+}
+
 .settings-item {
     display: flex;
     justify-content: space-between;

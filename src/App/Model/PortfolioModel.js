@@ -55,9 +55,9 @@ export class PortfolioModel {
         }
 
         const mainChangePerc =
-            (total.mainCurrencyChangeAbs / (total.mainCurrencyNet - total.mainCurrencyChangeAbs)) * 100
+            (total.mainCurrencyChangeAbs / (total.mainCurrencyNet - total.mainCurrencyChangeAbs)) * 100 || 0
         const secondChangePerc =
-            (total.secondCurrencyChangeAbs / (total.secondCurrencyNet - total.secondCurrencyChangeAbs)) * 100
+            (total.secondCurrencyChangeAbs / (total.secondCurrencyNet - total.secondCurrencyChangeAbs)) * 100 || 0
 
         return { ...total, mainChangePerc, secondChangePerc, shares }
     }

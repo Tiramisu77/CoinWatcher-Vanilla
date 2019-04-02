@@ -1,13 +1,13 @@
 import "./css/AddCoinWindow.css"
-
+import { utils } from "../utils.js"
 import { Autocomplete } from "./Autocomplete.js"
 
 export class AddCoinWindow {
     constructor(addItem, router) {
-        this.node = document.createElement("div")
-        this.node.id = "AddCoinWindow"
-        this.node.innerHTML = `
-        <form id="add-coin-form">
+        this.node = utils.createComponent(`
+          <div class="page-container">
+        <div  id="AddCoinWindow">
+          <form id="add-coin-form">
           <div style="display:flex;justify-content: space-between;margin-top:4px;"><span>Name:</span> <span class="full-name"></span>
           </div>
 
@@ -24,7 +24,9 @@ export class AddCoinWindow {
           </div>
           <div class="message" style="color:red; text-align:center;"> </div>
           <div class="confirm-add-container"> <div class="confirm-add btn"> ADD </div> </div>
-       </form>`
+          </form>
+        </div>
+        </div>`)
 
         this.confirm = this.node.querySelector(".confirm-add")
         this.tickerField = this.node.querySelector("input[name=symbol]")

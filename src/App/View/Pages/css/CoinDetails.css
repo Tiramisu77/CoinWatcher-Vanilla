@@ -3,7 +3,6 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    font-size: 18px;
 }
 
 .coin-logo-big {
@@ -27,7 +26,7 @@
     width: 140px;
 }
 
-#details-api-data {
+#details-data {
     display: grid;
     grid-template-columns: auto auto;
     grid-column-gap: 20px;
@@ -35,12 +34,13 @@
     margin: 6px;
 }
 
-#details-api-data .k {
+#details-data .k {
     align-self: center;
 }
 
-#details-api-data .v {
+#details-data .v {
     text-align: right;
+    justify-self: right;
 }
 
 .details-shareM {
