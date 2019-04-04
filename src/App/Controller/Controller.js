@@ -42,9 +42,9 @@ export class Controller {
             method = method.bind(this)
             this.network[func] = method
         }
-
-        this.view = new View(this.actions)
         this.model = new Model(constants)
+        this.view = new View(this.actions)
+
         this.storage = new Storage(this.model)
         this.timer = null
 
@@ -66,15 +66,17 @@ export class Controller {
 
             this.network.loop()
 
+            this.actions.getNotifPermission()
+
             window.addEventListener("focus", () => {
                 this.network.loop()
                 console.warn("starting sync loop")
             })
-
+            /*
             window.addEventListener("blur", () => {
                 clearTimeout(this.timer)
                 console.warn("exiting sync loop")
-            })
+            })*/
         } catch (error) {
             console.error(error)
         }

@@ -30,6 +30,8 @@ export class SettingsModel {
 
         this.constants = constants
 
+        window.EE.respond("settings", () => this.settingsJSON)
+
         Object.preventExtensions(this)
     }
 

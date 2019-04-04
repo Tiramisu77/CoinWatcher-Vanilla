@@ -1,14 +1,24 @@
 import { PortfolioModel } from "./PortfolioModel.js"
 import { SettingsModel } from "./SettingsModel.js"
 import { SupportedCoins } from "./SupportedCoins.js"
+import { NotificationsModel } from "./NotificationsModel.js"
+
 export class Model {
     constructor(constants) {
         this.versusCurrencies = []
         this._settings = new SettingsModel(constants)
         this._portfolioModel = new PortfolioModel(this.settings)
         this.SupportedCoins = new SupportedCoins()
-
+        this.NotificationsModel = new NotificationsModel()
         Object.preventExtensions(this)
+
+        window.EE.respond(
+            "supportedVersusCurrencies",
+            function() {
+                return this.versusCurrencies
+            },
+            this
+        )
     }
 
     get settings() {

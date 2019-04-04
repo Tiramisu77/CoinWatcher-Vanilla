@@ -55,7 +55,6 @@ body {
 .page-container {
     display: grid;
 
-    justify-content: center;
     align-content: center;
 }
 
@@ -63,6 +62,16 @@ body {
     .page-container {
         height: 100%;
     }
+}
+
+.btn {
+    padding: 3px 6px 3px 6px;
+    margin: 8px 4px 2px 4px;
+    background: linear-gradient(cyan, #9fa2c3);
+    color: black;
+    text-align: center;
+
+    border-radius: 2.5px;
 }
 
 #main {

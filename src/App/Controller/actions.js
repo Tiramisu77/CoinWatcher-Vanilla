@@ -86,6 +86,19 @@ const changeSettings = function(msg, val) {
     this.storage.saveSettings()
 }
 
+const getNotifPermission = function() {
+    if (!("Notification" in window)) {
+        return
+    }
+    if (Notification.permission !== "denied") {
+        Notification.requestPermission()
+    }
+}
+
+const testNotif = function() {
+    new Notification("test")
+}
+
 //we can't use bind here so we have to curry
 const sortCurry = function(order) {
     return function() {
@@ -104,4 +117,11 @@ const sortActions = {
     sortByMcapDsc: sortCurry("mcapDsc"),
 }
 
-export const actions = { ...portfolioActions, ...itemActions, ...sortActions, changeSettings }
+export const actions = {
+    ...portfolioActions,
+    ...itemActions,
+    ...sortActions,
+    changeSettings,
+    getNotifPermission,
+    testNotif,
+}

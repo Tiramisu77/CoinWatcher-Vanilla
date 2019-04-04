@@ -17,7 +17,7 @@ module.exports = {
 
             { from: "./public/manifest.json", to: "" },
         ]),
-        new GenerateSW({
+        /*  new GenerateSW({
             importWorkboxFrom: "local",
             skipWaiting: true,
 
@@ -49,7 +49,7 @@ module.exports = {
                     },
                 },
             ],
-        }),
+        }),*/
     ],
     mode: "development",
     output: {

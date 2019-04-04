@@ -10,6 +10,7 @@ export class PortfolioModel {
         window.EE.on("changeItemAmount", this.changeItemAmount, this)
         window.EE.on("newMarketData", this.updateItem, this)
         window.EE.respond("itemStrings", this.getItemStrings, this)
+        window.EE.respond("itemApiData", this.getItemApiData, this)
         window.EE.respond("printableCoinApiData", this.getPrintableCoinApiData, this)
         window.EE.on("updatePortfolio", this.updatePortfolio, this)
         window.EE.respond("totalValue", this.getnumericalTotalValue, this)
@@ -18,6 +19,10 @@ export class PortfolioModel {
         })
 
         Object.preventExtensions(this)
+    }
+
+    getItemApiData(id) {
+        return this.items[id].apiData
     }
 
     getItemStrings(id) {
