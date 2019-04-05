@@ -90,7 +90,7 @@ const getNotifPermission = function() {
     if (!("Notification" in window)) {
         return
     }
-    if (Notification.permission !== "denied") {
+    if (Notification.permission === "denied") {
         Notification.requestPermission()
     }
 }

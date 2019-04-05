@@ -66,7 +66,7 @@ export class Controller {
 
             this.network.loop()
 
-            this.actions.getNotifPermission()
+            //this.actions.getNotifPermission()
 
             window.addEventListener("focus", () => {
                 this.network.loop()

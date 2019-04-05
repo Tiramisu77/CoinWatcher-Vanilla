@@ -14,13 +14,13 @@ export class AddCoinWindow {
           <div class="input-container" >
           <label for="add-symbol"> Coin:</label>
           <div style="position:relative">
-          <input class="add-inp" type="text" name="symbol" id="add-symbol" minlength=1 autocomplete="off" maxlength=8 />
+          <input class="add-inp inp" type="text" name="symbol" id="add-symbol" minlength=1 autocomplete="off" maxlength=8 />
 
           </div>
           </div>
 
           <div class="input-container" >
-          <label for="add-amount"> Amount:</label> <input class="add-inp" autocomplete="off" type="number" name="amount" id="add-amount"  size=16 />
+          <label for="add-amount"> Amount:</label> <input class="add-inp inp" autocomplete="off" type="number" name="amount" id="add-amount"  size=16 />
           </div>
           <div class="message" style="color:red; text-align:center;"> </div>
           <div class="confirm-add-container"> <div class="confirm-add btn"> ADD </div> </div>

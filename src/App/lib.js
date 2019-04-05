@@ -65,3 +65,28 @@ export class EventEmitter {
         }
     }
 }
+
+const createId = function() {
+    return (
+        "_" +
+        Math.random()
+            .toString(36)
+            .substr(2, 9)
+    )
+}
+
+const wipeChildren = function(node) {
+    while (node.firstChild) {
+        node.removeChild(node.firstChild)
+    }
+}
+
+const lib = {
+    EventEmitter,
+    tryCatchWrapper,
+    decorate,
+    createId,
+    wipeChildren,
+}
+
+window.lib = lib

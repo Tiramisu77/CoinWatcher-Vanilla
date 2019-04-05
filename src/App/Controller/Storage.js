@@ -8,12 +8,16 @@ export class Storage {
                 this.savePortfolio()
             }
         })
+
+        window.EE.on("saveNotifications", this.saveNotifications, this)
     }
 
     onLaunch() {
         this.loadSettings()
 
         this.loadPortfolio()
+
+        this.loadNotifications()
     }
 
     testPermissions() {
@@ -28,6 +32,10 @@ export class Storage {
             console.error(error)
             alert("this webapp is based on window.localStorage API, please enable cookies and storage")
         }
+    }
+
+    saveNotifications(notificationsJSON) {
+        localStorage.setItem("notifications", JSON.stringify(notificationsJSON))
     }
 
     loadPortfolio() {
@@ -65,6 +73,11 @@ export class Storage {
         } catch (error) {
             console.error(error)
         }
+    }
+
+    loadNotifications() {
+        let notifications = JSON.parse(localStorage.getItem("notifications") || "{}")
+        window.EE.emit("initNotifications", notifications)
     }
 
     saveTotalValSnapshot(snapshot) {

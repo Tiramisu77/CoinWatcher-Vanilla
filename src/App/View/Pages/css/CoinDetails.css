@@ -23,10 +23,27 @@
     grid-row-gap: 7px;
 }
 
+.price-alert {
+    display: grid;
+    grid-template-columns:
+        minmax(min-content, max-content) minmax(min-content, max-content) minmax(min-content, max-content)
+        auto;
+    grid-column-gap: 6px;
+}
+.price-alert > input {
+    width: 80px;
+}
 .add-alert-modal .btn {
     width: 60px;
 }
-
+.coin-details-alerts {
+    display: grid;
+    grid-template-columns: auto;
+    grid-column-gap: 10px;
+    grid-row-gap: 7px;
+    margin: 6px;
+    justify-content: center;
+}
 .coin-logo-big {
     display: none;
     width: 3rem;
@@ -34,20 +51,16 @@
     vertical-align: middle;
     margin: 0 auto;
 }
-
 .remove-btn {
     width: 90px;
 }
-
 #add-amount-details {
     width: 140px;
 }
-
 .details-data-container {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
 }
-
 #details-data,
 .market-data-details {
     display: grid;
@@ -56,16 +69,13 @@
     grid-row-gap: 7px;
     margin: 6px;
 }
-
 .k {
     align-self: center;
 }
-
 .v {
     text-align: right;
     justify-self: right;
 }
-
 .details-shareM {
     align-self: center;
 }

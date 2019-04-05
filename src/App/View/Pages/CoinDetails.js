@@ -2,8 +2,8 @@ import { utils } from "../utils.js"
 import "./css/CoinDetails.css"
 
 class AddAlert {
-    constructor(closeModal) {
-        this.node = this.node = utils.createComponent(`
+    constructor(closeModal, rerenderAlerts) {
+        this.node = utils.createComponent(`
       <div class="add-alert-modal">
 
       <div>
@@ -19,11 +19,11 @@ class AddAlert {
 
 
       <label for="target-alert-inp" class="type-price"> Price:</label>
-      <input class="type-price" autocomplete="off" type="number" name="amount" id="target-alert-inp"  size=16></input>
+      <input class="type-price inp" autocomplete="off" type="number" name="amount" id="target-alert-inp"  size=16></input>
 
 
       <label class="type-perc" for="perc-alert-inp"> Percentage change:</label>
-      <input class="type-perc" autocomplete="off" type="number" name="amount" id="perc-alert-inp"  size=16></input>
+      <input class="type-perc inp" autocomplete="off" type="number" name="amount" id="perc-alert-inp"  size=16></input>
 
       <div class="type-perc">Period: </div>
 
@@ -77,9 +77,10 @@ class AddAlert {
                 data.period = this.changePeriod.value
             }
 
-            data.id = this.id
+            data.coinId = this.id
             data.currency = this.currencySelect.value
             window.EE.emit("addNotification", data)
+            rerenderAlerts(this.id)
             closeModal()
         })
 
@@ -92,6 +93,7 @@ class AddAlert {
         this.renderCurrencySelects()
         this.alertType.dispatchEvent(new Event("change"))
         this.id = id
+        //todo render current price in price input
     }
 
     renderCurrencySelects() {
@@ -116,6 +118,96 @@ class AddAlert {
         elem.value = option
         elem.textContent = option
         return elem
+    }
+}
+
+class Alerts {
+    constructor(parent, modalContainer) {
+        this.node = utils.createComponent(
+            `
+      <div class="coin-details-alerts">
+
+        <div style="justify-self:center">Price Alerts</div>
+        <div class="alert-container">
+        <div class="price-alerts-container"> </div>
+
+        <div> </div>
+        </div>
+        <div class="errormsg" style="color:red; justify-self:center"> </div>
+         <div class="add-alert btn" style="justify-self:center; width:80px">add alert</div>
+      </div>`,
+            parent
+        )
+
+        this.modalContainer = modalContainer
+        this.coinId = null
+        this.errorMsg = this.node.querySelector(".errormsg")
+
+        this.addAlert = new AddAlert(() => {
+            this.modalContainer.innerHTML = ""
+            this.modalContainer.style.display = "none"
+        }, this.render.bind(this))
+
+        this.percAlertTemplate = ``
+
+        this.priceAlertTemplate = `
+        <div class="price-alert">
+        <div>Price:</div>
+        <input class="inp" autocomplete="off" type="number" name="amount"  size=16></input>
+        <div class="currency"> </div>
+        <div class="remove-X">X</div>
+
+        </div>`
+        this.priceAlertsContainer = this.node.querySelector(".price-alerts-container")
+
+        this.node.querySelector(".add-alert").addEventListener("click", () => {
+            if (!("Notification" in window)) {
+                this.errorMsg.textContent = "Notifications are not supported in your browser"
+                return
+            }
+            if (Notification.permission !== "granted") {
+                Notification.requestPermission()
+                this.errorMsg.textContent = "Please enable notifications"
+                return
+            }
+            this.errorMsg.textContent = ""
+
+            this.modalContainer.innerHTML = ""
+            this.modalContainer.appendChild(this.addAlert.node)
+            this.modalContainer.style.display = "block"
+            this.addAlert.render(this.coinId)
+        })
+    }
+
+    render(coinId) {
+        this.modalContainer.style.display = "none"
+        this.coinId = coinId
+        window.lib.wipeChildren(this.priceAlertsContainer)
+        //window.lib.wipeChildren(this.priceAlertsContainer)
+        let alerts = window.EE.request("allAlerts", coinId)
+        alerts.forEach(alert => {
+            if (alert.type === "price") {
+                this.renderPriceAlert(alert)
+            }
+            if (alert.type === "perc") {
+                this.renderPercAlert(alert)
+            }
+        })
+    }
+
+    renderPercAlert(percAlert) {}
+
+    renderPriceAlert(priceAlert) {
+        let elem = utils.createComponent(this.priceAlertTemplate)
+        elem.querySelector(".currency").textContent = priceAlert.currency
+        elem.querySelector("input").value = priceAlert.target
+        elem.querySelector(".remove-X").addEventListener("click", () => {
+            window.EE.emit("removeNotification", priceAlert)
+            this.priceAlertsContainer.removeChild(elem)
+        })
+        elem.dataset.coinId = priceAlert.coinId
+        elem.dataset.notifId = priceAlert.notifId
+        this.priceAlertsContainer.appendChild(elem)
     }
 }
 
@@ -150,7 +242,7 @@ export class CoinDetails {
               <div class="full-name v"></div>
 
               <label for="add-amount-details"> Amount:</label>
-              <input class="add-inp v" autocomplete="off" type="number" name="amount" id="add-amount-details"  size=16></input>
+              <input class="add-inp v inp" autocomplete="off" type="number" name="amount" id="add-amount-details"  size=16></input>
 
 
 
@@ -158,7 +250,7 @@ export class CoinDetails {
 
               <div class="k">Value:</div> <div ><div class="details-valueM v"> </div> <div class="details-valueS v"> </div></div>
 
-              <div class="k">Share:</div> <div class="details-shareM v"> </div>
+              <div class="k">Portfolio share:</div> <div class="details-shareM v"> </div>
 
 
 
@@ -166,11 +258,8 @@ export class CoinDetails {
 
           </div>
 
-              <div class="coin-details-alerts">
+              <div class="coin-details-alerts-container">
 
-                <div>Price Alerts</div>
-                <div class="alert-container"> </div>
-                 <div class="add-alert btn">add alert</div>
               </div>
 
 
@@ -189,7 +278,6 @@ export class CoinDetails {
         this.icon = this.node.querySelector(".coin-logo-big")
         this.removeButton = this.node.querySelector(".remove-btn")
         this.message = this.node.querySelector(".message")
-        this.addAlertBtn = this.node.querySelector(".add-alert")
 
         this.priceM = this.node.querySelector(".details-priceM")
         this.valueM = this.node.querySelector(".details-valueM")
@@ -202,22 +290,14 @@ export class CoinDetails {
         this.athS = this.node.querySelector(".details-athS")
         this.mcapS = this.node.querySelector(".details-mcapS")
 
-        this.modalContainer = this.node.querySelector(".modal-container")
-        this.addAlert = new AddAlert(() => {
-            this.modalContainer.innerHTML = ""
-            this.modalContainer.style.display = "none"
-        })
+        this.Alerts = new Alerts(
+            this.node.querySelector(".coin-details-alerts-container"),
+            this.node.querySelector(".modal-container")
+        )
 
         //component state
         this.currentItem = null
         this.states = {}
-
-        this.addAlertBtn.addEventListener("click", () => {
-            this.modalContainer.innerHTML = ""
-            this.modalContainer.appendChild(this.addAlert.node)
-            this.modalContainer.style.display = "block"
-            this.addAlert.render(this.currentItem)
-        })
 
         const COUNTDOWN_SECONDS = 3
 
@@ -284,6 +364,7 @@ export class CoinDetails {
 
             this.renderIcon(itemStrings.icon)
             this.renderCoinDetailsApiData(printableCoinApiData, itemStrings)
+            this.Alerts.render(this.currentItem)
 
             router("/CoinDetails")
         }.bind(this)
