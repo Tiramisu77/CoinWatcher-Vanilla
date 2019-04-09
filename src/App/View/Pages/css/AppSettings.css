@@ -1,6 +1,6 @@
 #AppSettings {
     display: grid;
-
+    background-color: var(---secondary-color);
     justify-content: center;
 }
 

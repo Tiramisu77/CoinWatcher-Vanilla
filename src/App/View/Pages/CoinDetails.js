@@ -1,5 +1,6 @@
 import { utils } from "../utils.js"
 import "./css/CoinDetails.css"
+import { bell, trashcan } from "./icons.js"
 
 class AddAlert {
     constructor(closeModal, rerenderAlerts) {
@@ -10,9 +11,10 @@ class AddAlert {
       Alert type:
       </div>
 
+
       <select class="alert-type">
-      <option value="price"> Price Target</option>
-      <option value="perc"> Percentage Change</option>
+      <option value="price"> Price</option>
+      <option value="perc"> Percentage</option>
       </select>
 
 
@@ -87,13 +89,28 @@ class AddAlert {
         this.cancel.addEventListener("click", () => {
             closeModal()
         })
+
+        this.currencySelect.addEventListener("change", () => {
+            this.renderPriceInput(this.currencySelect.value)
+        })
     }
 
     render(id) {
         this.renderCurrencySelects()
         this.alertType.dispatchEvent(new Event("change"))
         this.id = id
+        this.renderPriceInput()
         //todo render current price in price input
+    }
+
+    renderPriceInput(currency) {
+        let marketData = window.EE.request("itemApiData", this.id)
+
+        if (!currency) {
+            currency = window.EE.request("settings").currentCurrencies.main
+        }
+
+        this.priceInput.value = marketData.market_data.current_price[currency.toLowerCase()]
     }
 
     renderCurrencySelects() {
@@ -127,7 +144,7 @@ class Alerts {
             `
       <div class="coin-details-alerts">
 
-        <div style="justify-self:center">Price Alerts</div>
+        <div class="alert-title">Alerts ${bell}</div>
         <div class="alert-container">
         <div class="price-alerts-container"> </div>
 
@@ -174,7 +191,7 @@ class Alerts {
 
             this.modalContainer.innerHTML = ""
             this.modalContainer.appendChild(this.addAlert.node)
-            this.modalContainer.style.display = "block"
+            this.modalContainer.style.display = "grid"
             this.addAlert.render(this.coinId)
         })
     }
@@ -222,9 +239,43 @@ export class CoinDetails {
 
           <div id="coin-details" >
 
-            <div><img class="coin-logo-big"></div>
+
+
 
             <div class="details-data-container">
+
+            <div>
+
+            <div class="top-icons">
+              <div> </div>
+             <div><img class="coin-logo-big"></div>
+            <div class="remove-btn-icon"> ${trashcan}</div>
+            </div>
+
+            <div id="details-data" >
+
+            <div>Coin:</div>
+            <div class="full-name v"></div>
+
+            <label for="add-amount-details"> Amount:</label>
+            <input class="add-inp v inp" autocomplete="off" type="number" name="amount" id="add-amount-details"  size=16></input>
+
+
+
+
+
+            <div class="k">Value:</div> <div ><div class="details-valueM v"> </div> <div class="details-valueS v"> </div></div>
+
+            <div class="k">Portfolio share:</div> <div class="details-shareM v"> </div>
+
+
+
+
+
+            </div>
+
+            </div>
+
 
               <div class="market-data-details">
 
@@ -236,27 +287,7 @@ export class CoinDetails {
 
               </div>
 
-              <div id="details-data" >
 
-              <div>Coin:</div>
-              <div class="full-name v"></div>
-
-              <label for="add-amount-details"> Amount:</label>
-              <input class="add-inp v inp" autocomplete="off" type="number" name="amount" id="add-amount-details"  size=16></input>
-
-
-
-
-
-              <div class="k">Value:</div> <div ><div class="details-valueM v"> </div> <div class="details-valueS v"> </div></div>
-
-              <div class="k">Portfolio share:</div> <div class="details-shareM v"> </div>
-
-
-
-
-
-          </div>
 
               <div class="coin-details-alerts-container">
 
@@ -267,7 +298,6 @@ export class CoinDetails {
 
 
             <div class="message" style="color:red; text-align:center;"> </div>
-            <div class="remove-container" style="display:flex;justify-content:center;"> <div class="remove-btn btn">remove</div> </div>
 
           </div>
           </div>
@@ -276,7 +306,8 @@ export class CoinDetails {
         this.name = this.node.querySelector(".full-name")
         this.amountField = this.node.querySelector("input[name=amount]")
         this.icon = this.node.querySelector(".coin-logo-big")
-        this.removeButton = this.node.querySelector(".remove-btn")
+
+        this.remove = this.node.querySelector(".remove-btn-icon")
         this.message = this.node.querySelector(".message")
 
         this.priceM = this.node.querySelector(".details-priceM")
@@ -297,36 +328,10 @@ export class CoinDetails {
 
         //component state
         this.currentItem = null
-        this.states = {}
 
-        const COUNTDOWN_SECONDS = 3
-
-        const countdown = (name, i = COUNTDOWN_SECONDS) => {
-            if (i > 0) {
-                if (this.currentItem === name) this.removeButton.textContent = `undo (${i})`
-                this.states[name].countdownID = setTimeout(countdown, 1000, name, i - 1)
-                this.states[name].countdownTick = i
-            } else {
-                // todo components need to have mount/dismount hooks
-                //hack
-                if (this.currentItem === name && /CoinDetails/.test(window.location.pathname)) {
-                    router("")
-                }
-                removeItem(name)
-                delete this.states[name]
-            }
-        }
-
-        this.removeButton.addEventListener("click", () => {
-            if (this.states[this.currentItem].removeButtonState === "remove") {
-                countdown(this.currentItem)
-                this.states[this.currentItem].removeButtonState = "undo"
-            } else {
-                clearTimeout(this.states[this.currentItem].countdownID)
-                this.removeButton.textContent = "remove"
-                this.states[this.currentItem].removeButtonState = "remove"
-                this.states[this.currentItem].countdownTick = null
-            }
+        this.remove.addEventListener("click", () => {
+            removeItem(this.currentItem)
+            router("")
         })
 
         this.amountField.addEventListener("change", () => {
@@ -341,22 +346,6 @@ export class CoinDetails {
         })
 
         this.render = function(itemStrings, printableCoinApiData) {
-            if (this.states[itemStrings.id] === undefined) {
-                this.states[itemStrings.id] = {
-                    countdownID: null,
-                    removeButtonState: "remove",
-                    countdownTick: null,
-                }
-                this.removeButton.textContent = "remove"
-            } else {
-                if (this.states[itemStrings.id].removeButtonState === "remove") {
-                    this.removeButton.textContent = "remove"
-                } else {
-                    this.removeButton.textContent =
-                        this.states[itemStrings.id].removeButtonState + `(${this.states[itemStrings.id].countdownTick})`
-                }
-            }
-
             this.currentItem = itemStrings.id
 
             this.amountField.value = itemStrings.amount

@@ -13,7 +13,10 @@
     grid-row: 1;
     z-index: 999;
     display: none;
-    background-color: var(---secondary-color);
+
+    justify-content: center;
+    align-content: center;
+    background-color: #092525a8;
 }
 
 .add-alert-modal {
@@ -21,6 +24,28 @@
     grid-template-columns: 75px 75px;
     grid-column-gap: 10px;
     grid-row-gap: 7px;
+    background-color: var(---secondary-color);
+    padding: 20px 32px;
+}
+
+.alert-title {
+    justify-self: center;
+    display: flex;
+    align-items: center;
+}
+
+.alert-bell {
+    height: 28px;
+}
+
+.trashcan {
+    height: 24px;
+    width: 24px;
+}
+
+.top-icons {
+    display: grid;
+    grid-template-columns: 24px 1fr 24px;
 }
 
 .price-alert {
@@ -57,10 +82,34 @@
 #add-amount-details {
     width: 140px;
 }
+
 .details-data-container {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: 1fr 1fr 1fr;
 }
+
+@media (min-width: 700px) {
+    .details-data-container {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        grid-template-rows: 1fr;
+    }
+    #details-data {
+        grid-column: 2;
+        grid-row: 1;
+    }
+    .market-data-details {
+        grid-column: 1;
+        grid-row: 1;
+        margin-top: 3rem !important;
+    }
+    .coin-details-alerts-container {
+        grid-column: 3;
+        grid-row: 1;
+        margin-top: 3rem;
+    }
+}
+
 #details-data,
 .market-data-details {
     display: grid;

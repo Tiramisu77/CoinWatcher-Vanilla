@@ -3,6 +3,7 @@
     padding: 6px;
     word-break: break-word;
     overflow: auto;
+    background-color: var(---secondary-color);
 }
 
 #about a {
