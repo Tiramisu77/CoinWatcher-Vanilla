@@ -6,6 +6,7 @@
     background-color: var(---secondary-color);
     grid-column: 1;
     grid-row: 1;
+    padding: 10px 5px;
 }
 
 .modal-container {
@@ -27,7 +28,9 @@
     background-color: var(---secondary-color);
     padding: 20px 32px;
 }
-
+.add-alert-modal > input {
+    width: 75px;
+}
 .alert-title {
     justify-self: center;
     display: flex;
@@ -35,7 +38,7 @@
 }
 
 .alert-bell {
-    height: 28px;
+    height: 20px;
 }
 
 .trashcan {
@@ -48,15 +51,27 @@
     grid-template-columns: 24px 1fr 24px;
 }
 
+.perc-alert {
+    display: grid;
+    grid-template-columns:
+        minmax(min-content, max-content) minmax(min-content, max-content) minmax(min-content, max-content) 50px
+        minmax(min-content, max-content) auto;
+    margin: 6px;
+    grid-column-gap: 2px;
+}
 .price-alert {
     display: grid;
     grid-template-columns:
         minmax(min-content, max-content) minmax(min-content, max-content) minmax(min-content, max-content)
         auto;
-    grid-column-gap: 6px;
+    grid-column-gap: 2px;
+    margin: 6px;
+}
+.perc-alert > input {
+    width: 40px;
 }
 .price-alert > input {
-    width: 80px;
+    width: 127px;
 }
 .add-alert-modal .btn {
     width: 60px;
@@ -65,7 +80,7 @@
     display: grid;
     grid-template-columns: auto;
     grid-column-gap: 10px;
-    grid-row-gap: 7px;
+    grid-row-gap: 5px;
     margin: 6px;
     justify-content: center;
 }
@@ -82,32 +97,9 @@
 #add-amount-details {
     width: 140px;
 }
-
 .details-data-container {
     display: grid;
-    grid-template-rows: 1fr 1fr 1fr;
-}
-
-@media (min-width: 700px) {
-    .details-data-container {
-        display: grid;
-        grid-template-columns: 1fr 1fr 1fr;
-        grid-template-rows: 1fr;
-    }
-    #details-data {
-        grid-column: 2;
-        grid-row: 1;
-    }
-    .market-data-details {
-        grid-column: 1;
-        grid-row: 1;
-        margin-top: 3rem !important;
-    }
-    .coin-details-alerts-container {
-        grid-column: 3;
-        grid-row: 1;
-        margin-top: 3rem;
-    }
+    grid-template-rows: auto auto auto;
 }
 
 #details-data,
@@ -115,7 +107,7 @@
     display: grid;
     grid-template-columns: auto auto;
     grid-column-gap: 10px;
-    grid-row-gap: 7px;
+    grid-row-gap: 4px;
     margin: 6px;
 }
 .k {
@@ -124,6 +116,7 @@
 .v {
     text-align: right;
     justify-self: right;
+    align-self: center;
 }
 .details-shareM {
     align-self: center;

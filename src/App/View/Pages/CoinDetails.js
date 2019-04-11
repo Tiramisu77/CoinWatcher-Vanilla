@@ -18,8 +18,6 @@ class AddAlert {
       </select>
 
 
-
-
       <label for="target-alert-inp" class="type-price"> Price:</label>
       <input class="type-price inp" autocomplete="off" type="number" name="amount" id="target-alert-inp"  size=16></input>
 
@@ -104,13 +102,13 @@ class AddAlert {
     }
 
     renderPriceInput(currency) {
-        let marketData = window.EE.request("itemApiData", this.id)
+        let marketData = window.EE.request("itemApiData", this.id).market_data
 
         if (!currency) {
             currency = window.EE.request("settings").currentCurrencies.main
         }
 
-        this.priceInput.value = marketData.market_data.current_price[currency.toLowerCase()]
+        this.priceInput.value = window.lib.toFixedCurrency(marketData.current_price[currency.toLowerCase()])
     }
 
     renderCurrencySelects() {
@@ -147,7 +145,7 @@ class Alerts {
         <div class="alert-title">Alerts ${bell}</div>
         <div class="alert-container">
         <div class="price-alerts-container"> </div>
-
+<div class="perc-alerts-container"> </div>
         <div> </div>
         </div>
         <div class="errormsg" style="color:red; justify-self:center"> </div>
@@ -165,14 +163,27 @@ class Alerts {
             this.modalContainer.style.display = "none"
         }, this.render.bind(this))
 
-        this.percAlertTemplate = ``
+        this.percAlertTemplate = `
+        <div class="perc-alert">
+        <div>Change:</div>
+        <input class="inp" autocomplete="off" type="number" name="percentage"  size=16></input>
+        <div>%</div>
+        <select class="period-select">
+        <option value="1h"> 1h</option>
+        <option value="24h"> 24h</option>
+        <option value="7d"> 7d</option>
+        </select>
+        <div class="currency"> </div>
+        <div class="remove-X clickable">×</div>
+        </div>`
+        this.percAlertContainer = this.node.querySelector(".perc-alerts-container")
 
         this.priceAlertTemplate = `
         <div class="price-alert">
         <div>Price:</div>
         <input class="inp" autocomplete="off" type="number" name="amount"  size=16></input>
         <div class="currency"> </div>
-        <div class="remove-X">X</div>
+        <div class="remove-X clickable">×</div>
 
         </div>`
         this.priceAlertsContainer = this.node.querySelector(".price-alerts-container")
@@ -197,10 +208,11 @@ class Alerts {
     }
 
     render(coinId) {
+        this.errorMsg.textContent = ""
         this.modalContainer.style.display = "none"
         this.coinId = coinId
         window.lib.wipeChildren(this.priceAlertsContainer)
-        //window.lib.wipeChildren(this.priceAlertsContainer)
+        window.lib.wipeChildren(this.percAlertContainer)
         let alerts = window.EE.request("allAlerts", coinId)
         alerts.forEach(alert => {
             if (alert.type === "price") {
@@ -212,12 +224,39 @@ class Alerts {
         })
     }
 
-    renderPercAlert(percAlert) {}
+    renderPercAlert(percAlert) {
+        let elem = utils.createComponent(this.percAlertTemplate)
+        elem.querySelector("input").value = percAlert.percChange
+        elem.querySelector("input").addEventListener("change", ev => {
+            percAlert.percChange = Number(ev.target.value)
+            percAlert.lastNotification = 0
+            window.EE.emit("updateNotification")
+        })
+
+        elem.querySelector("select").querySelector(`[value="${percAlert.period}"]`).selected = true
+        elem.querySelector("select").addEventListener("change", ev => {
+            percAlert.period = ev.target.value
+            percAlert.lastNotification = 0
+            window.EE.emit("updateNotification")
+        })
+        elem.querySelector(".remove-X").addEventListener("click", () => {
+            window.EE.emit("removeNotification", percAlert)
+            this.percAlertContainer.removeChild(elem)
+        })
+        elem.querySelector(".currency").textContent = percAlert.currency
+        elem.dataset.coinId = percAlert.coinId
+        elem.dataset.notifId = percAlert.notifId
+        this.percAlertContainer.appendChild(elem)
+    }
 
     renderPriceAlert(priceAlert) {
         let elem = utils.createComponent(this.priceAlertTemplate)
         elem.querySelector(".currency").textContent = priceAlert.currency
         elem.querySelector("input").value = priceAlert.target
+        elem.querySelector("input").addEventListener("change", ev => {
+            priceAlert.target = Number(ev.target.value)
+            window.EE.emit("updateNotification")
+        })
         elem.querySelector(".remove-X").addEventListener("click", () => {
             window.EE.emit("removeNotification", priceAlert)
             this.priceAlertsContainer.removeChild(elem)
@@ -276,17 +315,17 @@ export class CoinDetails {
 
             </div>
 
-
+              <div class="market-data-details-container">
               <div class="market-data-details">
 
-              <div class="k">Price:</div> <div ><div class="details-priceM v"> </div> <div class="details-priceS v"> </div></div>
+              <div class="k">Price:</div> <div class="v"><div class="details-priceM v"> </div> <div class="details-priceS v"> </div></div>
 
-              <div class="k">ATH:</div> <div ><div class="details-athM v"> </div> <div class="details-athS v"> </div> </div>
+              <div class="k">ATH:</div> <div class="v"><div class="details-athM v"> </div> <div class="details-athS v"> </div> </div>
 
-              <div class="k">Marketcap:</div> <div ><div class="details-mcapM v"> </div> <div class="details-mcapS v"> </div> </div>
+              <div class="k">Marketcap:</div> <div class="v"><div class="details-mcapM v"> </div> <div class="details-mcapS v"> </div> </div>
 
               </div>
-
+              </div>
 
 
               <div class="coin-details-alerts-container">

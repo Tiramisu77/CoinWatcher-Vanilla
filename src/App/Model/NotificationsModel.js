@@ -3,10 +3,11 @@ export class NotificationsModel {
         this.priceNotifs = {}
         this.percNotifs = {}
 
-        window.EE.on("newMarketData", this.checkNewMarketData, this)
+        window.EE.on("newMarketData", this.onNewMarketData, this)
         window.EE.on("addNotification", this.addNotification, this)
         window.EE.on("removeNotification", this.removeNotification, this)
         window.EE.on("initNotifications", this.initializeNotification, this)
+        window.EE.on("updateNotification", this.updateNotification, this)
         window.EE.respond("allAlerts", this.getAlerts, this)
     }
 
@@ -16,7 +17,7 @@ export class NotificationsModel {
             res = this.priceNotifs[coinId]
         }
         if (this.percNotifs[coinId]) {
-            res = res.concat(this.priceNotifs[coinId])
+            res = res.concat(this.percNotifs[coinId])
         }
         return res
     }
@@ -33,7 +34,7 @@ export class NotificationsModel {
             }
         }
         if (type === "perc") {
-            data.lastNotification = null
+            data.lastNotification = 0
             data.notifId = window.lib.createId()
             if (this.percNotifs[coinId]) {
                 this.percNotifs[coinId].push(data)
@@ -65,25 +66,64 @@ export class NotificationsModel {
         this.saveNotifications()
     }
 
-    checkNewMarketData(newMarketData) {
+    updateNotification() {
+        this.saveNotifications()
+    }
+
+    checkPriceNotifs(newMarketData) {
+        let id = newMarketData.id
+        this.priceNotifs[id].forEach(priceNotif => {
+            let currentPrice = newMarketData.market_data.current_price[priceNotif.currency.toLowerCase()]
+
+            if (this.checkPriceNotifConditions(priceNotif, currentPrice)) {
+                window.EE.emit("showNotification", {
+                    notification: priceNotif,
+                    data: {
+                        price: currentPrice,
+                        name: newMarketData.name,
+                    },
+                })
+                console.info(`Notification: ${id} ${currentPrice} ${priceNotif.target}`)
+                this.priceNotifs[id] = this.priceNotifs[id].filter(e => e !== priceNotif)
+                this.saveNotifications()
+            }
+        })
+    }
+
+    checkPercNotifs(newMarketData) {
+        let id = newMarketData.id
+        this.percNotifs[id].forEach(percNotif => {
+            let priceChange =
+                newMarketData.market_data[`price_change_percentage_${percNotif.period}_in_currency`][
+                    percNotif.currency.toLowerCase()
+                ]
+
+            let periodMs = window.lib.periodStrToMs(percNotif.period)
+            let canFire = Date.now() - percNotif.lastNotification > periodMs
+            if (canFire && Math.abs(priceChange) > parseFloat(percNotif.percChange)) {
+                window.EE.emit("showNotification", {
+                    notification: percNotif,
+                    data: {
+                        priceChange,
+                        name: newMarketData.name,
+                    },
+                })
+
+                percNotif.lastNotification = Date.now()
+                this.saveNotifications()
+            }
+        })
+    }
+
+    onNewMarketData(newMarketData) {
         let id = newMarketData.id
 
         if (this.priceNotifs[id]) {
-            this.priceNotifs[id].forEach(priceNotif => {
-                let currentPrice = newMarketData.market_data.current_price[priceNotif.currency.toLowerCase()]
-
-                if (this.checkPriceNotifConditions(priceNotif, currentPrice)) {
-                    new Notification(`${newMarketData.symbol} price reached: ${currentPrice}
-                      your target was: ${priceNotif.target}`)
-                    console.info(`Notification: ${id} ${currentPrice} ${priceNotif.target}`)
-                    this.priceNotifs[id] = this.priceNotifs[id].filter(e => e !== priceNotif)
-                    this.saveNotifications()
-                }
-            })
+            this.checkPriceNotifs(newMarketData)
         }
 
         if (this.percNotifs[id]) {
-            this.percNotifs[id].forEach(percNotif => {})
+            this.checkPercNotifs(newMarketData)
         }
     }
 

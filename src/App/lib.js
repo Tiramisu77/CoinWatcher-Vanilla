@@ -1,3 +1,5 @@
+import { numToFormattedString } from "./Model/helpers.js"
+
 export const decorate = function decorate(target, wrapper) {
     return function(...args) {
         return wrapper.call(this, target, args)
@@ -81,12 +83,33 @@ const wipeChildren = function(node) {
     }
 }
 
+const HOUR = 1000 * 60 * 60
+const DAY = 24 * HOUR
+const periodStrToMs = function(periodStr) {
+    if (periodStr[periodStr.length - 1] === "d") {
+        return parseInt(periodStr) * DAY
+    }
+    if (periodStr[periodStr.length - 1] === "h") {
+        return parseInt(periodStr) * HOUR
+    }
+}
+
+const toFixedCurrency = function(num) {
+    if (num > 100) return num.toFixed(0)
+    if (num > 10) return num.toFixed(2)
+    if (num > 1) return num.toFixed(4)
+    if (num < 1) return num.toFixed(8)
+}
+
 const lib = {
     EventEmitter,
     tryCatchWrapper,
     decorate,
     createId,
     wipeChildren,
+    periodStrToMs,
+    toFixedCurrency,
+    numToFormattedString,
 }
 
 window.lib = lib

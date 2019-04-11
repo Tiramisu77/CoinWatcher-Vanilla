@@ -14,6 +14,8 @@ import { About } from "./About.js"
 
 import { Root } from "./Router.js"
 
+import { NotificationsView } from "./NotificationsView.js"
+
 export class View {
     constructor(controllerActions) {
         this.node = document.getElementById("app")
@@ -55,6 +57,8 @@ export class View {
             },
             this.node
         )
+
+        this.NotificationsView = new NotificationsView()
     }
 
     router(path) {
