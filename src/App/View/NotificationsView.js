@@ -30,9 +30,12 @@ export class NotificationsView {
 
     renderPercNotification(percNotif, data) {
         let notification = new Notification(`Coin Watcher alert`, {
-            body: `${data.name} ${percNotif.period} change: ${window.lib.numToFormattedString(data.priceChange, {
-                type: "percentage",
-            })}`,
+            body: `${data.name} ${percNotif.period} change: ${
+                window.lib.numToFormattedString(data.priceChange, {
+                    type: "percentage",
+                    isChange: true,
+                }).str
+            }`,
             icon: data.priceChange < 0 ? "/images/red-delta.png" : "/images/green-delta.png",
         })
         notification.onclick = () => {

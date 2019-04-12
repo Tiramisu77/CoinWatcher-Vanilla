@@ -51,6 +51,9 @@
     grid-template-columns: 24px 1fr 24px;
 }
 
+.remove-X {
+    font-size: 26px;
+}
 .perc-alert {
     display: grid;
     grid-template-columns:
@@ -58,6 +61,7 @@
         minmax(min-content, max-content) auto;
     margin: 6px;
     grid-column-gap: 2px;
+    align-items: center;
 }
 .price-alert {
     display: grid;
@@ -66,6 +70,7 @@
         auto;
     grid-column-gap: 2px;
     margin: 6px;
+    align-items: center;
 }
 .perc-alert > input {
     width: 40px;

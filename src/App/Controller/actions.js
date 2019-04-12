@@ -6,8 +6,8 @@ const itemActions = {
 
     openDetails: function(id) {
         let itemStrings = window.EE.request("itemStrings", id)
-        let printableCoinApiData = window.EE.request("printableCoinApiData", id)
-        this.view.openDetails(itemStrings, printableCoinApiData)
+
+        this.view.openDetails(itemStrings)
     },
 }
 
@@ -35,6 +35,7 @@ const portfolioActions = {
         this.storage.savePortfolio()
         this.view.unmountItem(item)
         this.view.renderTotal(this.model.total)
+        window.EE.emit("removeAllNotifs", item)
     },
 
     switchPriceChangePeriod: function(priceChangePeriod) {

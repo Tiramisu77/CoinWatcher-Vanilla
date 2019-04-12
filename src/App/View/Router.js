@@ -11,12 +11,14 @@ export class Root {
         })
 
         this.routes = {
-            "/AddCoin": addCoinWindow.node,
-            "/CoinDetails": coinDetails.node,
-            "/Settings": appSettings.node,
-            "/About": about.node,
-            "/": main.node,
+            "/AddCoin": addCoinWindow,
+            "/CoinDetails": coinDetails,
+            "/Settings": appSettings,
+            "/About": about,
+            "/": main,
         }
+
+        this.currentRoute = null
 
         window.onpopstate = () => {
             const path = window.location.pathname
@@ -39,13 +41,17 @@ export class Root {
         if (window.location.protocol !== "file:") {
             window.history.pushState({}, path, window.location.origin + BASE_URL + path)
         }
+        if (this.currentRoute && this.currentRoute.onUnmount) {
+            this.currentRoute.onUnmount()
+        }
 
+        this.currentRoute = this.routes[path]
         this.render(this.routes[path])
     }
-    render(node) {
+    render(route) {
         while (this.node.firstChild) {
             this.node.removeChild(this.node.firstChild)
         }
-        this.node.appendChild(node)
+        this.node.appendChild(route.node)
     }
 }

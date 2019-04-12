@@ -8,7 +8,7 @@ export class AppSettings {
             <div class="page-container">
             <div id="AppSettings" >
             <div class="settings-item">
-              <span id="about-btn">About</span>
+              <span id="about-btn" class="clickable">About</span>
 
             </div>
             <div class="settings-item">

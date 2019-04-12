@@ -8,7 +8,7 @@ export class AddCoinWindow {
           <div class="page-container">
         <div  id="AddCoinWindow">
           <form id="add-coin-form">
-          <div style="display:flex;justify-content: space-between;margin-top:4px;"><span>Name:</span> <span class="full-name"></span>
+          <div style="display:flex;margin-top:4px;"><span style="margin-right:11px">Name:</span> <span class="full-name"></span>
           </div>
 
           <div class="input-container" >

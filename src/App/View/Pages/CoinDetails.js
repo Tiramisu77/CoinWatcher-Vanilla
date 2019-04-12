@@ -1,7 +1,7 @@
 import { utils } from "../utils.js"
 import "./css/CoinDetails.css"
 import { bell, trashcan } from "./icons.js"
-
+import { CurrencySelect } from "./CurrencySelect.js"
 class AddAlert {
     constructor(closeModal, rerenderAlerts) {
         this.node = utils.createComponent(`
@@ -38,8 +38,8 @@ class AddAlert {
       </div>
 
 
-      <select class="currency-select">
-      </select>
+      <div class="currency-select-container">
+      </div>
 
 
       <div class="btn cancel"> cancel </div> <div class="btn ok"> ok </div>
@@ -50,7 +50,8 @@ class AddAlert {
         this.priceInput = this.node.querySelector("input.type-price")
         this.changeInput = this.node.querySelector("input.type-perc")
         this.changePeriod = this.node.querySelector(".period-select")
-        this.currencySelect = this.node.querySelector(".currency-select")
+        this.currencySelect = new CurrencySelect()
+        this.node.querySelector(".currency-select-container").appendChild(this.currencySelect.node)
 
         this.cancel = this.node.querySelector(".cancel")
         this.ok = this.node.querySelector(".ok")
@@ -78,7 +79,7 @@ class AddAlert {
             }
 
             data.coinId = this.id
-            data.currency = this.currencySelect.value
+            data.currency = this.currencySelect.node.value
             window.EE.emit("addNotification", data)
             rerenderAlerts(this.id)
             closeModal()
@@ -88,8 +89,8 @@ class AddAlert {
             closeModal()
         })
 
-        this.currencySelect.addEventListener("change", () => {
-            this.renderPriceInput(this.currencySelect.value)
+        this.currencySelect.node.addEventListener("change", () => {
+            this.renderPriceInput(this.currencySelect.node.value)
         })
     }
 
@@ -98,7 +99,6 @@ class AddAlert {
         this.alertType.dispatchEvent(new Event("change"))
         this.id = id
         this.renderPriceInput()
-        //todo render current price in price input
     }
 
     renderPriceInput(currency) {
@@ -113,26 +113,9 @@ class AddAlert {
 
     renderCurrencySelects() {
         let supportedCurrencies = window.EE.request("supportedVersusCurrencies")
-        let currencySelects = this.node.querySelectorAll(".currency-select")
-        supportedCurrencies.forEach(currency => {
-            currencySelects.forEach(select => {
-                let elem = this.createOptionForCurrSelect(currency)
-                select.appendChild(elem)
-            })
-        })
-
         let currentCurrency = window.EE.request("settings").currentCurrencies.main
-
-        currencySelects.forEach(select => {
-            select.querySelector(`[value="${currentCurrency}"]`).selected = true
-        })
-    }
-
-    createOptionForCurrSelect(option) {
-        let elem = document.createElement("option")
-        elem.value = option
-        elem.textContent = option
-        return elem
+        this.currencySelect.render(supportedCurrencies)
+        this.currencySelect.selectCurrent(currentCurrency)
     }
 }
 
@@ -173,7 +156,7 @@ class Alerts {
         <option value="24h"> 24h</option>
         <option value="7d"> 7d</option>
         </select>
-        <div class="currency"> </div>
+        <div class="currency-container"> </div>
         <div class="remove-X clickable">×</div>
         </div>`
         this.percAlertContainer = this.node.querySelector(".perc-alerts-container")
@@ -182,7 +165,7 @@ class Alerts {
         <div class="price-alert">
         <div>Price:</div>
         <input class="inp" autocomplete="off" type="number" name="amount"  size=16></input>
-        <div class="currency"> </div>
+        <div class="currency-container"> </div>
         <div class="remove-X clickable">×</div>
 
         </div>`
@@ -196,6 +179,10 @@ class Alerts {
             if (Notification.permission !== "granted") {
                 Notification.requestPermission()
                 this.errorMsg.textContent = "Please enable notifications"
+                return
+            }
+            if (!("market_data" in window.EE.request("itemApiData", this.coinId))) {
+                this.errorMsg.textContent = "Alerts are not available for this coin"
                 return
             }
             this.errorMsg.textContent = ""
@@ -243,7 +230,16 @@ class Alerts {
             window.EE.emit("removeNotification", percAlert)
             this.percAlertContainer.removeChild(elem)
         })
-        elem.querySelector(".currency").textContent = percAlert.currency
+        let currencySelect = new CurrencySelect()
+        elem.querySelector(".currency-container").appendChild(currencySelect.node)
+        currencySelect.renderDefault()
+        currencySelect.selectCurrent(percAlert.currency)
+        currencySelect.node.addEventListener("change", () => {
+            percAlert.lastNotification = 0
+            percAlert.currency = currencySelect.node.value
+            window.EE.emit("updateNotification")
+        })
+
         elem.dataset.coinId = percAlert.coinId
         elem.dataset.notifId = percAlert.notifId
         this.percAlertContainer.appendChild(elem)
@@ -251,10 +247,23 @@ class Alerts {
 
     renderPriceAlert(priceAlert) {
         let elem = utils.createComponent(this.priceAlertTemplate)
-        elem.querySelector(".currency").textContent = priceAlert.currency
+
+        let currencySelect = new CurrencySelect()
+        elem.querySelector(".currency-container").appendChild(currencySelect.node)
+        currencySelect.renderDefault()
+        currencySelect.selectCurrent(priceAlert.currency)
+        currencySelect.node.addEventListener("change", () => {
+            priceAlert.currency = currencySelect.node.value
+            window.EE.emit("updateNotification")
+        })
+
         elem.querySelector("input").value = priceAlert.target
         elem.querySelector("input").addEventListener("change", ev => {
             priceAlert.target = Number(ev.target.value)
+            let marketData = window.EE.request("itemApiData", priceAlert.coinId).market_data
+            priceAlert.priceOnCreation = marketData.current_price[priceAlert.currency.toLowerCase()]
+            priceAlert.targetIsHigher = priceAlert.target > priceAlert.priceOnCreation
+
             window.EE.emit("updateNotification")
         })
         elem.querySelector(".remove-X").addEventListener("click", () => {
@@ -384,18 +393,27 @@ export class CoinDetails {
             }
         })
 
-        this.render = function(itemStrings, printableCoinApiData) {
+        this.render = function(itemStrings) {
+            router("/CoinDetails")
             this.currentItem = itemStrings.id
-
+            let printableCoinApiData = window.EE.request("printableCoinApiData", itemStrings.id)
             this.amountField.value = itemStrings.amount
             this.name.textContent = `${itemStrings.name} ${itemStrings.symbol}`
 
             this.renderIcon(itemStrings.icon)
             this.renderCoinDetailsApiData(printableCoinApiData, itemStrings)
             this.Alerts.render(this.currentItem)
-
-            router("/CoinDetails")
         }.bind(this)
+
+        window.EE.on(
+            "itemChange",
+            function(itemStrings) {
+                if (this.currentItem === itemStrings.id) {
+                    this.render(itemStrings)
+                }
+            },
+            this
+        )
     }
 
     renderIcon(icon) {
@@ -418,5 +436,9 @@ export class CoinDetails {
             this[key].textContent = printableCoinApiData[key]
         }
         this.shareM.textContent = share
+    }
+
+    onUnmount() {
+        this.currentItem = null
     }
 }

@@ -81,7 +81,6 @@ export class ItemModel {
         }
         mainCurrency = mainCurrency.toLowerCase()
         secondCurrency = secondCurrency.toLowerCase()
-        //todo make amount an argument
 
         let priceMain = this.getDataOrZero("current_price", mainCurrency)
         let netMain = priceMain * amount

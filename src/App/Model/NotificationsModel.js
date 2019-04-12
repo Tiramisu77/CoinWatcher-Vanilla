@@ -9,8 +9,13 @@ export class NotificationsModel {
         window.EE.on("initNotifications", this.initializeNotification, this)
         window.EE.on("updateNotification", this.updateNotification, this)
         window.EE.respond("allAlerts", this.getAlerts, this)
+        window.EE.on("removeAllNotifs", this.removeAllNotifs, this)
     }
-
+    removeAllNotifs(id) {
+        delete this.percNotifs[id]
+        delete this.priceNotifs[id]
+        this.saveNotifications()
+    }
     getAlerts(coinId) {
         let res = []
         if (this.priceNotifs[coinId]) {
@@ -83,7 +88,7 @@ export class NotificationsModel {
                         name: newMarketData.name,
                     },
                 })
-                console.info(`Notification: ${id} ${currentPrice} ${priceNotif.target}`)
+
                 this.priceNotifs[id] = this.priceNotifs[id].filter(e => e !== priceNotif)
                 this.saveNotifications()
             }
