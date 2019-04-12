@@ -26,7 +26,9 @@ export class NotificationsView {
                         currency: priceNotif.currency,
                         lang,
                     })}`,
-                    icon: priceNotif.targetIsHigher ? "/CoinWatcher/images/green-delta.png" : "/images/red-delta.png",
+                    icon: priceNotif.targetIsHigher
+                        ? "/CoinWatcher/images/green-delta.png"
+                        : "/CoinWatcher/images/red-delta.png",
                     requireInteraction: true,
                 })
             })
@@ -45,7 +47,10 @@ export class NotificationsView {
                             isChange: true,
                         }).str
                     }`,
-                    icon: data.priceChange < 0 ? "/CoinWatcher/images/red-delta.png" : "/images/green-delta.png",
+                    icon:
+                        data.priceChange < 0
+                            ? "/CoinWatcher/images/red-delta.png"
+                            : "/CoinWatcher/images/green-delta.png",
                     requireInteraction: true,
                 })
             })
