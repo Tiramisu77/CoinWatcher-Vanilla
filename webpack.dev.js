@@ -16,6 +16,7 @@ module.exports = {
             { from: "./public/index.html", to: "" },
             { from: "./public/push-notification.js", to: "" },
             { from: "./public/manifest.json", to: "" },
+            { from: "./public/timer-worker.js", to: "" },
         ]),
         new GenerateSW({
             importWorkboxFrom: "local",

@@ -46,8 +46,9 @@ export class Controller {
         this.view = new View(this.actions)
 
         this.storage = new Storage(this.model)
-        this.timer = null
 
+        this.timer = new Worker("./timer-worker.js")
+        this.timer.onmessage = this.network.loadPircesAndUpdate
         this.registerListeners()
     }
 

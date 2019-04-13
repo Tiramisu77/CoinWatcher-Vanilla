@@ -87,10 +87,10 @@ const getSupportedCoinsAndCurrencies = async function() {
 }
 
 const loop = async function() {
-    clearTimeout(this.timer)
+    this.timer.postMessage({ msg: "stop" })
     console.warn("syncing")
     let interval = this.model.settings.updateInterval
-    this.timer = setTimeout(this.network.loop, interval)
+
     if (
         typeof interval !== "number" ||
         isNaN(interval) ||
@@ -99,11 +99,12 @@ const loop = async function() {
     ) {
         throw new Error("bad interval")
     }
-    await loadPircesAndUpdate.call(this)
+    this.timer.postMessage({ msg: "start", interval })
 }
 
 export const network = {
     loop,
     loadPircesAndUpdateSingle,
     getSupportedCoinsAndCurrencies,
+    loadPircesAndUpdate,
 }

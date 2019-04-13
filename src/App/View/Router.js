@@ -23,7 +23,11 @@ export class Root {
         window.onpopstate = () => {
             const path = window.location.pathname
             const route = path.replace(new RegExp(BASE_URL), "")
+            if (this.currentRoute && this.currentRoute.onUnmount) {
+                this.currentRoute.onUnmount()
+            }
 
+            this.currentRoute = this.routes[route]
             this.render(this.routes[route])
         }
 
