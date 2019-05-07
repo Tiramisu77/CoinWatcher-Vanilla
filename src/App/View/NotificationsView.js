@@ -46,7 +46,10 @@ export class NotificationsView {
                             type: "percentage",
                             isChange: true,
                         }).str
-                    }`,
+                    } (${window.lib.numToFormattedString(data.currentPrice, {
+                        type: "currency",
+                        currency: percNotif.currency,
+                    })})`,
                     icon:
                         data.priceChange < 0
                             ? "/CoinWatcher/images/red-delta.png"

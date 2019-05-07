@@ -132,7 +132,7 @@ class Alerts {
         <div> </div>
         </div>
         <div class="errormsg" style="color:red; justify-self:center"> </div>
-         <div class="add-alert btn" style="justify-self:center; width:80px">add alert</div>
+         <div class="add-alert btn" style="justify-self:center; width:80px">new alert</div>
       </div>`,
             parent
         )

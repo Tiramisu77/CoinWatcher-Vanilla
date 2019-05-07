@@ -14,13 +14,13 @@ module.exports = {
         new CopyPlugin([
             { from: "./public/images", to: "images" },
             { from: "./public/index.html", to: "" },
-
+            { from: "./public/push-notification.js", to: "" },
             { from: "./public/manifest.json", to: "" },
         ]),
         new GenerateSW({
             importWorkboxFrom: "local",
             skipWaiting: true,
-
+            importScripts: ["./push-notification.js"],
             runtimeCaching: [
                 {
                     urlPattern: /https:\/\/api.coingecko.com\/api\/v3\/coins\/list|https:\/\/api.coingecko.com\/api\/v3\/simple\/supported_vs_currencies/,

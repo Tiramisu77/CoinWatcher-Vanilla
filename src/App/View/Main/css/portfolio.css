@@ -53,6 +53,11 @@
     margin: 6px 8px 6px 8px;
     white-space: nowrap;
 }
+
+.table-cell > div {
+    margin: 2px;
+}
+
 .ticker-container {
     flex-direction: row;
     align-items: center;

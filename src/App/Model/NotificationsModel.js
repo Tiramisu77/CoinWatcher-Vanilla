@@ -103,6 +103,8 @@ export class NotificationsModel {
                     percNotif.currency.toLowerCase()
                 ]
 
+            let currentPrice = newMarketData.market_data.current_price[percNotif.currency.toLowerCase()]
+
             let periodMs = window.lib.periodStrToMs(percNotif.period)
             let canFire = Date.now() - percNotif.lastNotification > periodMs
             if (canFire && Math.abs(priceChange) > parseFloat(percNotif.percChange)) {
@@ -110,6 +112,7 @@ export class NotificationsModel {
                     notification: percNotif,
                     data: {
                         priceChange,
+                        currentPrice,
                         name: newMarketData.name,
                     },
                 })
