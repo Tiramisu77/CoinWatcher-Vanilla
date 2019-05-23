@@ -16,7 +16,7 @@ workbox.setConfig({modulePathPrefix: "workbox-v4.1.1"});
 
 importScripts(
   "./push-notification.js",
-  "precache-manifest.e2eabb5ebf43f91bcbcfb938a6614947.js"
+  "precache-manifest.778935bd5e3cb93bc1c6e4320b1efd0a.js"
 );
 
 workbox.core.skipWaiting();
@@ -29,5 +29,5 @@ workbox.core.skipWaiting();
 self.__precacheManifest = [].concat(self.__precacheManifest || []);
 workbox.precaching.precacheAndRoute(self.__precacheManifest, {});
 
-workbox.routing.registerRoute(/https:\/\/api.coingecko.com\/api\/v3\/coins\/list|https:\/\/api.coingecko.com\/api\/v3\/simple\/supported_vs_currencies/, new workbox.strategies.CacheFirst({ "cacheName":"coinwatcher-coingecko-v3-lists", plugins: [new workbox.expiration.Plugin({ maxAgeSeconds: 518400, purgeOnQuotaError: false }), new workbox.cacheableResponse.Plugin({ statuses: [ 0, 200 ] })] }), 'GET');
+workbox.routing.registerRoute(/https:\/\/api.coingecko.com\/api\/v3\/coins\/list|https:\/\/api.coingecko.com\/api\/v3\/simple\/supported_vs_currencies/, new workbox.strategies.CacheFirst({ "cacheName":"coinwatcher-coingecko-v3-lists", plugins: [new workbox.expiration.Plugin({ maxAgeSeconds: 86400, purgeOnQuotaError: false }), new workbox.cacheableResponse.Plugin({ statuses: [ 0, 200 ] })] }), 'GET');
 workbox.routing.registerRoute(/(https:\/\/api.coingecko.com\/api\/v3\/coins\/)(?!list)/, new workbox.strategies.NetworkFirst({ "cacheName":"coinwatcher-coingecko-v3-coins", plugins: [new workbox.cacheableResponse.Plugin({ statuses: [ 0, 200 ] })] }), 'GET');
