@@ -29,7 +29,7 @@ module.exports = {
                         cacheName: "coinwatcher-coingecko-v3-lists",
 
                         expiration: {
-                            maxAgeSeconds: 60 * 60 * 24 * 6,
+                            maxAgeSeconds: 60 * 60 * 24,
                         },
 
                         cacheableResponse: {

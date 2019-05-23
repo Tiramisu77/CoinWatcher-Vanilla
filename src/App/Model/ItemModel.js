@@ -85,12 +85,12 @@ export class ItemModel {
         let priceMain = this.getDataOrZero("current_price", mainCurrency)
         let netMain = priceMain * amount
         let changeMainPerc = this.getDataOrZero(`price_change_percentage_${timePeriod}_in_currency`, mainCurrency)
-        let changeMainAbs = (changeMainPerc / 100) * netMain
+        let changeMainAbs = netMain - netMain / (1 + changeMainPerc / 100)
 
         let priceSecond = this.getDataOrZero("current_price", secondCurrency)
         let netSecond = priceSecond * amount
         let changeSecondPerc = this.getDataOrZero(`price_change_percentage_${timePeriod}_in_currency`, secondCurrency)
-        let changeSecondAbs = (changeSecondPerc / 100) * netSecond
+        let changeSecondAbs = netSecond - netSecond / (1 + changeSecondPerc / 100)
 
         let res = {
             amount,
