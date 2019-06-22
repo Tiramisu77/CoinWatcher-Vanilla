@@ -78,7 +78,7 @@ body {
     display: grid;
     grid-template-columns: 100%;
     grid-template-rows:
-        minmax(70px, max-content)
+        minmax(min-content, max-content)
         minmax(min-content, max-content)
         minmax(86px, max-content)
         minmax(min-content, 1fr);
@@ -99,9 +99,10 @@ body {
     grid-row: 1;
     display: flex;
     white-space: nowrap;
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
-    justify-content: flex-start;
+    justify-content: center;
+    flex-wrap: wrap;
 }
 
 @media (max-height: 415px) {

@@ -1,7 +1,7 @@
 import { utils } from "../utils.js"
 
 export class ItemView {
-    constructor(itemStrings, openDetails, orderIndex) {
+    constructor(itemStrings, openDetails, orderIndex, printableDataVsAll) {
         this.node = utils.createNode({
             tag: "div",
             cssClass: "table-row",
@@ -33,6 +33,10 @@ export class ItemView {
         this.node.style.order = orderIndex
         this.amount = this.node.querySelector(".amount")
         this.symbol = this.node.querySelector(".ticker")
+
+        this.itemPrices = this.node.querySelector(".item-prices")
+        this.itemNetValues = this.node.querySelector(".item-values")
+
         this.priceUSD = this.node.querySelector(".usd-price")
         this.priceBTC = this.node.querySelector(".btc-price")
         this.netUSD = this.node.querySelector(".netUSD")
@@ -48,7 +52,7 @@ export class ItemView {
         }
 
         const id = itemStrings.id
-        this.render(itemStrings)
+        this.render(itemStrings, printableDataVsAll)
 
         this.node.addEventListener(
             "click",
@@ -59,32 +63,44 @@ export class ItemView {
         )
     }
 
-    /*
-todo change btc and usd into main and second
-    */
-
-    renderPriceChanges(itemStrings) {
-        this.changeUSD.textContent = itemStrings.changeMainPerc.str
-        this.changeUSD.style.color = itemStrings.changeMainPerc.color
-        this.changeNetUsd.textContent = itemStrings.changeMainAbs.str
-        this.changeNetUsd.style.color = itemStrings.changeMainAbs.color
-        this.changeBTC.textContent = itemStrings.changeSecondPerc.str
-        this.changeBTC.style.color = itemStrings.changeSecondPerc.color
-        this.changeNetBTC.textContent = itemStrings.changeSecondAbs.str
-        this.changeNetBTC.style.color = itemStrings.changeSecondAbs.color
-    }
-
     render(itemStrings) {
-        if (itemStrings.icon) {
-            this.icon.src = itemStrings.icon
+        let printableDataVsAll = window.EE.request("printableDataVsAll", itemStrings.id)
+
+        if (printableDataVsAll.icon) {
+            this.icon.src = printableDataVsAll.icon
             this.icon.style.display = "block"
         }
-        this.amount.textContent = itemStrings.amount
-        this.symbol.textContent = itemStrings.symbol || itemStrings.id
-        this.priceUSD.textContent = itemStrings.priceMain
-        this.priceBTC.textContent = itemStrings.priceSecond
-        this.netUSD.textContent = itemStrings.netMain
-        this.netBTC.textContent = itemStrings.netSecond
-        this.renderPriceChanges(itemStrings)
+        this.amount.textContent = printableDataVsAll.amount
+        this.symbol.textContent = printableDataVsAll.symbol || printableDataVsAll.id
+
+        window.lib.wipeChildren(this.itemPrices)
+        window.lib.wipeChildren(this.itemNetValues)
+        printableDataVsAll.versusData.forEach(data => {
+            this.renderVersusData(data)
+        })
+    }
+
+    renderVersusData(data) {
+        let { price, changePerc, changeAbs, net } = data
+
+        let priceNode = document.createElement("div")
+        priceNode.textContent = price
+
+        let changePercNode = document.createElement("div")
+        changePercNode.textContent = changePerc.str
+        changePercNode.style.color = changePerc.color
+
+        let changeAbsNode = document.createElement("div")
+        changeAbsNode.textContent = changeAbs.str
+        changeAbsNode.style.color = changeAbs.color
+
+        let netNode = document.createElement("div")
+        netNode.textContent = net
+
+        this.itemPrices.appendChild(priceNode)
+        this.itemPrices.appendChild(changePercNode)
+
+        this.itemNetValues.appendChild(netNode)
+        this.itemNetValues.appendChild(changeAbsNode)
     }
 }

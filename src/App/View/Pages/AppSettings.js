@@ -1,6 +1,104 @@
 import { utils } from "../utils.js"
 import "./css/AppSettings.css"
 
+class VersusCurrItem {
+    constructor(name) {
+        this.node = utils.createComponent(`
+          <div>
+          <span class="versus-curr-name">${name}</span>
+          <span class="remove-versus-curr">x</span>
+          </div>`)
+        this.node.querySelector(".remove-versus-curr").addEventListener("click", () => {
+            let res = window.EE.request(
+                "removeVersusCurrency",
+                this.node.querySelector(".versus-curr-name").textContent
+            )
+            if (res) this.node.parentNode.removeChild(this.node)
+        })
+    }
+}
+
+class CustomSelect {
+    constructor(adder) {
+        this.node = utils.createComponent(`
+      <div class="custom-select">
+
+      </div>`)
+
+        this.node.style.display = "none"
+        document.addEventListener("click", e => {
+            if (e.data !== "dont_hide") this.node.style.display = "none"
+        })
+        this.node.addEventListener("click", e => {
+            adder(e.target.dataset.value)
+            window.EE.emit("addVersusCurrency", e.target.dataset.value)
+            this.node.style.display = "none"
+        })
+    }
+
+    addOptions() {
+        let list = window.EE.request("supportedVersusCurrencies")
+        let settings = window.EE.request("settings")
+        let alreadyAdded = new Set(settings.versusCurrencies)
+        for (let item of list) {
+            if (alreadyAdded.has(item) === false) {
+                this.add(item)
+            }
+        }
+    }
+
+    add(option) {
+        let e = document.createElement("div")
+        e.textContent = option
+        e.dataset.value = option
+        e.style.cursor = "default"
+        this.node.appendChild(e)
+    }
+
+    render() {
+        this.node.style.display = "block"
+        window.lib.wipeChildren(this.node)
+        this.addOptions()
+    }
+}
+
+class VersusCurrencyManager {
+    constructor() {
+        this.node = utils.createComponent(`
+      <div class="settings-item">
+        <span>Versus currencies: </span><span class="setting-item-padder"> </span>
+        <div id="versus-currencies" >
+        <div id="add-versus-currency" class="btn">
+        ADD
+        </div>
+
+        </div>
+      </div>`)
+        this.versusCurrencies = this.node.querySelector("#versus-currencies")
+        this.currencySelect = new CustomSelect(this.addVersusCurrency.bind(this))
+
+        this.node.querySelector("#add-versus-currency").addEventListener("click", e => {
+            this.currencySelect.render()
+            e.data = "dont_hide"
+        })
+        this.node.querySelector("#versus-currencies").appendChild(this.currencySelect.node)
+    }
+    addOptions(list, settings) {
+        this.currencySelect.addOptions(list, settings)
+    }
+
+    addVersusCurrency(currency) {
+        let versusCurrItem = new VersusCurrItem(currency)
+        this.versusCurrencies.appendChild(versusCurrItem.node)
+    }
+    render(settings) {
+        let { versusCurrencies } = settings
+        for (let currency of versusCurrencies) {
+            this.addVersusCurrency(currency)
+        }
+    }
+}
+
 export class AppSettings {
     constructor(changeSettings, aboutRoute) {
         this.node = utils.createComponent(
@@ -22,23 +120,9 @@ export class AppSettings {
 
 
 
-            <div class="settings-item">
-              <span>Primary currency: </span><span class="setting-item-padder"> </span>
-              <select id="prim-currency-select" >
 
 
-              </select>
-            </div>
-
-            <div class="settings-item">
-              <span>Secondary currency: </span><span class="setting-item-padder"> </span>
-              <select id="sec-currency-select" >
-
-
-              </select>
-            </div>
-
-            <div class="settings-item">
+            <div class="settings-item" id="color-scheme">
               <span>Color scheme: </span><span class="setting-item-padder"> </span>
               <select id="color-scheme-select" >
                 <option value="default">Default</option>
@@ -65,8 +149,11 @@ export class AppSettings {
 
         this.updateIntervalSelect = this.node.querySelector("#update-interval-select")
 
-        this.primaryCurrencySelect = this.node.querySelector("#prim-currency-select")
-        this.secondaryCurrencySelect = this.node.querySelector("#sec-currency-select")
+        this.versusCurrencies = new VersusCurrencyManager()
+
+        this.node
+            .querySelector("#AppSettings")
+            .insertBefore(this.versusCurrencies.node, this.node.querySelector("#color-scheme"))
 
         this.colorSchemeSelect = this.node.querySelector("#color-scheme-select")
         this.colorSchemePicker = this.node.querySelector(".color-scheme-picker")
@@ -83,14 +170,6 @@ export class AppSettings {
 
         this.updateIntervalSelect.addEventListener("change", () => {
             changeSettings("interval", this.updateIntervalSelect.value)
-        })
-
-        this.primaryCurrencySelect.addEventListener("change", () => {
-            changeSettings("currencyMain", this.primaryCurrencySelect.value)
-        })
-
-        this.secondaryCurrencySelect.addEventListener("change", () => {
-            changeSettings("currencySecond", this.secondaryCurrencySelect.value)
         })
 
         this.colorSchemeSelect.addEventListener("change", () => {
@@ -125,6 +204,8 @@ export class AppSettings {
                 `[value="${settings.updateInterval / (1000 * 60)} min"]`
             ).selected = true
 
+            this.versusCurrencies.render(settings)
+
             this.primaryColor.value = settings.colorScheme.custom["--main-color"]
             this.secondaryColor.value = settings.colorScheme.custom["---secondary-color"]
             this.textColor.value = settings.colorScheme.custom["--main-font-color"]
@@ -139,25 +220,7 @@ export class AppSettings {
         }
     }
 
-    createOptionForCurrSelect(option) {
-        let elem = document.createElement("option")
-        elem.value = option
-        elem.textContent = option
-        return elem
-    }
-
-    addCurrOptionToBoth(option) {
-        let elem = this.createOptionForCurrSelect(option)
-        let clone = this.createOptionForCurrSelect(option)
-        this.primaryCurrencySelect.appendChild(elem)
-        this.secondaryCurrencySelect.appendChild(clone)
-    }
-
     addAllCurrencyOptions(list, settings) {
-        for (let item of list) {
-            this.addCurrOptionToBoth(item)
-        }
-        this.primaryCurrencySelect.querySelector(`[value="${settings.currentCurrencies.main}"]`).selected = true
-        this.secondaryCurrencySelect.querySelector(`[value="${settings.currentCurrencies.second}"]`).selected = true
+        this.versusCurrencies.addOptions(list, settings)
     }
 }

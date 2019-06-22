@@ -48,11 +48,10 @@ export class ItemModel {
     }
 
     get netValue() {
-        let timeperiod = this.settings.priceChangePeriod
-        let mainCurrency = this.settings.currentCurrencies.main
-        let secondCurrency = this.settings.currentCurrencies.second
-        let { netMain } = this.getNumericalDataAgainstCurrencies(timeperiod, mainCurrency, secondCurrency) || 0
-        return netMain
+        let amount = this.amount
+        let price = this.getDataOrZero("current_price", "usd")
+        let net = price * amount
+        return net
     }
 
     getDataOrZero(prop, currency) {
@@ -73,35 +72,41 @@ export class ItemModel {
         )
     }
 
-    getNumericalDataAgainstCurrencies(timePeriod, mainCurrency, secondCurrency) {
+    get printableDataVsAll() {
+        let versusData = this.settings.versusCurrencies.map(currency =>
+            this.getPrintableDataAgainstCurrency(this.settings.priceChangePeriod, currency)
+        )
+        const id = this.id
+        const symbol = this.apiData.symbol ? this.apiData.symbol : ""
+        const name = this.apiData.name ? this.apiData.name : id
+        const icon = this.apiData.image
+        const amount = this.amount
+        return { id, amount, symbol, name, icon, versusData }
+    }
+
+    getNumericalDataAgainstCurrency(timePeriod, currency) {
         let amount = this.amount
-        let concattedArgs = timePeriod.toString() + mainCurrency.toString() + secondCurrency.toString()
+        let concattedArgs = timePeriod.toString() + currency.toString()
         if (this._cache.numerical[concattedArgs]) {
             return this._cache.numerical[concattedArgs]
         }
-        mainCurrency = mainCurrency.toLowerCase()
-        secondCurrency = secondCurrency.toLowerCase()
+        currency = currency.toLowerCase()
 
-        let priceMain = this.getDataOrZero("current_price", mainCurrency)
-        let netMain = priceMain * amount
-        let changeMainPerc = this.getDataOrZero(`price_change_percentage_${timePeriod}_in_currency`, mainCurrency)
-        let changeMainAbs = netMain - netMain / (1 + changeMainPerc / 100)
-
-        let priceSecond = this.getDataOrZero("current_price", secondCurrency)
-        let netSecond = priceSecond * amount
-        let changeSecondPerc = this.getDataOrZero(`price_change_percentage_${timePeriod}_in_currency`, secondCurrency)
-        let changeSecondAbs = netSecond - netSecond / (1 + changeSecondPerc / 100)
+        let price = this.getDataOrZero("current_price", currency)
+        let net = price * amount
+        let changePerc = this.getDataOrZero(`price_change_percentage_${timePeriod}_in_currency`, currency)
+        let changeAbs = net - net / (1 + changePerc / 100)
+        let ath = this.getDataOrZero("ath", currency)
+        let mcap = this.getDataOrZero("market_cap", currency)
 
         let res = {
             amount,
-            priceMain,
-            netMain,
-            changeMainPerc,
-            changeMainAbs,
-            priceSecond,
-            netSecond,
-            changeSecondPerc,
-            changeSecondAbs,
+            price,
+            net,
+            changePerc,
+            changeAbs,
+            ath,
+            mcap,
         }
 
         this._cache.numerical[concattedArgs] = res
@@ -109,100 +114,56 @@ export class ItemModel {
         return res
     }
 
-    getPrintableDataAgainstCurrencies(timePeriod, mainCurrency, secondCurrency) {
-        let concattedArgs = timePeriod.toString() + mainCurrency.toString() + secondCurrency.toString()
+    getPrintableDataAgainstCurrency(timePeriod, currency) {
+        let concattedArgs = timePeriod.toString() + currency.toString()
         if (this._cache.printable[concattedArgs]) {
             return this._cache.printable[concattedArgs]
         }
 
-        let {
-            amount,
-            priceMain,
-            netMain,
-            changeMainPerc,
-            changeMainAbs,
-            priceSecond,
-            netSecond,
-            changeSecondPerc,
-            changeSecondAbs,
-        } = this.getNumericalDataAgainstCurrencies(timePeriod, mainCurrency, secondCurrency)
+        let { amount, price, net, changePerc, changeAbs, ath, mcap } = this.getNumericalDataAgainstCurrency(
+            timePeriod,
+            currency
+        )
 
-        const id = this.id
-        const symbol = this.apiData.symbol ? this.apiData.symbol : ""
-        const name = this.apiData.name ? this.apiData.name : id
-        const icon = this.apiData.image
         const lang = navigator.languages ? navigator.languages[0] : navigator.language ? navigator.language : "en-US"
 
-        priceMain = numToFormattedString(priceMain, {
+        price = numToFormattedString(price, {
             type: "currency",
-            currency: mainCurrency,
+            currency: currency,
             lang,
         })
-        netMain = numToFormattedString(netMain, { type: "currency", currency: mainCurrency, lang })
-        changeMainPerc = numToFormattedString(changeMainPerc, { type: "percentage", isChange: true })
-        changeMainAbs = numToFormattedString(changeMainAbs, {
+        net = numToFormattedString(net, { type: "currency", currency: currency, lang })
+        changePerc = numToFormattedString(changePerc, { type: "percentage", isChange: true })
+        changeAbs = numToFormattedString(changeAbs, {
             type: "currency",
-            currency: mainCurrency,
+            currency: currency,
             lang,
             isChange: true,
         })
 
-        priceSecond = numToFormattedString(priceSecond, {
-            type: "currency",
-            currency: secondCurrency,
-            lang,
-        })
-        netSecond = numToFormattedString(netSecond, { type: "currency", currency: secondCurrency, lang })
-        changeSecondPerc = numToFormattedString(changeSecondPerc, { type: "percentage", isChange: true })
-        changeSecondAbs = numToFormattedString(changeSecondAbs, {
-            type: "currency",
-            currency: secondCurrency,
-            lang,
-            isChange: true,
-        })
+        ath = numToFormattedString(ath, { type: "currency", currency: currency, lang })
+        mcap = numToFormattedString(mcap, { type: "currency", currency: currency, lang })
 
         const res = {
-            id,
-            symbol,
-            name,
-            icon,
             amount,
-            priceMain,
-            netMain,
-            changeMainPerc,
-            changeMainAbs,
-            priceSecond,
-            netSecond,
-            changeSecondPerc,
-            changeSecondAbs,
+            price,
+            net,
+            changePerc,
+            changeAbs,
+            ath,
+            mcap,
         }
         this._cache.printable[concattedArgs] = res
         return res
     }
 
-    get printableCoinApiData() {
-        let main = this.settings.currentCurrencies.main
-        let second = this.settings.currentCurrencies.second
-        let lang = navigator.languages ? navigator.languages[0] : navigator.language ? navigator.language : "en-US"
+    getPrintableDataAgainstCurrencies() {
+        const id = this.id
 
-        let optionsM = {
-            type: "currency",
-            currency: main,
-            lang,
+        const res = {
+            id,
         }
-        let mcapM = numToFormattedString(this.getDataOrZero("market_cap", main), { ...optionsM, digits: 0 })
-        let athM = numToFormattedString(this.getDataOrZero("ath", main), { ...optionsM, digits: 0 })
-        let priceM = numToFormattedString(this.getDataOrZero("current_price", main), optionsM)
 
-        let optionsS = {
-            type: "currency",
-            currency: second,
-            lang,
-        }
-        let mcapS = numToFormattedString(this.getDataOrZero("market_cap", second), { ...optionsS, digits: 0 })
-        let athS = numToFormattedString(this.getDataOrZero("ath", second), { ...optionsS, digits: 0 })
-        let priceS = numToFormattedString(this.getDataOrZero("current_price", second), optionsS)
-
-        return { mcapM, athM, priceM, mcapS, athS, priceS }
+        return res
     }
 }

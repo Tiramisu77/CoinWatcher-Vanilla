@@ -19,3 +19,17 @@
     grid-template-columns: 1fr 1fr;
     margin: 5px;
 }
+
+.custom-select {
+    background-color: white;
+    color: black;
+    max-height: 25vh;
+    overflow-y: auto;
+    position: absolute;
+    z-index: 10;
+    padding: 4px;
+}
+
+.remove-versus-curr {
+    cursor: pointer;
+}

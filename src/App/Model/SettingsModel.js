@@ -1,6 +1,6 @@
 export class SettingsModel {
     constructor(constants) {
-        this._version = 1.13
+        this._version = 1.14
         this._portfolioSortedBy = "netvalDsc"
         this._priceChangePeriod = "24h"
         this._updateInterval = 5 * 1000 * 60
@@ -28,10 +28,25 @@ export class SettingsModel {
             second: "BTC",
         }
 
+        this._versusCurrencies = ["USD", "BTC"]
+
         this.constants = constants
 
         window.EE.respond("settings", () => this.settingsJSON)
 
+        window.EE.on("addVersusCurrency", currency => {
+            this._versusCurrencies.push(currency)
+            window.EE.emit("saveSettings")
+            window.EE.emit("updatePortfolio")
+        })
+        window.EE.respond("removeVersusCurrency", currency => {
+            if (this.versusCurrencies.length > 1) {
+                this.versusCurrencies = this.versusCurrencies.filter(e => e !== currency)
+                window.EE.emit("saveSettings")
+                window.EE.emit("updatePortfolio")
+                return true
+            } else return false
+        })
         Object.preventExtensions(this)
     }
 
@@ -39,7 +54,15 @@ export class SettingsModel {
         return this._version
     }
 
-    set version(val) {}
+    set version(v) {}
+
+    get versusCurrencies() {
+        return [...this._versusCurrencies]
+    }
+
+    set versusCurrencies(arr) {
+        this._versusCurrencies = arr
+    }
 
     get currentCurrencies() {
         return this._currentCurrencies
@@ -132,6 +155,7 @@ export class SettingsModel {
             networkMode: this.networkMode,
             colorScheme: this.colorScheme,
             currentCurrencies: this.currentCurrencies,
+            versusCurrencies: this.versusCurrencies,
         }
     }
 

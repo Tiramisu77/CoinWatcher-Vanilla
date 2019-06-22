@@ -8,6 +8,6 @@
 
 11.
 
-12) fix percentage calculation formula
+12)
 
-13) nan in total
+13. nan in total

@@ -276,6 +276,66 @@ class Alerts {
     }
 }
 
+class MarketDataDetails {
+    constructor() {
+        this.node = utils.createComponent(`
+      <div class="market-data-details">
+
+      <div class="k">Price:</div>  <div class="v details-prices"> </div>
+
+      <div class="k">ATH:</div> <div class="v details-aths"> </div>
+
+      <div class="k">Marketcap:</div> <div class="v details-mcaps"> </div>
+
+      </div>
+      `)
+
+        this.prices = this.node.querySelector(".details-prices")
+        this.aths = this.node.querySelector(".details-aths")
+        this.mcaps = this.node.querySelector(".details-mcaps")
+    }
+
+    renderPrices(data) {
+        let node = utils.createComponent(`
+    <div class="v"> </div>
+    `)
+        node.textContent = data.price
+
+        this.prices.appendChild(node)
+    }
+
+    renderAths(data) {
+        let node = utils.createComponent(`
+  <div class="v"> </div>
+  `)
+        node.textContent = data.ath
+
+        this.aths.appendChild(node)
+    }
+
+    renderMcaps(data) {
+        let node = utils.createComponent(`
+  <div class="v"> </div>
+  `)
+        node.textContent = data.mcap
+
+        this.mcaps.appendChild(node)
+    }
+
+    render(versusData) {
+        window.lib.wipeChildren(this.prices)
+        window.lib.wipeChildren(this.aths)
+        window.lib.wipeChildren(this.mcaps)
+        for (let data of versusData) {
+            this.renderPrices(data)
+
+            this.renderAths(data)
+
+            this.renderMcaps(data)
+        }
+    }
+}
+
 export class CoinDetails {
     constructor(removeItem, router) {
         this.node = utils.createComponent(`
@@ -312,7 +372,7 @@ export class CoinDetails {
 
 
 
-            <div class="k">Value:</div> <div ><div class="details-valueM v"> </div> <div class="details-valueS v"> </div></div>
+            <div class="k">Value:</div> <div class="details-values"></div>
 
             <div class="k">Portfolio share:</div> <div class="details-shareM v"> </div>
 
@@ -325,15 +385,7 @@ export class CoinDetails {
             </div>
 
               <div class="market-data-details-container">
-              <div class="market-data-details">
 
-              <div class="k">Price:</div> <div class="v"><div class="details-priceM v"> </div> <div class="details-priceS v"> </div></div>
-
-              <div class="k">ATH:</div> <div class="v"><div class="details-athM v"> </div> <div class="details-athS v"> </div> </div>
-
-              <div class="k">Marketcap:</div> <div class="v"><div class="details-mcapM v"> </div> <div class="details-mcapS v"> </div> </div>
-
-              </div>
               </div>
 
 
@@ -354,20 +406,14 @@ export class CoinDetails {
         this.name = this.node.querySelector(".full-name")
         this.amountField = this.node.querySelector("input[name=amount]")
         this.icon = this.node.querySelector(".coin-logo-big")
+        this.values = this.node.querySelector(".details-values")
 
         this.remove = this.node.querySelector(".remove-btn-icon")
         this.message = this.node.querySelector(".message")
 
-        this.priceM = this.node.querySelector(".details-priceM")
-        this.valueM = this.node.querySelector(".details-valueM")
-        this.athM = this.node.querySelector(".details-athM")
-        this.mcapM = this.node.querySelector(".details-mcapM")
-        this.shareM = this.node.querySelector(".details-shareM")
+        this.marketDataDetails = new MarketDataDetails()
 
-        this.priceS = this.node.querySelector(".details-priceS")
-        this.valueS = this.node.querySelector(".details-valueS")
-        this.athS = this.node.querySelector(".details-athS")
-        this.mcapS = this.node.querySelector(".details-mcapS")
+        this.node.querySelector(".market-data-details-container").appendChild(this.marketDataDetails.node)
 
         this.Alerts = new Alerts(
             this.node.querySelector(".coin-details-alerts-container"),
@@ -396,12 +442,18 @@ export class CoinDetails {
         this.render = function(itemStrings) {
             router("/CoinDetails")
             this.currentItem = itemStrings.id
-            let printableCoinApiData = window.EE.request("printableCoinApiData", itemStrings.id)
-            this.amountField.value = itemStrings.amount
-            this.name.textContent = `${itemStrings.name} ${itemStrings.symbol}`
 
-            this.renderIcon(itemStrings.icon)
-            this.renderCoinDetailsApiData(printableCoinApiData, itemStrings)
+            let printableDataVsAll = window.EE.request("printableDataVsAll", itemStrings.id)
+
+            let versusData = printableDataVsAll.versusData
+
+            this.amountField.value = printableDataVsAll.amount
+            this.name.textContent = `${printableDataVsAll.name} ${printableDataVsAll.symbol}`
+
+            this.renderIcon(printableDataVsAll.icon)
+            this.renderValues(versusData)
+
+            this.marketDataDetails.render(versusData)
             this.Alerts.render(this.currentItem)
         }.bind(this)
 
@@ -425,17 +477,16 @@ export class CoinDetails {
         }
     }
 
-    renderCoinDetailsApiData(printableCoinApiData, itemStrings) {
-        let shares = window.EE.request("portfolioStructure")
-        let share = shares[this.currentItem].main
-        let { netMain, netSecond } = itemStrings
-        printableCoinApiData.valueM = netMain
-        printableCoinApiData.valueS = netSecond
+    renderValues(versusData) {
+        window.lib.wipeChildren(this.values)
+        for (let data of versusData) {
+            let node = utils.createComponent(`
+  <div class="v"> </div>
+  `)
+            node.textContent = data.net
 
-        for (let key in printableCoinApiData) {
-            this[key].textContent = printableCoinApiData[key]
+            this.values.appendChild(node)
         }
-        this.shareM.textContent = share
     }
 
     onUnmount() {

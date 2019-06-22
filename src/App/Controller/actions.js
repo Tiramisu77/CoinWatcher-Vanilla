@@ -73,6 +73,12 @@ const changeSettings = function(msg, val) {
         this.view.changeColorScheme(this.model.settings.colorScheme[this.model.settings.colorScheme.current])
     }
 
+    if (msg === "versusCurrencies") {
+        this.model.settings.versusCurrencies = val
+        this.view.renderTotal(this.model.total)
+        window.EE.emit("updatePortfolio")
+    }
+
     if (msg === "currencyMain") {
         this.model.settings.currentCurrencies.main = val
         this.view.renderTotal(this.model.total)

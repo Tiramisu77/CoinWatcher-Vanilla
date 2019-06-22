@@ -11,12 +11,13 @@ export class PortfolioModel {
         window.EE.on("newMarketData", this.updateItem, this)
         window.EE.respond("itemStrings", this.getItemStrings, this)
         window.EE.respond("itemApiData", this.getItemApiData, this)
-        window.EE.respond("printableCoinApiData", this.getPrintableCoinApiData, this)
+
         window.EE.on("updatePortfolio", this.updatePortfolio, this)
-        window.EE.respond("totalValue", this.getnumericalTotalValue, this)
+
         window.EE.respond("portfolioStructure", () => {
             return this.printableShares
         })
+        window.EE.respond("printableDataVsAll", this.getCoinVersusData, this)
 
         Object.preventExtensions(this)
     }
@@ -29,116 +30,69 @@ export class PortfolioModel {
         return this.items[id].printableData
     }
 
-    getPrintableCoinApiData(id) {
-        return this.items[id].printableCoinApiData
-    }
-
     changeItemAmount(id, amountStr) {
         let amount = Number(amountStr.replace(",", "."))
         this.items[id].amount = amount
         return "ok"
     }
 
-    getnumericalTotalValue(timePeriod, mainCurrency, secondCurrency) {
-        const total = { mainCurrencyNet: 0, mainCurrencyChangeAbs: 0, secondCurrencyNet: 0, secondCurrencyChangeAbs: 0 }
-        let shares = {}
-
-        for (let item in this.items) {
-            let numData = this.items[item].getNumericalDataAgainstCurrencies(timePeriod, mainCurrency, secondCurrency)
-            let { netMain, changeMainAbs, netSecond, changeSecondAbs } = numData
-
-            total.mainCurrencyNet += netMain
-            total.mainCurrencyChangeAbs += changeMainAbs
-            total.secondCurrencyNet += netSecond
-            total.secondCurrencyChangeAbs += changeSecondAbs
-        }
-
-        for (let item in this.items) {
-            let numData = this.items[item].getNumericalDataAgainstCurrencies(timePeriod, mainCurrency, secondCurrency)
-            let { netMain, netSecond } = numData
-            shares[item] = { main: netMain / total.mainCurrencyNet, second: netSecond / total.secondCurrencyNet }
-        }
-
-        const mainChangePerc =
-            (total.mainCurrencyChangeAbs / (total.mainCurrencyNet - total.mainCurrencyChangeAbs)) * 100 || 0
-        const secondChangePerc =
-            (total.secondCurrencyChangeAbs / (total.secondCurrencyNet - total.secondCurrencyChangeAbs)) * 100 || 0
-
-        return { ...total, mainChangePerc, secondChangePerc, shares }
+    getCoinVersusData(id) {
+        return this.items[id].printableDataVsAll
     }
 
-    getPrintableTotalAgainstCurrencies(timeperiod, mainCurrency, secondCurrency) {
-        let numData = this.getnumericalTotalValue(timeperiod, mainCurrency, secondCurrency)
-        let {
-            mainCurrencyNet,
-            mainCurrencyChangeAbs,
-            secondCurrencyNet,
-            secondCurrencyChangeAbs,
-            mainChangePerc,
-            secondChangePerc,
-            shares,
-        } = numData
+    getNumTotalValue() {
+        let res = []
+        let { versusCurrencies } = this.settings
+
+        for (let currency of versusCurrencies) {
+            let sum = { currency, totalValue: 0, changePerc: 0, changeAbs: 0 }
+
+            for (let item in this.items) {
+                let itemNumData = this.items[item].getNumericalDataAgainstCurrency(
+                    this.settings.priceChangePeriod,
+                    currency
+                )
+
+                sum.totalValue += itemNumData.net
+                sum.changeAbs += itemNumData.changeAbs
+            }
+            sum.changePerc = (sum.changeAbs / (sum.totalValue - sum.changeAbs)) * 100 || 0
+            res.push(sum)
+        }
+
+        return res
+    }
+
+    getPrintableTotalValue() {
         const lang = navigator.languages ? navigator.languages[0] : navigator.language ? navigator.language : "en-US"
-
-        mainCurrencyNet = numToFormattedString(mainCurrencyNet, { type: "currency", currency: mainCurrency, lang })
-        mainCurrencyChangeAbs = numToFormattedString(mainCurrencyChangeAbs, {
-            type: "currency",
-            currency: mainCurrency,
-            isChange: true,
-            lang,
+        return this.getNumTotalValue().map(value => {
+            let { currency, totalValue, changePerc, changeAbs } = value
+            totalValue = numToFormattedString(totalValue, { type: "currency", currency: currency, lang })
+            changePerc = numToFormattedString(changePerc, { type: "percentage", isChange: true })
+            changeAbs = numToFormattedString(changeAbs, {
+                type: "currency",
+                currency: currency,
+                lang,
+                isChange: true,
+            })
+            return { totalValue, changePerc, changeAbs }
         })
-        mainChangePerc = numToFormattedString(mainChangePerc, { type: "percentage", isChange: true })
-
-        secondCurrencyNet = numToFormattedString(secondCurrencyNet, {
-            type: "currency",
-            currency: secondCurrency,
-            lang,
-        })
-        secondCurrencyChangeAbs = numToFormattedString(secondCurrencyChangeAbs, {
-            type: "currency",
-            currency: secondCurrency,
-            lang,
-            isChange: true,
-        })
-        secondChangePerc = numToFormattedString(secondChangePerc, { type: "percentage", isChange: true })
-
-        shares = this.getPrintableShares(timeperiod, mainCurrency, secondCurrency)
-
-        return {
-            mainCurrencyNet,
-            mainCurrencyChangeAbs,
-            secondCurrencyNet,
-            secondCurrencyChangeAbs,
-            mainChangePerc,
-            secondChangePerc,
-            shares,
-        }
-    }
-
-    getPrintableShares(timeperiod, mainCurrency, secondCurrency) {
-        let { shares } = this.getnumericalTotalValue(timeperiod, mainCurrency, secondCurrency)
-        for (let key in shares) {
-            let main = numToFormattedString(shares[key].main * 100, { type: "percentage" })
-            let second = numToFormattedString(shares[key].second * 100, { type: "percentage" })
-            shares[key] = { main, second }
-        }
-        return shares
     }
 
     get printableShares() {
-        return this.getPrintableShares(
-            this.settings.priceChangePeriod,
-            this.settings.currentCurrencies.main,
-            this.settings.currentCurrencies.second
-        )
+        let res = {}
+
+        let currency = "USD"
+        let total = this.getNumTotalValue().find(e => e.currency === currency)
+        for (let item in this.items) {
+            let { net } = this.items[item].getNumericalDataAgainstCurrency(this.settings.priceChangePeriod, currency)
+            res[item] = net / total.totalValue
+        }
+        return res
     }
 
     get printableTotalValue() {
-        return this.getPrintableTotalAgainstCurrencies(
-            this.settings.priceChangePeriod,
-            this.settings.currentCurrencies.main,
-            this.settings.currentCurrencies.second
-        )
+        return this.getPrintableTotalValue()
     }
 
     get mcapAsc() {
@@ -228,7 +182,7 @@ export class PortfolioModel {
 
     updatePortfolio() {
         for (let item in this.items) {
-            window.EE.emit("itemChange", this.items[item].printableData)
+            window.EE.emit("itemChange", this.items[item].printableData, this.items[item].printableDataVsAll)
         }
     }
 }

@@ -10,6 +10,7 @@ export class Storage {
         })
 
         window.EE.on("saveNotifications", this.saveNotifications, this)
+        window.EE.on("saveSettings", this.saveSettings, this)
     }
 
     onLaunch() {
