@@ -14,7 +14,7 @@ export class PortfolioModel {
 
         window.EE.on("updatePortfolio", this.updatePortfolio, this)
 
-        window.EE.respond("portfolioStructure", () => {
+        window.EE.respond("printableShares", () => {
             return this.printableShares
         })
         window.EE.respond("printableDataVsAll", this.getCoinVersusData, this)
@@ -86,7 +86,7 @@ export class PortfolioModel {
         let total = this.getNumTotalValue().find(e => e.currency === currency)
         for (let item in this.items) {
             let { net } = this.items[item].getNumericalDataAgainstCurrency(this.settings.priceChangePeriod, currency)
-            res[item] = net / total.totalValue
+            res[item] = numToFormattedString((net / total.totalValue) * 100, { type: "percentage", isChange: false })
         }
         return res
     }

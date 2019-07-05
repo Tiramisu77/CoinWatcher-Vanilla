@@ -407,6 +407,7 @@ export class CoinDetails {
         this.amountField = this.node.querySelector("input[name=amount]")
         this.icon = this.node.querySelector(".coin-logo-big")
         this.values = this.node.querySelector(".details-values")
+        this.share = this.node.querySelector(".details-shareM")
 
         this.remove = this.node.querySelector(".remove-btn-icon")
         this.message = this.node.querySelector(".message")
@@ -452,7 +453,7 @@ export class CoinDetails {
 
             this.renderIcon(printableDataVsAll.icon)
             this.renderValues(versusData)
-
+            this.renderShare()
             this.marketDataDetails.render(versusData)
             this.Alerts.render(this.currentItem)
         }.bind(this)
@@ -475,6 +476,10 @@ export class CoinDetails {
         } else {
             this.icon.style.display = "none"
         }
+    }
+
+    renderShare() {
+        this.share.textContent = window.EE.request("printableShares")[this.currentItem]
     }
 
     renderValues(versusData) {
