@@ -2,7 +2,7 @@
 import "./style.css"
 import { registerSW } from "./registerSW.js"
 import { App } from "./App/App.js"
-
+//test
 if (process.env.NODE_ENV !== "production") {
     window.DEBUG = true
 }
