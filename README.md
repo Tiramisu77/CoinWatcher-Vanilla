@@ -7,22 +7,6 @@ It stores all user data strictly on client side utilizing `window.localStorage`,
 
 Visit [the official page](https://tiramisu77.github.io/CoinWatcher/) or build and run locally.
 
-### Installation
-
-Clone this repo and then run
-
-`npm install`
-
-and then
-
-`npm run dev-build`
-
-or
-
-`npm run build`
-
-After this you can go to `dist` directory and open `index.html` in your browser to run the app with the `file://` protocol, or run any available server tool to serve it locally, for example `npx serve`
-
 ### Credits
 
 This app uses cryptocurrency market data provided by the following public API's:
