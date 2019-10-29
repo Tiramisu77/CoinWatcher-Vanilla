@@ -5,7 +5,7 @@ It stores all user data strictly on client side utilizing `window.localStorage`,
 
 ### Using
 
-Visit [the official page](https://tiramisu77.github.io/CoinWatcher/) or build and run locally.
+Visit [the official page](https://tiramisu77.github.io/CoinWatcher-Vanilla/) or build and run locally.
 
 ### Credits
 

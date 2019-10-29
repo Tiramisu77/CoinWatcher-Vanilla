@@ -17,8 +17,8 @@ export class NotificationsView {
             const lang = navigator.languages
                 ? navigator.languages[0]
                 : navigator.language
-                ? navigator.language
-                : "en-US"
+                    ? navigator.language
+                    : "en-US"
             navigator.serviceWorker.ready.then(function(registration) {
                 registration.showNotification(`Coin Watcher alert`, {
                     body: `${data.name} @ ${window.lib.numToFormattedString(data.price, {
@@ -27,8 +27,8 @@ export class NotificationsView {
                         lang,
                     })}`,
                     icon: priceNotif.targetIsHigher
-                        ? "/CoinWatcher/images/green-delta.png"
-                        : "/CoinWatcher/images/red-delta.png",
+                        ? "/CoinWatcher-Vanilla/images/green-delta.png"
+                        : "/CoinWatcher-Vanilla/images/red-delta.png",
                     requireInteraction: true,
                 })
             })
@@ -52,8 +52,8 @@ export class NotificationsView {
                     })})`,
                     icon:
                         data.priceChange < 0
-                            ? "/CoinWatcher/images/red-delta.png"
-                            : "/CoinWatcher/images/green-delta.png",
+                            ? "/CoinWatcher-Vanilla/images/red-delta.png"
+                            : "/CoinWatcher-Vanilla/images/green-delta.png",
                     requireInteraction: true,
                 })
             })

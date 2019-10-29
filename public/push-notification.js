@@ -11,7 +11,7 @@ self.addEventListener("notificationclick", function(event) {
                     let client = clientList[i]
                     if ("focus" in client) return client.focus()
                 }
-                if (clients.openWindow) return clients.openWindow("/CoinWatcher/")
+                if (clients.openWindow) return clients.openWindow("/CoinWatcher-Vanilla/")
             })
     )
 })
